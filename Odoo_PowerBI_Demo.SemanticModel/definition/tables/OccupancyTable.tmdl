@@ -1,0 +1,137 @@
+table OccupancyTable
+	lineageTag: 1fbc8d83-7e9b-444f-96f5-5689c90307f9
+
+	measure 'Taux d''occupation' =
+			
+			DIVIDE(
+			    SUM(OccupancyTable[Chambres_Vendues]),
+			    SUM(OccupancyTable[Chambres_Disponibles])
+			)
+		lineageTag: 615b1014-23b2-47c5-a722-e95a2b126178
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenu chambres' = SUM(OccupancyTable[Revenu_Chambres])
+		formatString: #,0
+		lineageTag: 94057c0a-aa0a-5bb9-900c-e8341b759d37
+
+	measure RevPAR_DAF = DIVIDE(SUM(OccupancyTable[Revenu_Chambres]), SUM(OccupancyTable[Chambres_Disponibles]))
+		formatString: #,0
+		lineageTag: e0a92ad3-4c93-59fa-a9df-ab116c1e6329
+
+	measure 'Chambres vendues' = SUM(OccupancyTable[Chambres_Vendues])
+		formatString: #,0
+		lineageTag: 60458962-e5f7-55d0-a1e2-25253202daeb
+
+	column Date_Clé
+		dataType: int64
+		formatString: 0
+		lineageTag: 44bd79e6-7792-4105-8a0c-546d778f3676
+		summarizeBy: none
+		sourceColumn: Date_Clé
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: ea97643c-51e8-4c79-a443-c40a30bada54
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: 26b0c360-652d-40d0-a2e4-91bff0d7f6f0
+			defaultHierarchy: LocalDateTable_3c139ad2-623c-43f5-a1c5-9f679d889f93.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Type_Chambre
+		dataType: string
+		lineageTag: 574564e6-4c75-4dc5-b24a-ffa0d1dc7b04
+		summarizeBy: none
+		sourceColumn: Type_Chambre
+
+		annotation SummarizationSetBy = Automatic
+
+	column Chambres_Disponibles
+		dataType: int64
+		formatString: 0
+		lineageTag: ec525a7e-1c87-4f84-9a67-c6ce410ec655
+		summarizeBy: sum
+		sourceColumn: Chambres_Disponibles
+
+		annotation SummarizationSetBy = Automatic
+
+	column Chambres_Vendues
+		dataType: int64
+		formatString: 0
+		lineageTag: 5bbcb871-d4f5-46f3-ae59-0a648683ead8
+		summarizeBy: sum
+		sourceColumn: Chambres_Vendues
+
+		annotation SummarizationSetBy = Automatic
+
+	column Taux_Occupation
+		dataType: double
+		lineageTag: 6e73bc0c-0cf1-4bf9-9da4-7cfc2f05b247
+		summarizeBy: sum
+		sourceColumn: Taux_Occupation
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Tarif_Moyen
+		dataType: int64
+		formatString: 0
+		lineageTag: 3a06c8f9-1ad1-4cef-b1af-34be6a9e1bb7
+		summarizeBy: sum
+		sourceColumn: Tarif_Moyen
+
+		annotation SummarizationSetBy = Automatic
+
+	column Revenu_Chambres
+		dataType: int64
+		formatString: 0
+		lineageTag: ad8c62ad-7fca-4956-a653-89bfe208ad27
+		summarizeBy: sum
+		sourceColumn: Revenu_Chambres
+
+		annotation SummarizationSetBy = Automatic
+
+	column RevPAR
+		dataType: double
+		lineageTag: b59234f6-06d2-4ea9-aef0-44192baec13d
+		summarizeBy: sum
+		sourceColumn: RevPAR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Annulations
+		dataType: int64
+		formatString: 0
+		lineageTag: bfab634e-6f5c-488c-b085-3a76cccfcc2a
+		summarizeBy: sum
+		sourceColumn: Annulations
+
+		annotation SummarizationSetBy = Automatic
+
+	partition OccupancyTable = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\Augustin\Documents\HOTEL2FEVRIER\Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"), null, true),
+				    OccupancyTable_Table = Source{[Item="OccupancyTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(OccupancyTable_Table,{{"Date_Clé", Int64.Type}, {"Date", type date}, {"Type_Chambre", type text}, {"Chambres_Disponibles", Int64.Type}, {"Chambres_Vendues", Int64.Type}, {"Taux_Occupation", type number}, {"Tarif_Moyen", Int64.Type}, {"Revenu_Chambres", Int64.Type}, {"RevPAR", type number}, {"Annulations", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

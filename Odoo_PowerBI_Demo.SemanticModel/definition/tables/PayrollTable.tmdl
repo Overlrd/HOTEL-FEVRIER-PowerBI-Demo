@@ -1,0 +1,168 @@
+table PayrollTable
+	lineageTag: be1a6dc6-2f4f-4be9-a95f-ba5980ea8f70
+
+	measure 'Masse salariale' =
+			
+			SUM(PayrollTable[Net_Paye])
+		formatString: 0
+		lineageTag: 9f5ed2e9-e5f9-41cf-a742-0d4a29289a6d
+
+	measure 'Taux de présence' = DIVIDE(SUM(PayrollTable[Jours_Présents]), SUM(PayrollTable[Jours_Ouvrés]))
+		formatString: 0.0%
+		lineageTag: efeffb22-eba1-57b2-843c-272002faa114
+
+	column Année_Mois
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 9054c333-d8a3-4096-8e98-051374afca2d
+		summarizeBy: none
+		sourceColumn: Année_Mois
+
+		variation Variation
+			isDefault
+			relationship: 51cd29c3-a167-4b81-9d41-db77fd68c8d5
+			defaultHierarchy: LocalDateTable_f8c88e25-3ee1-4bf1-bf44-67deeed4ddf4.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Mois
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 152a609d-b5a5-4a6c-b3f3-f463081db055
+		summarizeBy: none
+		sourceColumn: Mois
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Employé_ID
+		dataType: string
+		lineageTag: f45f113e-1b25-443c-b4e4-69e99915f849
+		summarizeBy: none
+		sourceColumn: Employé_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nom_Employé
+		dataType: string
+		lineageTag: b87c88fa-f532-45be-8487-1664d4ecae28
+		summarizeBy: none
+		sourceColumn: Nom_Employé
+
+		annotation SummarizationSetBy = Automatic
+
+	column Département
+		dataType: string
+		lineageTag: 626b2bc7-527f-4b9f-a077-700e7d3e5e7c
+		summarizeBy: none
+		sourceColumn: Département
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type_Contrat
+		dataType: string
+		lineageTag: f404c670-294a-4038-9bf0-b05b06d9aca1
+		summarizeBy: none
+		sourceColumn: Type_Contrat
+
+		annotation SummarizationSetBy = Automatic
+
+	column Jours_Ouvrés
+		dataType: int64
+		formatString: 0
+		lineageTag: 02146c80-2d45-4361-87f8-d3b67572bb5d
+		summarizeBy: sum
+		sourceColumn: Jours_Ouvrés
+
+		annotation SummarizationSetBy = Automatic
+
+	column Jours_Présents
+		dataType: int64
+		formatString: 0
+		lineageTag: 5b4fe051-84cf-43f5-86a2-5f5d1412837d
+		summarizeBy: sum
+		sourceColumn: Jours_Présents
+
+		annotation SummarizationSetBy = Automatic
+
+	column Jours_Absents
+		dataType: int64
+		formatString: 0
+		lineageTag: 96182473-a38b-4c9a-a0cb-c183ca11d723
+		summarizeBy: sum
+		sourceColumn: Jours_Absents
+
+		annotation SummarizationSetBy = Automatic
+
+	column Heures_Sup
+		dataType: int64
+		formatString: 0
+		lineageTag: 764231b1-8162-4bf8-99d9-645e7cbe1e58
+		summarizeBy: sum
+		sourceColumn: Heures_Sup
+
+		annotation SummarizationSetBy = Automatic
+
+	column Taux_Presence
+		dataType: double
+		lineageTag: 675cdf4e-1a14-4056-931e-b35ba2c66123
+		summarizeBy: sum
+		sourceColumn: Taux_Presence
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Salaire_Base
+		dataType: int64
+		formatString: 0
+		lineageTag: 4da47b94-3d5d-4321-9486-56ab49b1a789
+		summarizeBy: sum
+		sourceColumn: Salaire_Base
+
+		annotation SummarizationSetBy = Automatic
+
+	column Primes
+		dataType: int64
+		formatString: 0
+		lineageTag: c8ce248d-1470-4fda-84f8-725d27a36dcf
+		summarizeBy: sum
+		sourceColumn: Primes
+
+		annotation SummarizationSetBy = Automatic
+
+	column Retenues
+		dataType: int64
+		formatString: 0
+		lineageTag: 9a34baba-093b-42d1-bf2f-c94c50401834
+		summarizeBy: sum
+		sourceColumn: Retenues
+
+		annotation SummarizationSetBy = Automatic
+
+	column Net_Paye
+		dataType: int64
+		formatString: 0
+		lineageTag: 2fe51f61-7b9b-4c2f-a5d3-e6fbb47d52bb
+		summarizeBy: sum
+		sourceColumn: Net_Paye
+
+		annotation SummarizationSetBy = Automatic
+
+	partition PayrollTable = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\Augustin\Documents\HOTEL2FEVRIER\Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"), null, true),
+				    PayrollTable_Table = Source{[Item="PayrollTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(PayrollTable_Table,{{"Année_Mois", type date}, {"Mois", type date}, {"Employé_ID", type text}, {"Nom_Employé", type text}, {"Département", type text}, {"Type_Contrat", type text}, {"Jours_Ouvrés", Int64.Type}, {"Jours_Présents", Int64.Type}, {"Jours_Absents", Int64.Type}, {"Heures_Sup", Int64.Type}, {"Taux_Presence", type number}, {"Salaire_Base", Int64.Type}, {"Primes", Int64.Type}, {"Retenues", Int64.Type}, {"Net_Paye", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

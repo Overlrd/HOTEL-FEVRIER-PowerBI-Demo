@@ -1,0 +1,165 @@
+table CashTable
+	lineageTag: 4e71174b-d11c-46bf-81d7-43bfc771e1e6
+
+	measure 'Solde trésorerie' =
+			
+			VAR DateMax = MAX(DateTable[Date])
+			RETURN
+			SUMX(
+			    CALCULATETABLE(
+			        VALUES(CashTable[Compte]),
+			        REMOVEFILTERS(DateTable)
+			    ),
+			    VAR CompteCourant = CashTable[Compte]
+			    VAR DernierMouvement =
+			        TOPN(
+			            1,
+			            FILTER(
+			                ALL(CashTable),
+			                CashTable[Compte] = CompteCourant
+			                    && CashTable[Date] <= DateMax
+			            ),
+			            CashTable[Date], DESC,
+			            CashTable[Mouvement_ID], DESC
+			        )
+			    RETURN
+			        MAXX(DernierMouvement, CashTable[Solde_Après_Mouvement])
+			)
+		formatString: 0
+		lineageTag: 05da9092-8f33-415e-b874-cd5a415d5289
+
+	measure Encaissements = SUM(CashTable[Encaissement])
+		formatString: #,0
+		lineageTag: 782a4a5c-bc1e-5fea-8e55-d503db338c00
+
+	measure Décaissements = SUM(CashTable[Décaissement])
+		formatString: #,0
+		lineageTag: 9e42abbb-09f1-5af0-bd06-b797a720a36f
+
+	measure 'Flux net' = [Encaissements] - [Décaissements]
+		formatString: #,0
+		lineageTag: ff26686d-e6d5-58d2-a5a0-5b05703885c6
+
+	column Mouvement_ID
+		dataType: string
+		lineageTag: e12c7f1c-bded-45e2-8c40-559ad2216b0b
+		summarizeBy: none
+		sourceColumn: Mouvement_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date_Clé
+		dataType: int64
+		formatString: 0
+		lineageTag: d5ddef9c-9e8a-4da9-9ba2-6a620a7f7ced
+		summarizeBy: none
+		sourceColumn: Date_Clé
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: a2146cb4-1d13-47ac-b333-76b2e220e0bb
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: 32e40dde-49a9-4d54-97b5-fb5366b9c70d
+			defaultHierarchy: LocalDateTable_a553f71e-cdfa-4043-9f26-4d624d4176c0.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Compte
+		dataType: string
+		lineageTag: 66885979-5b8d-4354-bc24-47900af6fd51
+		summarizeBy: none
+		sourceColumn: Compte
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type_Mouvement
+		dataType: string
+		lineageTag: 87554465-cb48-4516-930e-77f29cfc413a
+		summarizeBy: none
+		sourceColumn: Type_Mouvement
+
+		annotation SummarizationSetBy = Automatic
+
+	column Catégorie
+		dataType: string
+		lineageTag: c94bc837-ee10-4715-908c-f948a0c5952e
+		summarizeBy: none
+		sourceColumn: Catégorie
+
+		annotation SummarizationSetBy = Automatic
+
+	column Facture_ID
+		dataType: string
+		lineageTag: 3b9ae92d-7a08-4fe3-a98e-c71ca141f4a8
+		summarizeBy: none
+		sourceColumn: Facture_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Libellé
+		dataType: string
+		lineageTag: efe40d93-fa88-47f1-9374-d7a770e2d393
+		summarizeBy: none
+		sourceColumn: Libellé
+
+		annotation SummarizationSetBy = Automatic
+
+	column Encaissement
+		dataType: int64
+		formatString: 0
+		lineageTag: 41bc1416-15cc-48a1-891d-a77b1599c9fd
+		summarizeBy: sum
+		sourceColumn: Encaissement
+
+		annotation SummarizationSetBy = Automatic
+
+	column Décaissement
+		dataType: int64
+		formatString: 0
+		lineageTag: c70a509e-142e-4f5e-b093-da98585c8cbd
+		summarizeBy: sum
+		sourceColumn: Décaissement
+
+		annotation SummarizationSetBy = Automatic
+
+	column Montant_Signé
+		dataType: int64
+		formatString: 0
+		lineageTag: e1541505-42ad-4835-897b-d897b163b502
+		summarizeBy: sum
+		sourceColumn: Montant_Signé
+
+		annotation SummarizationSetBy = Automatic
+
+	column Solde_Après_Mouvement
+		dataType: int64
+		formatString: 0
+		lineageTag: f4c1e679-49ee-4d6a-ac3a-f1a9efd5561e
+		summarizeBy: sum
+		sourceColumn: Solde_Après_Mouvement
+
+		annotation SummarizationSetBy = Automatic
+
+	partition CashTable = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\Augustin\Documents\HOTEL2FEVRIER\Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"), null, true),
+				    CashTable_Table = Source{[Item="CashTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(CashTable_Table,{{"Mouvement_ID", type text}, {"Date_Clé", Int64.Type}, {"Date", type date}, {"Compte", type text}, {"Type_Mouvement", type text}, {"Catégorie", type text}, {"Facture_ID", type text}, {"Libellé", type text}, {"Encaissement", Int64.Type}, {"Décaissement", Int64.Type}, {"Montant_Signé", Int64.Type}, {"Solde_Après_Mouvement", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

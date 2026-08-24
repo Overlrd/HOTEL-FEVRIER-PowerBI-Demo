@@ -1,0 +1,70 @@
+table EmployeeTable
+	lineageTag: da826350-2730-4248-bf26-153fd006c53f
+
+	column Employé_ID
+		dataType: string
+		lineageTag: e412dec3-600e-4eca-9a0c-19053c9fe312
+		summarizeBy: none
+		sourceColumn: Employé_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nom_Employé
+		dataType: string
+		lineageTag: 8f2135ce-cd6d-4a0f-b657-80d05ea02e19
+		summarizeBy: none
+		sourceColumn: Nom_Employé
+
+		annotation SummarizationSetBy = Automatic
+
+	column Département
+		dataType: string
+		lineageTag: 3aeb833d-367e-41d8-acde-df3947af9865
+		summarizeBy: none
+		sourceColumn: Département
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type_Contrat
+		dataType: string
+		lineageTag: 531a3a24-a2f6-4ef9-8a7a-09d96b4c1937
+		summarizeBy: none
+		sourceColumn: Type_Contrat
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date_Embauche
+		dataType: string
+		lineageTag: bc40bdc1-fa41-4d80-81d5-43839b6014a5
+		summarizeBy: none
+		sourceColumn: Date_Embauche
+
+		annotation SummarizationSetBy = Automatic
+
+	column Salaire_Base_Mensuel
+		dataType: string
+		lineageTag: d3b47ab4-7600-4ef1-a377-1ec032e45566
+		summarizeBy: none
+		sourceColumn: Salaire_Base_Mensuel
+
+		annotation SummarizationSetBy = Automatic
+
+	column Statut
+		dataType: string
+		lineageTag: 8d7a2845-8ab7-46a3-83ed-51eeac7acf4f
+		summarizeBy: none
+		sourceColumn: Statut
+
+		annotation SummarizationSetBy = Automatic
+
+	partition EmployeeTable = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\Augustin\Documents\HOTEL2FEVRIER\Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"), null, true),
+				    EmployeeTable_Table = Source{[Item="EmployeeTable",Kind="Table"]}[Data]
+				in
+				    EmployeeTable_Table
+
+	annotation PBI_ResultType = Exception
+

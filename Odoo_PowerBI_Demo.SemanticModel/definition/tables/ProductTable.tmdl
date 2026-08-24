@@ -1,0 +1,74 @@
+table ProductTable
+	lineageTag: 4ca07f04-c743-41a3-a70c-f87aabf49815
+
+	column Produit_ID
+		dataType: string
+		lineageTag: d6b87f29-95a1-4d68-a014-b477a37a5131
+		summarizeBy: none
+		sourceColumn: Produit_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nom_Produit
+		dataType: string
+		lineageTag: 449b7631-daf5-46e8-810c-741f7c7fed48
+		summarizeBy: none
+		sourceColumn: Nom_Produit
+
+		annotation SummarizationSetBy = Automatic
+
+	column Catégorie
+		dataType: string
+		lineageTag: 743f7056-332e-453a-9490-057d82a3f4a2
+		summarizeBy: none
+		sourceColumn: Catégorie
+
+		annotation SummarizationSetBy = Automatic
+
+	column Unité
+		dataType: string
+		lineageTag: a1633b84-ded6-4506-917d-668f4a903869
+		summarizeBy: none
+		sourceColumn: Unité
+
+		annotation SummarizationSetBy = Automatic
+
+	column Seuil_Stock
+		dataType: int64
+		formatString: 0
+		lineageTag: 0913523c-284c-4963-a290-95fcb58480b8
+		summarizeBy: none
+		sourceColumn: Seuil_Stock
+
+		annotation SummarizationSetBy = Automatic
+
+	column Coût_Unitaire
+		dataType: int64
+		formatString: 0
+		lineageTag: 4d848bbe-e22e-43b0-8301-7ca0d14a8fda
+		summarizeBy: none
+		sourceColumn: Coût_Unitaire
+
+		annotation SummarizationSetBy = Automatic
+
+	column Prix_Vente
+		dataType: int64
+		formatString: 0
+		lineageTag: 527c512c-cc38-4efb-a672-ec8142770a2f
+		summarizeBy: none
+		sourceColumn: Prix_Vente
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ProductTable = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\Augustin\Documents\HOTEL2FEVRIER\Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"), null, true),
+				    ProductTable_Table = Source{[Item="ProductTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(ProductTable_Table,{{"Produit_ID", type text}, {"Nom_Produit", type text}, {"Catégorie", type text}, {"Unité", type text}, {"Seuil_Stock", Int64.Type}, {"Coût_Unitaire", Int64.Type}, {"Prix_Vente", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Exception
+

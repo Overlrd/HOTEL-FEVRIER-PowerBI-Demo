@@ -1,0 +1,194 @@
+table StockTable
+	lineageTag: 69cdaca0-ed64-40f6-ba2e-66f56a578278
+
+	measure 'Produits sous seuil' = CALCULATE(DISTINCTCOUNT(StockTable[Produit_ID]), StockTable[Sous_Seuil] = TRUE())
+		formatString: 0
+		lineageTag: 59941f78-9539-5ed0-8cbf-2f8fcd86301c
+
+	measure 'Valeur mouvements stock' = SUM(StockTable[Valeur_Mouvement])
+		formatString: #,0
+		lineageTag: 1ea5bdbc-a43f-5c68-a324-51dc2edc5d46
+
+	column Mouvement_Stock_ID
+		dataType: string
+		lineageTag: f0343b3f-6c49-40ad-aa68-f3c4c0b429b7
+		summarizeBy: none
+		sourceColumn: Mouvement_Stock_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date_Clé
+		dataType: int64
+		formatString: 0
+		lineageTag: 36b5ab48-aecb-48f1-97de-59b40efd23b3
+		summarizeBy: none
+		sourceColumn: Date_Clé
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: dbce1ec3-2856-4d47-8a8e-791aedea8a7f
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: 1473c594-a34e-430f-9513-76a8d3ac5249
+			defaultHierarchy: LocalDateTable_cc984bd5-7d24-4593-8964-011f7c72efff.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Produit_ID
+		dataType: string
+		lineageTag: 88624580-b2d3-482d-97b0-a2035859002f
+		summarizeBy: none
+		sourceColumn: Produit_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nom_Produit
+		dataType: string
+		lineageTag: 3f7db4ff-0eae-4343-8c10-ec279f38b303
+		summarizeBy: none
+		sourceColumn: Nom_Produit
+
+		annotation SummarizationSetBy = Automatic
+
+	column Catégorie
+		dataType: string
+		lineageTag: 2a5960e4-316a-4e1b-bf8f-185eaf4f99c2
+		summarizeBy: none
+		sourceColumn: Catégorie
+
+		annotation SummarizationSetBy = Automatic
+
+	column Entrepôt
+		dataType: string
+		lineageTag: 0697b213-e876-4033-a1c6-d30882496fcb
+		summarizeBy: none
+		sourceColumn: Entrepôt
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type_Mouvement
+		dataType: string
+		lineageTag: ad86925c-c6e4-49c4-8ee4-7e55e0908a90
+		summarizeBy: none
+		sourceColumn: Type_Mouvement
+
+		annotation SummarizationSetBy = Automatic
+
+	column Commande_ID
+		dataType: string
+		lineageTag: 5cc0919d-6f70-499c-b137-7095cd389a15
+		summarizeBy: none
+		sourceColumn: Commande_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantité_Entrée
+		dataType: int64
+		formatString: 0
+		lineageTag: 42f16413-c108-4ded-bb7b-b2b5b550c49e
+		summarizeBy: sum
+		sourceColumn: Quantité_Entrée
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantité_Sortie
+		dataType: int64
+		formatString: 0
+		lineageTag: cb61bd99-38dc-49c2-8b3e-b00127960974
+		summarizeBy: sum
+		sourceColumn: Quantité_Sortie
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantité_Signée
+		dataType: int64
+		formatString: 0
+		lineageTag: d9b15a4e-ef13-4327-a165-2043221b2282
+		summarizeBy: sum
+		sourceColumn: Quantité_Signée
+
+		annotation SummarizationSetBy = Automatic
+
+	column Unité
+		dataType: string
+		lineageTag: a16d20f1-3397-4f7e-8fe1-a9adac432555
+		summarizeBy: none
+		sourceColumn: Unité
+
+		annotation SummarizationSetBy = Automatic
+
+	column Coût_Unitaire
+		dataType: int64
+		formatString: 0
+		lineageTag: 225e9db9-243b-4ced-a6ea-fd13cca66939
+		summarizeBy: sum
+		sourceColumn: Coût_Unitaire
+
+		annotation SummarizationSetBy = Automatic
+
+	column Valeur_Mouvement
+		dataType: int64
+		formatString: 0
+		lineageTag: 0ef392c6-2cfe-4878-86d7-925e36ba212b
+		summarizeBy: sum
+		sourceColumn: Valeur_Mouvement
+
+		annotation SummarizationSetBy = Automatic
+
+	column Stock_Après
+		dataType: int64
+		formatString: 0
+		lineageTag: 707c25e2-0d3a-4ecf-808d-460e0b0e1211
+		summarizeBy: sum
+		sourceColumn: Stock_Après
+
+		annotation SummarizationSetBy = Automatic
+
+	column Seuil_Stock
+		dataType: int64
+		formatString: 0
+		lineageTag: c67f53d8-4bfd-4f1d-acac-a7710b3e56a3
+		summarizeBy: sum
+		sourceColumn: Seuil_Stock
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sous_Seuil
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 00704492-3fe6-4237-ac8b-0e3340c43669
+		summarizeBy: none
+		sourceColumn: Sous_Seuil
+
+		annotation SummarizationSetBy = Automatic
+
+	column Motif
+		dataType: string
+		lineageTag: eb1be2f9-ba36-49cc-8329-54bd80081b4b
+		summarizeBy: none
+		sourceColumn: Motif
+
+		annotation SummarizationSetBy = Automatic
+
+	partition StockTable = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\Augustin\Documents\HOTEL2FEVRIER\Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"), null, true),
+				    StockTable_Table = Source{[Item="StockTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(StockTable_Table,{{"Mouvement_Stock_ID", type text}, {"Date_Clé", Int64.Type}, {"Date", type date}, {"Produit_ID", type text}, {"Nom_Produit", type text}, {"Catégorie", type text}, {"Entrepôt", type text}, {"Type_Mouvement", type text}, {"Commande_ID", type text}, {"Quantité_Entrée", Int64.Type}, {"Quantité_Sortie", Int64.Type}, {"Quantité_Signée", Int64.Type}, {"Unité", type text}, {"Coût_Unitaire", Int64.Type}, {"Valeur_Mouvement", Int64.Type}, {"Stock_Après", Int64.Type}, {"Seuil_Stock", Int64.Type}, {"Sous_Seuil", type logical}, {"Motif", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

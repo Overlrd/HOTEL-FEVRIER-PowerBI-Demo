@@ -1,0 +1,187 @@
+table OrderTable
+	lineageTag: 150139d1-7e83-4a58-9c36-c2cf014a3ba2
+
+	measure 'Chiffre d''affaires' =
+			
+			CALCULATE(
+			    SUM(OrderTable[Montant_TTC]),
+			    OrderTable[Type_Commande] = "Vente",
+			    OrderTable[Statut] = "Terminée"
+			)
+		formatString: 0
+		lineageTag: b08b3791-f3d0-4348-bf5f-08471b2cd259
+
+	measure Achats =
+			
+			CALCULATE(
+			    SUM(OrderTable[Montant_TTC]),
+			    OrderTable[Type_Commande] = "Achat",
+			    OrderTable[Statut] = "Terminée"
+			)
+		formatString: 0
+		lineageTag: 3d1274f5-3699-476f-8737-ba10c84cfe07
+
+	column Commande_ID
+		dataType: string
+		lineageTag: 49144fc1-295b-4459-8cf4-e6398b3958fb
+		summarizeBy: none
+		sourceColumn: Commande_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type_Commande
+		dataType: string
+		lineageTag: 42220d7c-15e8-46c2-b296-8cede5b27b3a
+		summarizeBy: none
+		sourceColumn: Type_Commande
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date_Clé
+		dataType: int64
+		formatString: 0
+		lineageTag: 44ac4c58-c9a3-4c3a-9d68-43151f6eed33
+		summarizeBy: none
+		sourceColumn: Date_Clé
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date_Commande
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c6a216bf-0192-4ca5-bffa-732d4ec929aa
+		summarizeBy: none
+		sourceColumn: Date_Commande
+
+		variation Variation
+			isDefault
+			relationship: a41b0123-720c-4562-b441-abdc3cdff53c
+			defaultHierarchy: LocalDateTable_f9cca8e7-271d-4d2a-9edd-1a664d936877.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Partenaire_ID
+		dataType: string
+		lineageTag: 895708c5-bd1a-4650-a520-ff96cd073110
+		summarizeBy: none
+		sourceColumn: Partenaire_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nom_Partenaire
+		dataType: string
+		lineageTag: 96f8d207-ff10-4684-8ac0-a3d9e7841b75
+		summarizeBy: none
+		sourceColumn: Nom_Partenaire
+
+		annotation SummarizationSetBy = Automatic
+
+	column Catégorie
+		dataType: string
+		lineageTag: 15001fc7-976c-4713-852b-4bb1eff77d30
+		summarizeBy: none
+		sourceColumn: Catégorie
+
+		annotation SummarizationSetBy = Automatic
+
+	column Montant_HT
+		dataType: int64
+		formatString: 0
+		lineageTag: df1b979a-84b2-43a7-9f94-e77b66f53b97
+		summarizeBy: sum
+		sourceColumn: Montant_HT
+
+		annotation SummarizationSetBy = Automatic
+
+	column TVA
+		dataType: int64
+		formatString: 0
+		lineageTag: 780a1ecb-b0c8-4f38-bc5f-1a23f50b3a58
+		summarizeBy: sum
+		sourceColumn: TVA
+
+		annotation SummarizationSetBy = Automatic
+
+	column Retenue
+		dataType: int64
+		formatString: 0
+		lineageTag: 26fbd144-52e4-4e92-8747-c80fc7166a59
+		summarizeBy: sum
+		sourceColumn: Retenue
+
+		annotation SummarizationSetBy = Automatic
+
+	column Montant_TTC
+		dataType: int64
+		formatString: 0
+		lineageTag: 1b971b5f-9cd4-42bb-8e9f-99703d8cf3e3
+		summarizeBy: sum
+		sourceColumn: Montant_TTC
+
+		annotation SummarizationSetBy = Automatic
+
+	column Statut
+		dataType: string
+		lineageTag: 78f1ce06-8a48-4462-b30a-da02fc2754ae
+		summarizeBy: none
+		sourceColumn: Statut
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date_Livraison_Prévue
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 6775cc92-ebb8-4925-b97c-e199dd10daaa
+		summarizeBy: none
+		sourceColumn: Date_Livraison_Prévue
+
+		variation Variation
+			isDefault
+			relationship: 2687307c-baf8-42a2-b1df-f49292f16560
+			defaultHierarchy: LocalDateTable_360deeae-5e06-4cde-9935-b880ade67f79.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Date_Livraison_Réelle
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 1d08ed08-242e-4f3a-9558-4ced6da700ac
+		summarizeBy: none
+		sourceColumn: Date_Livraison_Réelle
+
+		variation Variation
+			isDefault
+			relationship: 56119d91-3de9-46cf-9059-6d1c4ca59543
+			defaultHierarchy: LocalDateTable_f9d9161a-d48e-41a5-8634-fd76754e1afb.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Livrée_À_Temps
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: ea675c63-4b85-4050-978e-ec3fd1c1678c
+		summarizeBy: none
+		sourceColumn: Livrée_À_Temps
+
+		annotation SummarizationSetBy = Automatic
+
+	partition OrderTable = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\Augustin\Documents\HOTEL2FEVRIER\Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"), null, true),
+				    OrderTable_Table = Source{[Item="OrderTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(OrderTable_Table,{{"Commande_ID", type text}, {"Type_Commande", type text}, {"Date_Clé", Int64.Type}, {"Date_Commande", type date}, {"Partenaire_ID", type text}, {"Nom_Partenaire", type text}, {"Catégorie", type text}, {"Montant_HT", Int64.Type}, {"TVA", Int64.Type}, {"Retenue", Int64.Type}, {"Montant_TTC", Int64.Type}, {"Statut", type text}, {"Date_Livraison_Prévue", type date}, {"Date_Livraison_Réelle", type date}, {"Livrée_À_Temps", type logical}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

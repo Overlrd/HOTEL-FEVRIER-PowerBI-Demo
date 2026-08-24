@@ -1,0 +1,211 @@
+table InvoiceTable
+	lineageTag: 23c9de0a-4100-4130-9bca-7da52cf6e36f
+
+	measure 'Créances clients' =
+			
+			CALCULATE(
+			    SUM(InvoiceTable[Solde]),
+			    InvoiceTable[Type_Facture] = "Client"
+			)
+		formatString: 0
+		lineageTag: 6f932d05-a130-4b5c-a9d0-869d080e4680
+
+	measure 'Dettes fournisseurs' =
+			
+			CALCULATE(
+			    SUM(InvoiceTable[Solde]),
+			    InvoiceTable[Type_Facture] = "Fournisseur"
+			)
+		formatString: 0
+		lineageTag: f058c75f-a77c-454d-822b-e19e007a3de6
+
+	column Facture_ID
+		dataType: string
+		lineageTag: d51eb76b-b3bf-46de-88b7-ceda86650299
+		summarizeBy: none
+		sourceColumn: Facture_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Commande_ID
+		dataType: string
+		lineageTag: fdef0819-8399-4334-853c-9c63c9fc146c
+		summarizeBy: none
+		sourceColumn: Commande_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type_Facture
+		dataType: string
+		lineageTag: 0d9afcbc-f658-4616-8882-e7ae8aecc871
+		summarizeBy: none
+		sourceColumn: Type_Facture
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date_Clé
+		dataType: int64
+		formatString: 0
+		lineageTag: b1decce4-ebe8-4490-ae79-1acda6846ce5
+		summarizeBy: none
+		sourceColumn: Date_Clé
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date_Facture
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 107e8ee0-b8cd-4321-be06-892e9a27b147
+		summarizeBy: none
+		sourceColumn: Date_Facture
+
+		variation Variation
+			isDefault
+			relationship: b4283e05-93af-4e77-a094-b903534c7194
+			defaultHierarchy: LocalDateTable_187205ce-0975-4c69-b009-af169f870aa0.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Date_Échéance
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 62734339-5e97-4434-a903-f945ed903c91
+		summarizeBy: none
+		sourceColumn: Date_Échéance
+
+		variation Variation
+			isDefault
+			relationship: a89ae71b-7852-4bb0-bef3-44ab98e59a9f
+			defaultHierarchy: LocalDateTable_dc5bd289-100e-428b-a15f-46b0a7d38afc.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Date_Paiement
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 0d761fa5-a9fb-4b10-9864-72e7faed6e9e
+		summarizeBy: none
+		sourceColumn: Date_Paiement
+
+		variation Variation
+			isDefault
+			relationship: 8479219d-6440-4de3-bb88-081dd65daf24
+			defaultHierarchy: LocalDateTable_492dfd6d-b3f3-42c0-8c87-c68933de10fe.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Partenaire_ID
+		dataType: string
+		lineageTag: 945248aa-9bce-45ed-a9cd-95a8d96abf63
+		summarizeBy: none
+		sourceColumn: Partenaire_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nom_Partenaire
+		dataType: string
+		lineageTag: 69e603fb-39f8-43dc-a57b-de0c797ab5ca
+		summarizeBy: none
+		sourceColumn: Nom_Partenaire
+
+		annotation SummarizationSetBy = Automatic
+
+	column Montant_HT
+		dataType: int64
+		formatString: 0
+		lineageTag: b9772a41-348d-4308-a03e-94f2e5546a9e
+		summarizeBy: sum
+		sourceColumn: Montant_HT
+
+		annotation SummarizationSetBy = Automatic
+
+	column TVA
+		dataType: int64
+		formatString: 0
+		lineageTag: b98916a1-e456-4ac7-aed8-13aa99d91ba4
+		summarizeBy: sum
+		sourceColumn: TVA
+
+		annotation SummarizationSetBy = Automatic
+
+	column Retenue
+		dataType: int64
+		formatString: 0
+		lineageTag: 628bada0-44bf-426c-8997-189360675a0d
+		summarizeBy: sum
+		sourceColumn: Retenue
+
+		annotation SummarizationSetBy = Automatic
+
+	column Montant_TTC
+		dataType: int64
+		formatString: 0
+		lineageTag: 45e08ac7-be6a-4888-9e87-3ca6d0fd729a
+		summarizeBy: sum
+		sourceColumn: Montant_TTC
+
+		annotation SummarizationSetBy = Automatic
+
+	column Montant_Payé
+		dataType: int64
+		formatString: 0
+		lineageTag: 3807b4f5-6ad4-4b9e-9e11-e76a1ed113f8
+		summarizeBy: sum
+		sourceColumn: Montant_Payé
+
+		annotation SummarizationSetBy = Automatic
+
+	column Solde
+		dataType: int64
+		formatString: 0
+		lineageTag: d5509162-ad6a-4fda-bacf-9e626abb0df2
+		summarizeBy: sum
+		sourceColumn: Solde
+
+		annotation SummarizationSetBy = Automatic
+
+	column Statut_Paiement
+		dataType: string
+		lineageTag: 6b02c00a-323c-478f-8ef0-7b60089a6dca
+		summarizeBy: none
+		sourceColumn: Statut_Paiement
+
+		annotation SummarizationSetBy = Automatic
+
+	column Retard_Jours
+		dataType: int64
+		formatString: 0
+		lineageTag: d4644cd8-36e0-4a69-8492-9b58c18b8dce
+		summarizeBy: sum
+		sourceColumn: Retard_Jours
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tranche_Retard
+		dataType: string
+		lineageTag: d063536d-d345-4688-9f64-8482c34dcb2d
+		summarizeBy: none
+		sourceColumn: Tranche_Retard
+
+		annotation SummarizationSetBy = Automatic
+
+	partition InvoiceTable = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\Augustin\Documents\HOTEL2FEVRIER\Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"), null, true),
+				    InvoiceTable_Table = Source{[Item="InvoiceTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(InvoiceTable_Table,{{"Facture_ID", type text}, {"Commande_ID", type text}, {"Type_Facture", type text}, {"Date_Clé", Int64.Type}, {"Date_Facture", type date}, {"Date_Échéance", type date}, {"Date_Paiement", type date}, {"Partenaire_ID", type text}, {"Nom_Partenaire", type text}, {"Montant_HT", Int64.Type}, {"TVA", Int64.Type}, {"Retenue", Int64.Type}, {"Montant_TTC", Int64.Type}, {"Montant_Payé", Int64.Type}, {"Solde", Int64.Type}, {"Statut_Paiement", type text}, {"Retard_Jours", Int64.Type}, {"Tranche_Retard", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

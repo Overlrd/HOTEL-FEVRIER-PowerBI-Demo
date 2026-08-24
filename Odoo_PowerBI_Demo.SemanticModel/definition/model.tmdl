@@ -1,0 +1,39 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["CashTable","DateTable","EmployeeTable","InvoiceTable","OccupancyTable","OrderTable","PartnerTable","PayrollTable","ProductTable","StockTable"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table CashTable
+ref table DateTableTemplate_59b0e2a7-1f93-49b7-af6c-3f8a48e93a66
+ref table LocalDateTable_a553f71e-cdfa-4043-9f26-4d624d4176c0
+ref table DateTable
+ref table EmployeeTable
+ref table InvoiceTable
+ref table LocalDateTable_187205ce-0975-4c69-b009-af169f870aa0
+ref table LocalDateTable_dc5bd289-100e-428b-a15f-46b0a7d38afc
+ref table LocalDateTable_492dfd6d-b3f3-42c0-8c87-c68933de10fe
+ref table OccupancyTable
+ref table LocalDateTable_3c139ad2-623c-43f5-a1c5-9f679d889f93
+ref table OrderTable
+ref table LocalDateTable_f9cca8e7-271d-4d2a-9edd-1a664d936877
+ref table LocalDateTable_360deeae-5e06-4cde-9935-b880ade67f79
+ref table LocalDateTable_f9d9161a-d48e-41a5-8634-fd76754e1afb
+ref table PartnerTable
+ref table PayrollTable
+ref table LocalDateTable_f8c88e25-3ee1-4bf1-bf44-67deeed4ddf4
+ref table ProductTable
+ref table StockTable
+ref table LocalDateTable_cc984bd5-7d24-4593-8964-011f7c72efff
+
+ref cultureInfo en-US
+

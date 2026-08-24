@@ -1,0 +1,86 @@
+table DateTable
+	lineageTag: c6c56712-7ccf-48c6-95e6-b0086c9b8866
+	dataCategory: Time
+
+	column Date_Clé
+		dataType: string
+		lineageTag: 80032547-3680-4bc3-ae13-c5f1ee60f798
+		summarizeBy: none
+		sourceColumn: Date_Clé
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: Long Date
+		lineageTag: 9f0dc5ff-e2a7-41f8-8d8f-7777a78bac94
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Année
+		dataType: string
+		lineageTag: 18420f1b-015d-4107-b9ca-91f40038c146
+		summarizeBy: none
+		sourceColumn: Année
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mois_Num
+		dataType: string
+		lineageTag: 382e776d-0204-44f5-b5cf-b2579cce987a
+		summarizeBy: none
+		sourceColumn: Mois_Num
+
+		annotation SummarizationSetBy = Automatic
+
+	column Année_Mois
+		dataType: string
+		lineageTag: 2f17507b-9783-4de0-a03c-eb6a1e98653e
+		summarizeBy: none
+		sourceColumn: Année_Mois
+
+		annotation SummarizationSetBy = Automatic
+
+	column Trimestre
+		dataType: string
+		lineageTag: f9b3b434-718a-480f-a8cb-8d7ceac71a82
+		summarizeBy: none
+		sourceColumn: Trimestre
+
+		annotation SummarizationSetBy = Automatic
+
+	column Jour_Semaine
+		dataType: string
+		lineageTag: 83b5f760-5efb-4002-8b90-08370b96943d
+		summarizeBy: none
+		sourceColumn: Jour_Semaine
+
+		annotation SummarizationSetBy = Automatic
+
+	column Week_end
+		dataType: string
+		lineageTag: 42ae9d8e-6ef0-429b-b62a-906a69c70d04
+		summarizeBy: none
+		sourceColumn: Week_end
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DateTable = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\Augustin\Documents\HOTEL2FEVRIER\Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"), null, true),
+				    DateTable_Table = Source{[Item="DateTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(DateTable_Table,{{"Date", type date}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

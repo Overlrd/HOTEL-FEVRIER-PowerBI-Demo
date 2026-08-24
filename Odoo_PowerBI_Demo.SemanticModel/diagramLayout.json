@@ -1,0 +1,152 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 395.34310414516221,
+            "y": -50
+          },
+          "nodeIndex": "CashTable",
+          "nodeLineageTag": "4e71174b-d11c-46bf-81d7-43bfc771e1e6",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1541.7466297981489,
+            "y": 574.96202695159036
+          },
+          "nodeIndex": "DateTable",
+          "nodeLineageTag": "c6c56712-7ccf-48c6-95e6-b0086c9b8866",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1307.7466297981489,
+            "y": 536.96202695159036
+          },
+          "nodeIndex": "EmployeeTable",
+          "nodeLineageTag": "da826350-2730-4248-bf26-153fd006c53f",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 339.44518817409272,
+            "y": 303.72784031490937
+          },
+          "nodeIndex": "InvoiceTable",
+          "nodeLineageTag": "23c9de0a-4100-4130-9bca-7da52cf6e36f",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1825.7466297981489,
+            "y": 560.96202695159036
+          },
+          "nodeIndex": "OccupancyTable",
+          "nodeLineageTag": "1fbc8d83-7e9b-444f-96f5-5689c90307f9",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 623.99808695327681,
+            "y": 449.46427061633869
+          },
+          "nodeIndex": "OrderTable",
+          "nodeLineageTag": "150139d1-7e83-4a58-9c36-c2cf014a3ba2",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 739.74662979814889,
+            "y": 802.5426696093524
+          },
+          "nodeIndex": "PartnerTable",
+          "nodeLineageTag": "31764372-3a0b-449c-a510-3401d4eb81d8",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1023.7466297981489,
+            "y": 510.96202695159036
+          },
+          "nodeIndex": "PayrollTable",
+          "nodeLineageTag": "be1a6dc6-2f4f-4be9-a95f-ba5980ea8f70",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": 1123.9240539031807
+          },
+          "nodeIndex": "ProductTable",
+          "nodeLineageTag": "4ca07f04-c743-41a3-a70c-f87aabf49815",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 336.98805849805694,
+            "y": 774.78027771024335
+          },
+          "nodeIndex": "StockTable",
+          "nodeLineageTag": "69cdaca0-ed64-40f6-ba2e-66f56a578278",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 31.863081771035677,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

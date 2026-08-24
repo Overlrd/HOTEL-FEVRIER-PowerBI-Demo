@@ -1,0 +1,90 @@
+relationship 32e40dde-49a9-4d54-97b5-fb5366b9c70d
+	joinOnDateBehavior: datePartOnly
+	fromColumn: CashTable.Date
+	toColumn: LocalDateTable_a553f71e-cdfa-4043-9f26-4d624d4176c0.Date
+
+relationship b4283e05-93af-4e77-a094-b903534c7194
+	joinOnDateBehavior: datePartOnly
+	fromColumn: InvoiceTable.Date_Facture
+	toColumn: LocalDateTable_187205ce-0975-4c69-b009-af169f870aa0.Date
+
+relationship a89ae71b-7852-4bb0-bef3-44ab98e59a9f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: InvoiceTable.Date_Échéance
+	toColumn: LocalDateTable_dc5bd289-100e-428b-a15f-46b0a7d38afc.Date
+
+relationship 8479219d-6440-4de3-bb88-081dd65daf24
+	joinOnDateBehavior: datePartOnly
+	fromColumn: InvoiceTable.Date_Paiement
+	toColumn: LocalDateTable_492dfd6d-b3f3-42c0-8c87-c68933de10fe.Date
+
+relationship 26b0c360-652d-40d0-a2e4-91bff0d7f6f0
+	joinOnDateBehavior: datePartOnly
+	fromColumn: OccupancyTable.Date
+	toColumn: LocalDateTable_3c139ad2-623c-43f5-a1c5-9f679d889f93.Date
+
+relationship a41b0123-720c-4562-b441-abdc3cdff53c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: OrderTable.Date_Commande
+	toColumn: LocalDateTable_f9cca8e7-271d-4d2a-9edd-1a664d936877.Date
+
+relationship 2687307c-baf8-42a2-b1df-f49292f16560
+	joinOnDateBehavior: datePartOnly
+	fromColumn: OrderTable.Date_Livraison_Prévue
+	toColumn: LocalDateTable_360deeae-5e06-4cde-9935-b880ade67f79.Date
+
+relationship 56119d91-3de9-46cf-9059-6d1c4ca59543
+	joinOnDateBehavior: datePartOnly
+	fromColumn: OrderTable.Date_Livraison_Réelle
+	toColumn: LocalDateTable_f9d9161a-d48e-41a5-8634-fd76754e1afb.Date
+
+relationship 51cd29c3-a167-4b81-9d41-db77fd68c8d5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: PayrollTable.Année_Mois
+	toColumn: LocalDateTable_f8c88e25-3ee1-4bf1-bf44-67deeed4ddf4.Date
+
+relationship 1473c594-a34e-430f-9513-76a8d3ac5249
+	joinOnDateBehavior: datePartOnly
+	fromColumn: StockTable.Date
+	toColumn: LocalDateTable_cc984bd5-7d24-4593-8964-011f7c72efff.Date
+
+relationship AutoDetected_e891d005-05f6-4af9-a684-691939be4e42
+	fromColumn: PayrollTable.Employé_ID
+	toColumn: EmployeeTable.Employé_ID
+
+relationship AutoDetected_56104498-c7b6-466d-b097-ceee068d6290
+	fromColumn: InvoiceTable.Partenaire_ID
+	toColumn: PartnerTable.Partenaire_ID
+
+relationship AutoDetected_81b11383-6916-4c9f-a871-fc2bd941d7a3
+	fromColumn: OrderTable.Partenaire_ID
+	toColumn: PartnerTable.Partenaire_ID
+
+relationship AutoDetected_4d9d67f2-b9f4-4089-bdd2-2b01ab27ad82
+	fromColumn: StockTable.Produit_ID
+	toColumn: ProductTable.Produit_ID
+
+relationship 61d59fcc-b3da-2e2d-1063-98dcc721ff4a
+	fromColumn: CashTable.Date_Clé
+	toColumn: DateTable.Date_Clé
+
+relationship e1758b78-1a99-a83f-c3a3-34e42987d5cd
+	fromColumn: InvoiceTable.Date_Clé
+	toColumn: DateTable.Date_Clé
+
+relationship 24010cd8-d776-de41-94eb-33dab5999f71
+	fromColumn: OccupancyTable.Date_Clé
+	toColumn: DateTable.Date_Clé
+
+relationship 4620aafb-8a22-53df-7984-387ae8608e48
+	fromColumn: OrderTable.Date_Clé
+	toColumn: DateTable.Date_Clé
+
+relationship 199007d3-32b3-5e71-dde0-313a09710ccf
+	fromColumn: StockTable.Date_Clé
+	toColumn: DateTable.Date_Clé
+
+relationship 1414fd49-616e-2afd-3484-9b9192d1f4fd
+	fromColumn: PayrollTable.Mois
+	toColumn: DateTable.Date
+

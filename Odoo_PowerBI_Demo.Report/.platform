@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Odoo_PowerBI_Demo"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "ad55eb65-3781-4286-89ea-55e0bf8ddab2"
+  }
+}

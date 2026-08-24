@@ -1,0 +1,80 @@
+table PartnerTable
+	lineageTag: 31764372-3a0b-449c-a510-3401d4eb81d8
+
+	column Partenaire_ID
+		dataType: string
+		lineageTag: f0e14544-a9a7-41a3-91a9-2d8b4232a6b8
+		summarizeBy: none
+		sourceColumn: Partenaire_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type_Partenaire
+		dataType: string
+		lineageTag: 22adb66b-e962-4138-9d57-52b33771ef4c
+		summarizeBy: none
+		sourceColumn: Type_Partenaire
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nom_Partenaire
+		dataType: string
+		lineageTag: 1c32e627-fb3b-4d87-ad94-9e81bacfa18e
+		summarizeBy: none
+		sourceColumn: Nom_Partenaire
+
+		annotation SummarizationSetBy = Automatic
+
+	column Segment
+		dataType: string
+		lineageTag: 45bb6475-8ffa-4949-9183-222a39789fe4
+		summarizeBy: none
+		sourceColumn: Segment
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ville
+		dataType: string
+		lineageTag: e4243342-28ca-40f7-b1ae-07514a5f3a74
+		summarizeBy: none
+		sourceColumn: Ville
+
+		annotation SummarizationSetBy = Automatic
+
+	column Pays
+		dataType: string
+		lineageTag: 2577fe0f-aac6-4993-8315-e5ac8df14cf8
+		summarizeBy: none
+		sourceColumn: Pays
+
+		annotation SummarizationSetBy = Automatic
+
+	column Délai_Paiement_Jours
+		dataType: int64
+		formatString: 0
+		lineageTag: 807b8e26-a690-4f46-a7f7-2cb6ca07431a
+		summarizeBy: sum
+		sourceColumn: Délai_Paiement_Jours
+
+		annotation SummarizationSetBy = Automatic
+
+	column Risque_Crédit
+		dataType: string
+		lineageTag: 52e0e3c2-b860-4a7f-9f6f-545b9f2179db
+		summarizeBy: none
+		sourceColumn: Risque_Crédit
+
+		annotation SummarizationSetBy = Automatic
+
+	partition PartnerTable = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\Augustin\Documents\HOTEL2FEVRIER\Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"), null, true),
+				    PartnerTable_Table = Source{[Item="PartnerTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(PartnerTable_Table,{{"Partenaire_ID", type text}, {"Type_Partenaire", type text}, {"Nom_Partenaire", type text}, {"Segment", type text}, {"Ville", type text}, {"Pays", type text}, {"Délai_Paiement_Jours", Int64.Type}, {"Risque_Crédit", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Exception
+
