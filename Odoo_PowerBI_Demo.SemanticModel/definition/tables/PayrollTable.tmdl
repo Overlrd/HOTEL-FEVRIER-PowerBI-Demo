@@ -156,7 +156,7 @@ table PayrollTable
 		mode: import
 		source =
 				let
-				    Source = Excel.Workbook(File.Contents("C:\Users\Augustin\Documents\HOTEL2FEVRIER\Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"), null, true),
+				    Source = Excel.Workbook(Web.Contents("https://ivorygoldconsulting-my.sharepoint.com/:x:/g/personal/augustin_kpadonou_ivorygoldglobal_com/IQDEXHjay8ZNS5kfe6cix4JPAQqtwdr3Nolbf8m5ZFk1JwA?e=nec0rX&download=1"), null, true),
 				    PayrollTable_Table = Source{[Item="PayrollTable",Kind="Table"]}[Data],
 				    #"Changed Type" = Table.TransformColumnTypes(PayrollTable_Table,{{"Année_Mois", type date}, {"Mois", type date}, {"Employé_ID", type text}, {"Nom_Employé", type text}, {"Département", type text}, {"Type_Contrat", type text}, {"Jours_Ouvrés", Int64.Type}, {"Jours_Présents", Int64.Type}, {"Jours_Absents", Int64.Type}, {"Heures_Sup", Int64.Type}, {"Taux_Presence", type number}, {"Salaire_Base", Int64.Type}, {"Primes", Int64.Type}, {"Retenues", Int64.Type}, {"Net_Paye", Int64.Type}})
 				in
