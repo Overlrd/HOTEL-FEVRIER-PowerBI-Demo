@@ -64,7 +64,8 @@ table ProductTable
 		mode: import
 		source =
 				let
-				    Source = Excel.Workbook(Web.Contents("https://ivorygoldconsulting-my.sharepoint.com/:x:/g/personal/augustin_kpadonou_ivorygoldglobal_com/IQDEXHjay8ZNS5kfe6cix4JPAQqtwdr3Nolbf8m5ZFk1JwA?e=nec0rX&download=1"), null, true),
+				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
+            Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
 				    ProductTable_Table = Source{[Item="ProductTable",Kind="Table"]}[Data],
 				    #"Changed Type" = Table.TransformColumnTypes(ProductTable_Table,{{"Produit_ID", type text}, {"Nom_Produit", type text}, {"Catégorie", type text}, {"Unité", type text}, {"Seuil_Stock", Int64.Type}, {"Coût_Unitaire", Int64.Type}, {"Prix_Vente", Int64.Type}})
 				in

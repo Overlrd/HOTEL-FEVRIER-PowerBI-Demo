@@ -125,7 +125,8 @@ table OccupancyTable
 		mode: import
 		source =
 				let
-				    Source = Excel.Workbook(Web.Contents("https://ivorygoldconsulting-my.sharepoint.com/:x:/g/personal/augustin_kpadonou_ivorygoldglobal_com/IQDEXHjay8ZNS5kfe6cix4JPAQqtwdr3Nolbf8m5ZFk1JwA?e=nec0rX&download=1"), null, true),
+				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
+            Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
 				    OccupancyTable_Table = Source{[Item="OccupancyTable",Kind="Table"]}[Data],
 				    #"Changed Type" = Table.TransformColumnTypes(OccupancyTable_Table,{{"Date_Clé", Int64.Type}, {"Date", type date}, {"Type_Chambre", type text}, {"Chambres_Disponibles", Int64.Type}, {"Chambres_Vendues", Int64.Type}, {"Taux_Occupation", type number}, {"Tarif_Moyen", Int64.Type}, {"Revenu_Chambres", Int64.Type}, {"RevPAR", type number}, {"Annulations", Int64.Type}})
 				in
