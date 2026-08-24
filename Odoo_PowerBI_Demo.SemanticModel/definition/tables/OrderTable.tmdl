@@ -176,7 +176,7 @@ table OrderTable
 		source =
 				let
 				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
-            Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
+				    Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
 				    OrderTable_Table = Source{[Item="OrderTable",Kind="Table"]}[Data],
 				    #"Changed Type" = Table.TransformColumnTypes(OrderTable_Table,{{"Commande_ID", type text}, {"Type_Commande", type text}, {"Date_Clé", Int64.Type}, {"Date_Commande", type date}, {"Partenaire_ID", type text}, {"Nom_Partenaire", type text}, {"Catégorie", type text}, {"Montant_HT", Int64.Type}, {"TVA", Int64.Type}, {"Retenue", Int64.Type}, {"Montant_TTC", Int64.Type}, {"Statut", type text}, {"Date_Livraison_Prévue", type date}, {"Date_Livraison_Réelle", type date}, {"Livrée_À_Temps", type logical}})
 				in

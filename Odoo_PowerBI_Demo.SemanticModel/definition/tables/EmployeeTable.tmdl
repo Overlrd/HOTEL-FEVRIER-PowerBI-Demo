@@ -62,7 +62,7 @@ table EmployeeTable
 		source =
 				let
 				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
-            Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
+				    Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
 				    EmployeeTable_Table = Source{[Item="EmployeeTable",Kind="Table"]}[Data]
 				in
 				    EmployeeTable_Table

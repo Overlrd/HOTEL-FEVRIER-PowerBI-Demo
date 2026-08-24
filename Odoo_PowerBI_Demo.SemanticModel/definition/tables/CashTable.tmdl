@@ -154,7 +154,7 @@ table CashTable
 		source =
 				let
 				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
-            Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
+				    Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
 				    CashTable_Table = Source{[Item="CashTable",Kind="Table"]}[Data],
 				    #"Changed Type" = Table.TransformColumnTypes(CashTable_Table,{{"Mouvement_ID", type text}, {"Date_Clé", Int64.Type}, {"Date", type date}, {"Compte", type text}, {"Type_Mouvement", type text}, {"Catégorie", type text}, {"Facture_ID", type text}, {"Libellé", type text}, {"Encaissement", Int64.Type}, {"Décaissement", Int64.Type}, {"Montant_Signé", Int64.Type}, {"Solde_Après_Mouvement", Int64.Type}})
 				in
