@@ -34,6 +34,6 @@ ref table LocalDateTable_f8c88e25-3ee1-4bf1-bf44-67deeed4ddf4
 ref table ProductTable
 ref table StockTable
 ref table LocalDateTable_cc984bd5-7d24-4593-8964-011f7c72efff
+ref table AxeActivite
 
 ref cultureInfo en-US
-

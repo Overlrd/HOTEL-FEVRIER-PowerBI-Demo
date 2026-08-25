@@ -79,6 +79,30 @@ table CashTable
 			)
 		lineageTag: 4db49593-84ec-4dd8-a807-9e13405ade2b
 
+	measure 'Évolution trésorerie dernier mois' =
+			VAR DateFin = MAX(DateTable[Date])
+			VAR DateDebut = DATE(YEAR(DateFin), MONTH(DateFin), 1)
+			VAR DateFinPrecedente = EDATE(DateFin, -1)
+			VAR DateDebutPrecedente = DATE(YEAR(DateFinPrecedente), MONTH(DateFinPrecedente), 1)
+			VAR Actuel = CALCULATE([Solde trésorerie], REMOVEFILTERS(DateTable), DATESBETWEEN(DateTable[Date], DateDebut, DateFin))
+			VAR Precedent = CALCULATE([Solde trésorerie], REMOVEFILTERS(DateTable), DATESBETWEEN(DateTable[Date], DateDebutPrecedente, DateFinPrecedente))
+			RETURN IF(ISBLANK(Precedent) || Precedent = 0, BLANK(), DIVIDE(Actuel - Precedent, ABS(Precedent)))
+		formatString: 0.0%
+		lineageTag: 17108f86-2f30-4d75-a4a6-3275839621c5
+
+	measure 'Évolution trésorerie affichée' =
+			VAR Evolution = [Évolution trésorerie dernier mois]
+			RETURN IF(ISBLANK(Evolution), "Comparaison indisponible", IF(Evolution >= 0, "▲ ", "▼ ") & FORMAT(ABS(Evolution), "0.0 %", "fr-FR") & " vs mois préc.")
+		lineageTag: 32405ab5-53d1-49f7-a849-6c4329a28ee9
+
+	measure 'Couleur évolution trésorerie' =
+			VAR Evolution = [Évolution trésorerie dernier mois]
+			RETURN SWITCH(TRUE(), [Solde trésorerie] < 0, "#EB5757", ISBLANK(Evolution), "#667085", Evolution >= 0, "#2FA79B", "#EB5757")
+		lineageTag: 3c0bd735-f1c8-452c-b489-8f5e43b9f44f
+
+	measure 'Couleur alerte trésorerie' = IF([Solde trésorerie] < 0, "#EB5757", "#2FA79B")
+		lineageTag: aa0fdac4-5fbf-4af7-89b0-75566aa2613e
+
 	column Mouvement_ID
 		dataType: string
 		lineageTag: e12c7f1c-bded-45e2-8c40-559ad2216b0b

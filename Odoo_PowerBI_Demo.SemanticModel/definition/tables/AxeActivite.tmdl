@@ -1,0 +1,49 @@
+table AxeActivite
+	lineageTag: b4175585-8a6c-46ff-b926-a0a31c854098
+
+	measure 'CA par activité' =
+			SWITCH(
+			    SELECTEDVALUE(AxeActivite[Activité]),
+			    "Hébergement", [CA Hébergement],
+			    "Restauration", [CA Restaurant],
+			    "Bar", [CA Bar],
+			    "Autres prestations", [CA Autres],
+			    BLANK()
+			)
+		formatString: 0
+		lineageTag: 5fc88c80-7210-4433-a5a6-df17d6139450
+
+	column Activité
+		dataType: string
+		lineageTag: e5f4faf9-52fd-4172-9958-8987070e4f92
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Activité]
+		sortByColumn: Ordre
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordre
+		dataType: int64
+		formatString: 0
+		lineageTag: ef8326e9-5f04-43d3-8788-66890abe58fe
+		summarizeBy: sum
+		isNameInferred
+		isHidden
+		sourceColumn: [Ordre]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition AxeActivite = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "Activité", STRING,
+				    "Ordre", INTEGER,
+				    {
+				        {"Hébergement", 1},
+				        {"Restauration", 2},
+				        {"Bar", 3},
+				        {"Autres prestations", 4}
+				    }
+				)

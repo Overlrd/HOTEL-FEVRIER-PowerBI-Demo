@@ -45,6 +45,77 @@ table InvoiceTable
 			)
 		lineageTag: 4444f137-8559-4237-83e3-c0f4b9209790
 
+	measure 'Créances échues' =
+			CALCULATE(
+			    SUM(InvoiceTable[Solde]),
+			    InvoiceTable[Type_Facture] = "Client",
+			    InvoiceTable[Solde] > 0,
+			    InvoiceTable[Retard_Jours] > 0
+			)
+		formatString: 0
+		lineageTag: 2d61ac14-f0a0-482b-b8c4-4e091ebbc1b1
+
+	measure 'Créances échues affichées' =
+			VAR Montant = [Créances échues]
+			VAR ValeurAbsolue = ABS(Montant)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISBLANK(Montant), "0 XOF",
+			    ValeurAbsolue >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			    ValeurAbsolue >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			    FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			)
+		lineageTag: c1698cc5-7cd2-4134-8ca9-7e5ef468769f
+
+	measure 'Évolution créances dernier mois' =
+			VAR DateFin = MAX(DateTable[Date])
+			VAR DateDebut = DATE(YEAR(DateFin), MONTH(DateFin), 1)
+			VAR DateFinPrecedente = EDATE(DateFin, -1)
+			VAR DateDebutPrecedente = DATE(YEAR(DateFinPrecedente), MONTH(DateFinPrecedente), 1)
+			VAR Actuel = CALCULATE([Créances clients], REMOVEFILTERS(DateTable), DATESBETWEEN(DateTable[Date], DateDebut, DateFin))
+			VAR Precedent = CALCULATE([Créances clients], REMOVEFILTERS(DateTable), DATESBETWEEN(DateTable[Date], DateDebutPrecedente, DateFinPrecedente))
+			RETURN IF(ISBLANK(Precedent) || Precedent = 0, BLANK(), DIVIDE(Actuel - Precedent, ABS(Precedent)))
+		formatString: 0.0%
+		lineageTag: 58758ed0-f9e6-4f25-8ab9-e555798e8fb9
+
+	measure 'Évolution créances affichée' =
+			VAR Evolution = [Évolution créances dernier mois]
+			RETURN IF(ISBLANK(Evolution), "Comparaison indisponible", IF(Evolution <= 0, "▼ ", "▲ ") & FORMAT(ABS(Evolution), "0.0 %", "fr-FR") & " vs mois préc.")
+		lineageTag: 13324834-4b16-4d9d-8a89-464bc5c8aa03
+
+	measure 'Couleur évolution créances' =
+			VAR Evolution = [Évolution créances dernier mois]
+			RETURN SWITCH(TRUE(), ISBLANK(Evolution), "#667085", Evolution <= 0, "#2FA79B", "#EB5757")
+		lineageTag: 1bf5c536-da35-42da-ad9b-67b55a6f551f
+
+	measure 'Évolution dettes dernier mois' =
+			VAR DateFin = MAX(DateTable[Date])
+			VAR DateDebut = DATE(YEAR(DateFin), MONTH(DateFin), 1)
+			VAR DateFinPrecedente = EDATE(DateFin, -1)
+			VAR DateDebutPrecedente = DATE(YEAR(DateFinPrecedente), MONTH(DateFinPrecedente), 1)
+			VAR Actuel = CALCULATE([Dettes fournisseurs], REMOVEFILTERS(DateTable), DATESBETWEEN(DateTable[Date], DateDebut, DateFin))
+			VAR Precedent = CALCULATE([Dettes fournisseurs], REMOVEFILTERS(DateTable), DATESBETWEEN(DateTable[Date], DateDebutPrecedente, DateFinPrecedente))
+			RETURN IF(ISBLANK(Precedent) || Precedent = 0, BLANK(), DIVIDE(Actuel - Precedent, ABS(Precedent)))
+		formatString: 0.0%
+		lineageTag: 9cc5a22e-e64a-4686-870d-86daef3bf502
+
+	measure 'Évolution dettes affichée' =
+			VAR Evolution = [Évolution dettes dernier mois]
+			RETURN IF(ISBLANK(Evolution), "Comparaison indisponible", IF(Evolution <= 0, "▼ ", "▲ ") & FORMAT(ABS(Evolution), "0.0 %", "fr-FR") & " vs mois préc.")
+		lineageTag: b23d0f0c-baa9-432c-a9e6-2fc850bb7145
+
+	measure 'Couleur évolution dettes' =
+			VAR Evolution = [Évolution dettes dernier mois]
+			RETURN SWITCH(TRUE(), ISBLANK(Evolution), "#667085", Evolution <= 0, "#2FA79B", "#EB5757")
+		lineageTag: 45733ef9-2419-4057-b713-5ad8393c8398
+
+	measure 'Couleur alerte créances' = IF(COALESCE([Créances échues], 0) > 0, "#F2994A", "#2FA79B")
+		lineageTag: a2be4a13-1cba-42d2-bdc9-0381e8021ec9
+
+	measure 'Couleur alerte dettes' = IF(COALESCE([Dettes fournisseurs], 0) > 0, "#F2994A", "#2FA79B")
+		lineageTag: 93400a13-c27b-429b-97fe-36b67cc054c6
+
 	column Facture_ID
 		dataType: string
 		lineageTag: d51eb76b-b3bf-46de-88b7-ceda86650299

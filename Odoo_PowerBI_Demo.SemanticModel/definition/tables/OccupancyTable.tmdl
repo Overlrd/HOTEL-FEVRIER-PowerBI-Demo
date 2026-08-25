@@ -52,6 +52,27 @@ table OccupancyTable
 			RETURN IF(ISBLANK(Valeur), BLANK(), FORMAT(Valeur, "#,0", "fr-FR"))
 		lineageTag: c9cb7a65-b923-45b1-a48f-dee075482ddf
 
+	measure 'Évolution occupation dernier mois' =
+			VAR DateFin = MAX(DateTable[Date])
+			VAR DateDebut = DATE(YEAR(DateFin), MONTH(DateFin), 1)
+			VAR DateFinPrecedente = EDATE(DateFin, -1)
+			VAR DateDebutPrecedente = DATE(YEAR(DateFinPrecedente), MONTH(DateFinPrecedente), 1)
+			VAR Actuel = CALCULATE([Taux d'occupation], REMOVEFILTERS(DateTable), DATESBETWEEN(DateTable[Date], DateDebut, DateFin))
+			VAR Precedent = CALCULATE([Taux d'occupation], REMOVEFILTERS(DateTable), DATESBETWEEN(DateTable[Date], DateDebutPrecedente, DateFinPrecedente))
+			RETURN IF(ISBLANK(Precedent) || Precedent = 0, BLANK(), DIVIDE(Actuel - Precedent, ABS(Precedent)))
+		formatString: 0.0%
+		lineageTag: bd9e820f-f0bc-4fc2-b231-c1e8e7e124d5
+
+	measure 'Évolution occupation affichée' =
+			VAR Evolution = [Évolution occupation dernier mois]
+			RETURN IF(ISBLANK(Evolution), "Comparaison indisponible", IF(Evolution >= 0, "▲ ", "▼ ") & FORMAT(ABS(Evolution), "0.0 %", "fr-FR") & " vs mois préc.")
+		lineageTag: ece122e8-335f-422c-bea7-7cde56b3a9d9
+
+	measure 'Couleur évolution occupation' =
+			VAR Evolution = [Évolution occupation dernier mois]
+			RETURN SWITCH(TRUE(), ISBLANK(Evolution), "#667085", Evolution >= 0, "#2FA79B", "#EB5757")
+		lineageTag: 2adeac80-488a-4210-a3d9-4c873e92e924
+
 	column Date_Clé
 		dataType: int64
 		formatString: 0

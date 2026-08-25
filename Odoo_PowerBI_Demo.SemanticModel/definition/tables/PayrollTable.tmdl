@@ -29,6 +29,25 @@ table PayrollTable
 			RETURN IF(ISBLANK(Taux), BLANK(), FORMAT(Taux, "0.0 %", "fr-FR"))
 		lineageTag: 67ee9afa-440f-42c7-b258-7a5553568be7
 
+	measure 'Évolution masse salariale dernier mois' =
+			VAR DateFin = MAX(DateTable[Date])
+			VAR DateDebut = DATE(YEAR(DateFin), MONTH(DateFin), 1)
+			VAR DateFinPrecedente = EDATE(DateFin, -1)
+			VAR DateDebutPrecedente = DATE(YEAR(DateFinPrecedente), MONTH(DateFinPrecedente), 1)
+			VAR Actuel = CALCULATE([Masse salariale], REMOVEFILTERS(DateTable), DATESBETWEEN(DateTable[Date], DateDebut, DateFin))
+			VAR Precedent = CALCULATE([Masse salariale], REMOVEFILTERS(DateTable), DATESBETWEEN(DateTable[Date], DateDebutPrecedente, DateFinPrecedente))
+			RETURN IF(ISBLANK(Precedent) || Precedent = 0, BLANK(), DIVIDE(Actuel - Precedent, ABS(Precedent)))
+		formatString: 0.0%
+		lineageTag: 7d7fbb91-2bd3-42f6-82d0-fe707818f2e8
+
+	measure 'Évolution masse salariale affichée' =
+			VAR Evolution = [Évolution masse salariale dernier mois]
+			RETURN IF(ISBLANK(Evolution), "Comparaison indisponible", IF(Evolution >= 0, "▲ ", "▼ ") & FORMAT(ABS(Evolution), "0.0 %", "fr-FR") & " vs mois préc.")
+		lineageTag: b146f8e3-a8d5-48f1-b001-b627a38fd1e0
+
+	measure 'Couleur évolution masse salariale' = "#667085"
+		lineageTag: e5675f5c-e281-4d73-82ce-ce1754fe3551
+
 	column Année_Mois
 		dataType: dateTime
 		formatString: Long Date

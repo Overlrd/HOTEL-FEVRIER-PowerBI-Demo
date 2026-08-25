@@ -15,7 +15,11 @@ table OrderTable
 			COALESCE(
 			    CALCULATE(
 			        [Chiffre d'affaires],
-			        OrderTable[Activité_CA] = "Hébergement"
+			        FILTER(
+			            VALUES(OrderTable[Catégorie]),
+			            VAR Categorie = UPPER(COALESCE(OrderTable[Catégorie], ""))
+			            RETURN CONTAINSSTRING(Categorie, "HÉBERGEMENT") || CONTAINSSTRING(Categorie, "HEBERGEMENT")
+			        )
 			    ),
 			    0
 			)
@@ -26,7 +30,10 @@ table OrderTable
 			COALESCE(
 			    CALCULATE(
 			        [Chiffre d'affaires],
-			        OrderTable[Activité_CA] = "Restaurant"
+			        FILTER(
+			            VALUES(OrderTable[Catégorie]),
+			            CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie], "")), "RESTAUR")
+			        )
 			    ),
 			    0
 			)
@@ -37,7 +44,10 @@ table OrderTable
 			COALESCE(
 			    CALCULATE(
 			        [Chiffre d'affaires],
-			        OrderTable[Activité_CA] = "Bar"
+			        FILTER(
+			            VALUES(OrderTable[Catégorie]),
+			            CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie], "")), "BAR")
+			        )
 			    ),
 			    0
 			)
@@ -45,13 +55,7 @@ table OrderTable
 		lineageTag: 8f6cc89e-c230-412c-b3d4-550659f42f3a
 
 	measure 'CA Autres' =
-			COALESCE(
-			    CALCULATE(
-			        [Chiffre d'affaires],
-			        OrderTable[Activité_CA] = "Autres"
-			    ),
-			    0
-			)
+			COALESCE([Chiffre d'affaires] - [CA Hébergement] - [CA Restaurant] - [CA Bar], 0)
 		formatString: 0
 		lineageTag: e8a8d515-4ad3-46c7-8380-cb7970da2d6c
 
@@ -77,6 +81,27 @@ table OrderTable
 			    FORMAT(Montant, "#,0", "fr-FR") & " XOF"
 			)
 		lineageTag: b57c22b0-b9a4-46da-87e4-6f78eaaef240
+
+	measure 'Évolution CA dernier mois' =
+			VAR DateFin = MAX(DateTable[Date])
+			VAR DateDebut = DATE(YEAR(DateFin), MONTH(DateFin), 1)
+			VAR DateFinPrecedente = EDATE(DateFin, -1)
+			VAR DateDebutPrecedente = DATE(YEAR(DateFinPrecedente), MONTH(DateFinPrecedente), 1)
+			VAR Actuel = CALCULATE([Chiffre d'affaires], REMOVEFILTERS(DateTable), DATESBETWEEN(DateTable[Date], DateDebut, DateFin))
+			VAR Precedent = CALCULATE([Chiffre d'affaires], REMOVEFILTERS(DateTable), DATESBETWEEN(DateTable[Date], DateDebutPrecedente, DateFinPrecedente))
+			RETURN IF(ISBLANK(Precedent) || Precedent = 0, BLANK(), DIVIDE(Actuel - Precedent, ABS(Precedent)))
+		formatString: 0.0%
+		lineageTag: 69c9ce6a-d609-4ff3-9442-1190bed5790f
+
+	measure 'Évolution CA affichée' =
+			VAR Evolution = [Évolution CA dernier mois]
+			RETURN IF(ISBLANK(Evolution), "Comparaison indisponible", IF(Evolution >= 0, "▲ ", "▼ ") & FORMAT(ABS(Evolution), "0.0 %", "fr-FR") & " vs mois préc.")
+		lineageTag: 6ee2b64c-aa4d-4ce7-9880-9432fe0f7fd3
+
+	measure 'Couleur évolution CA' =
+			VAR Evolution = [Évolution CA dernier mois]
+			RETURN SWITCH(TRUE(), ISBLANK(Evolution), "#667085", Evolution >= 0, "#2FA79B", "#EB5757")
+		lineageTag: 0d71d16c-a82e-45ff-8829-26ad23c1dc23
 
 	column Commande_ID
 		dataType: string

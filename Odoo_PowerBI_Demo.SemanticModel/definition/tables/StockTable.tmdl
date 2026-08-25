@@ -27,6 +27,9 @@ table StockTable
 			)
 		lineageTag: c59cfe38-f890-4446-94b8-0cf749cfe9d2
 
+	measure 'Couleur alerte stock' = IF(COALESCE([Produits sous seuil], 0) > 0, "#EB5757", "#2FA79B")
+		lineageTag: a4b05632-9165-462f-ae09-64e319d9fcb9
+
 	column Mouvement_Stock_ID
 		dataType: string
 		lineageTag: f0343b3f-6c49-40ad-aa68-f3c4c0b429b7
