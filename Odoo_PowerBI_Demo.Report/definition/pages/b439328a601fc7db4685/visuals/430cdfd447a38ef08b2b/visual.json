@@ -23,11 +23,11 @@
                       "Entity": "OrderTable"
                     }
                   },
-                  "Property": "Activité_CA"
+                  "Property": "Catégorie"
                 }
               },
-              "queryRef": "OrderTable.Activité_CA",
-              "nativeQueryRef": "Activité_CA"
+              "queryRef": "OrderTable.Catégorie",
+              "nativeQueryRef": "Catégorie"
             }
           ]
         },
