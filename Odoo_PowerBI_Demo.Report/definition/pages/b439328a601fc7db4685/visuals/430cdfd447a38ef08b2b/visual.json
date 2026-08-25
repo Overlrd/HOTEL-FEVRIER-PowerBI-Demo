@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "InvoiceTable"
+                      "Entity": "OrderTable"
                     }
                   },
-                  "Property": "Tranche_Retard"
+                  "Property": "Activité_CA"
                 }
               },
-              "queryRef": "InvoiceTable.Tranche_Retard",
-              "nativeQueryRef": "Tranche_Retard"
+              "queryRef": "OrderTable.Activité_CA",
+              "nativeQueryRef": "Activité_CA"
             }
           ]
         },
@@ -38,14 +38,14 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "InvoiceTable"
+                      "Entity": "OrderTable"
                     }
                   },
-                  "Property": "Créances clients"
+                  "Property": "Chiffre d'affaires"
                 }
               },
-              "queryRef": "InvoiceTable.Créances clients",
-              "nativeQueryRef": "Créances clients"
+              "queryRef": "OrderTable.Chiffre d'affaires",
+              "nativeQueryRef": "Chiffre d'affaires"
             }
           ]
         }
@@ -57,10 +57,10 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "InvoiceTable"
+                    "Entity": "OrderTable"
                   }
                 },
-                "Property": "Créances clients"
+                "Property": "Chiffre d'affaires"
               }
             },
             "direction": "Descending"
@@ -214,7 +214,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Créances clients par tranche de retard'"
+                  "Value": "'Chiffre d''affaires par activité'"
                 }
               }
             },
