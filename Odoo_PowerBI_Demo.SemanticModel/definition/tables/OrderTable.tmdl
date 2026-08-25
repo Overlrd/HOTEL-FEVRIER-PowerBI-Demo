@@ -11,6 +11,50 @@ table OrderTable
 		formatString: 0
 		lineageTag: b08b3791-f3d0-4348-bf5f-08471b2cd259
 
+	measure 'CA Hébergement' =
+			COALESCE(
+			    CALCULATE(
+			        [Chiffre d'affaires],
+			        OrderTable[Activité_CA] = "Hébergement"
+			    ),
+			    0
+			)
+		formatString: 0
+		lineageTag: 9f4d9b60-c9ec-4c72-88d4-3044134b9db8
+
+	measure 'CA Restaurant' =
+			COALESCE(
+			    CALCULATE(
+			        [Chiffre d'affaires],
+			        OrderTable[Activité_CA] = "Restaurant"
+			    ),
+			    0
+			)
+		formatString: 0
+		lineageTag: a5fa32ae-a3a0-4d97-b017-4fb1b1c91d22
+
+	measure 'CA Bar' =
+			COALESCE(
+			    CALCULATE(
+			        [Chiffre d'affaires],
+			        OrderTable[Activité_CA] = "Bar"
+			    ),
+			    0
+			)
+		formatString: 0
+		lineageTag: 8f6cc89e-c230-412c-b3d4-550659f42f3a
+
+	measure 'CA Autres' =
+			COALESCE(
+			    CALCULATE(
+			        [Chiffre d'affaires],
+			        OrderTable[Activité_CA] = "Autres"
+			    ),
+			    0
+			)
+		formatString: 0
+		lineageTag: e8a8d515-4ad3-46c7-8380-cb7970da2d6c
+
 	measure Achats =
 			
 			CALCULATE(
@@ -83,6 +127,14 @@ table OrderTable
 		lineageTag: 15001fc7-976c-4713-852b-4bb1eff77d30
 		summarizeBy: none
 		sourceColumn: Catégorie
+
+		annotation SummarizationSetBy = Automatic
+
+	column Activité_CA
+		dataType: string
+		lineageTag: 32d632ae-5ebd-4b95-8df0-bd6f49b9af70
+		summarizeBy: none
+		sourceColumn: Activité_CA
 
 		annotation SummarizationSetBy = Automatic
 
@@ -178,9 +230,22 @@ table OrderTable
 				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
 				    Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
 				    OrderTable_Table = Source{[Item="OrderTable",Kind="Table"]}[Data],
-				    #"Changed Type" = Table.TransformColumnTypes(OrderTable_Table,{{"Commande_ID", type text}, {"Type_Commande", type text}, {"Date_Clé", Int64.Type}, {"Date_Commande", type date}, {"Partenaire_ID", type text}, {"Nom_Partenaire", type text}, {"Catégorie", type text}, {"Montant_HT", Int64.Type}, {"TVA", Int64.Type}, {"Retenue", Int64.Type}, {"Montant_TTC", Int64.Type}, {"Statut", type text}, {"Date_Livraison_Prévue", type date}, {"Date_Livraison_Réelle", type date}, {"Livrée_À_Temps", type logical}})
+				    #"Changed Type" = Table.TransformColumnTypes(OrderTable_Table,{{"Commande_ID", type text}, {"Type_Commande", type text}, {"Date_Clé", Int64.Type}, {"Date_Commande", type date}, {"Partenaire_ID", type text}, {"Nom_Partenaire", type text}, {"Catégorie", type text}, {"Montant_HT", Int64.Type}, {"TVA", Int64.Type}, {"Retenue", Int64.Type}, {"Montant_TTC", Int64.Type}, {"Statut", type text}, {"Date_Livraison_Prévue", type date}, {"Date_Livraison_Réelle", type date}, {"Livrée_À_Temps", type logical}}),
+				    #"Added Activity" = Table.AddColumn(
+				        #"Changed Type",
+				        "Activité_CA",
+				        each
+				            let
+				                Category = Text.Upper(Text.Trim(if [Catégorie] = null then "" else Text.From([Catégorie])))
+				            in
+				                if Text.Contains(Category, "HÉBERGEMENT") or Text.Contains(Category, "HEBERGEMENT") then "Hébergement"
+				                else if Text.Contains(Category, "RESTAUR") then "Restaurant"
+				                else if Text.Contains(Category, "BAR") then "Bar"
+				                else "Autres",
+				        type text
+				    )
 				in
-				    #"Changed Type"
+				    #"Added Activity"
 
 	annotation PBI_NavigationStepName = Navigation
 
