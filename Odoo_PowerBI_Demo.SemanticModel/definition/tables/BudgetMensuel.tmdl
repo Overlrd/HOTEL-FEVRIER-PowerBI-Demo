@@ -1,0 +1,61 @@
+table BudgetMensuel
+	lineageTag: e9757711-f0c3-4b95-9565-f930638e2e20
+
+	column Budget_ID
+		dataType: string
+		lineageTag: 37e8f59d-1163-4a3b-baf3-6968e5603839
+		summarizeBy: none
+		sourceColumn: Budget_ID
+
+	column Mois
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: f4159a34-7e08-40bf-923f-9b587ec1e70b
+		summarizeBy: none
+		sourceColumn: Mois
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Activité
+		dataType: string
+		lineageTag: b86df26e-2b2a-49e4-9439-3f53a7aad538
+		summarizeBy: none
+		sourceColumn: Activité
+
+	column 'Ligne_P&L'
+		dataType: string
+		lineageTag: 3ffd9f1d-5d17-4d60-8d03-8b11dee4b344
+		summarizeBy: none
+		sourceColumn: Ligne_P&L
+
+	column Catégorie
+		dataType: string
+		lineageTag: 8e478196-43ba-4cfe-bd80-196a580704f8
+		summarizeBy: none
+		sourceColumn: Catégorie
+
+	column Budget_XOF
+		dataType: int64
+		formatString: #,0
+		lineageTag: b71eeda9-3fc4-4278-8c5c-6d6934eacc3f
+		summarizeBy: sum
+		sourceColumn: Budget_XOF
+
+	column Commentaire
+		dataType: string
+		lineageTag: cc9dbcb9-8ed4-4d6c-841c-a65b19d7f852
+		summarizeBy: none
+		sourceColumn: Commentaire
+
+	partition BudgetMensuel = m
+		mode: import
+		source =
+				let
+				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
+				    Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
+				    BudgetMensuel_Table = Source{[Item="BudgetMensuel",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(BudgetMensuel_Table,{{"Budget_ID", type text}, {"Mois", type date}, {"Activité", type text}, {"Ligne_P&L", type text}, {"Catégorie", type text}, {"Budget_XOF", Int64.Type}, {"Commentaire", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+	annotation PBI_ResultType = Table
