@@ -105,3 +105,16 @@ relationship cf3240e3-9590-4a77-8b93-bfb31b238c78
 relationship 5758149b-5af4-4479-9c66-b749e8cd1118
 	fromColumn: ChargesExploitation.Activité
 	toColumn: DimActivite.Activité
+
+relationship a1c1744c-2ff6-4052-b73c-486fdef7dc31
+	joinOnDateBehavior: datePartOnly
+	fromColumn: DetailPerformance.Date
+	toColumn: DateTable.Date
+
+relationship 9bde7761-3439-4673-83a5-6d85bc0e74f8
+	fromColumn: DetailPerformance.Activité
+	toColumn: DimActivite.Activité
+
+relationship 71ed366f-f7a1-4e6e-a8d7-d9db084ef85a
+	fromColumn: DetailPerformance.Ligne_P&L
+	toColumn: LignePerformance.Ligne_P&L

@@ -2,118 +2,84 @@ table PerformanceFinance
 	lineageTag: d2662131-2080-44b0-b3d9-d729e7bcf498
 
 	measure 'CA HT finance' =
-			SUMX(
-			    VALUES(DimActivite[Activité]),
-			    VAR Act = DimActivite[Activité]
-			    RETURN
-			        SWITCH(
-			            Act,
-			            "Hébergement", CALCULATE(SUM(OrderTable[Montant_HT]), OrderTable[Type_Commande] = "Vente", OrderTable[Statut] = "Terminée", FILTER(ALL(OrderTable[Catégorie]), CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie], "")), "HÉBERGEMENT") || CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie], "")), "HEBERGEMENT"))),
-			            "Restauration", CALCULATE(SUM(OrderTable[Montant_HT]), OrderTable[Type_Commande] = "Vente", OrderTable[Statut] = "Terminée", FILTER(ALL(OrderTable[Catégorie]), CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie], "")), "RESTAUR"))),
-			            "Bar", CALCULATE(SUM(OrderTable[Montant_HT]), OrderTable[Type_Commande] = "Vente", OrderTable[Statut] = "Terminée", FILTER(ALL(OrderTable[Catégorie]), CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie], "")), "BAR"))),
-			            "Autres prestations", CALCULATE(SUM(OrderTable[Montant_HT]), OrderTable[Type_Commande] = "Vente", OrderTable[Statut] = "Terminée", FILTER(ALL(OrderTable[Catégorie]), NOT(CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie], "")), "HÉBERGEMENT")) && NOT(CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie], "")), "HEBERGEMENT")) && NOT(CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie], "")), "RESTAUR")) && NOT(CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie], "")), "BAR")))),
-			            0
-			        )
-			)
+			SUMX(VALUES(DimActivite[Activité]),VAR Act = DimActivite[Activité] RETURN SWITCH(Act,"Hébergement",CALCULATE(SUM(OrderTable[Montant_HT]),OrderTable[Type_Commande]="Vente",OrderTable[Statut]="Terminée",FILTER(ALL(OrderTable[Catégorie]),CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie],"")),"HÉBERGEMENT")||CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie],"")),"HEBERGEMENT"))),"Restauration",CALCULATE(SUM(OrderTable[Montant_HT]),OrderTable[Type_Commande]="Vente",OrderTable[Statut]="Terminée",FILTER(ALL(OrderTable[Catégorie]),CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie],"")),"RESTAUR"))),"Bar",CALCULATE(SUM(OrderTable[Montant_HT]),OrderTable[Type_Commande]="Vente",OrderTable[Statut]="Terminée",FILTER(ALL(OrderTable[Catégorie]),CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie],"")),"BAR"))),"Autres prestations",CALCULATE(SUM(OrderTable[Montant_HT]),OrderTable[Type_Commande]="Vente",OrderTable[Statut]="Terminée",FILTER(ALL(OrderTable[Catégorie]),NOT(CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie],"")),"HÉBERGEMENT"))&&NOT(CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie],"")),"HEBERGEMENT"))&&NOT(CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie],"")),"RESTAUR"))&&NOT(CONTAINSSTRING(UPPER(COALESCE(OrderTable[Catégorie],"")),"BAR")))),0))
 		formatString: #,0
 		lineageTag: 139f47bc-ab54-4de6-93a2-061c1a1741db
 
-	measure 'Achats directs HT finance' =
-			SUMX(
-			    VALUES(DimActivite[Activité]),
-			    VAR Act = DimActivite[Activité]
-			    RETURN
-			        SWITCH(
-			            Act,
-			            "Hébergement", CALCULATE(SUM(OrderTable[Montant_HT]), OrderTable[Type_Commande] = "Achat", OrderTable[Statut] = "Terminée", OrderTable[Catégorie] IN {"Linge", "Accueil"}),
-			            "Restauration", CALCULATE(SUM(OrderTable[Montant_HT]), OrderTable[Type_Commande] = "Achat", OrderTable[Statut] = "Terminée", OrderTable[Catégorie] = "Alimentation"),
-			            "Bar", CALCULATE(SUM(OrderTable[Montant_HT]), OrderTable[Type_Commande] = "Achat", OrderTable[Statut] = "Terminée", OrderTable[Catégorie] = "Boissons"),
-			            "Autres prestations", 0,
-			            "Commun", CALCULATE(SUM(OrderTable[Montant_HT]), OrderTable[Type_Commande] = "Achat", OrderTable[Statut] = "Terminée", NOT(OrderTable[Catégorie] IN {"Linge", "Accueil", "Alimentation", "Boissons"})),
-			            0
-			        )
-			)
+	measure 'Achats directs HT finance' = SUMX(VALUES(DimActivite[Activité]),VAR Act=DimActivite[Activité] RETURN SWITCH(Act,"Hébergement",CALCULATE(SUM(OrderTable[Montant_HT]),OrderTable[Type_Commande]="Achat",OrderTable[Statut]="Terminée",OrderTable[Catégorie] IN {"Linge","Accueil"}),"Restauration",CALCULATE(SUM(OrderTable[Montant_HT]),OrderTable[Type_Commande]="Achat",OrderTable[Statut]="Terminée",OrderTable[Catégorie]="Alimentation"),"Bar",CALCULATE(SUM(OrderTable[Montant_HT]),OrderTable[Type_Commande]="Achat",OrderTable[Statut]="Terminée",OrderTable[Catégorie]="Boissons"),"Autres prestations",0,"Commun",CALCULATE(SUM(OrderTable[Montant_HT]),OrderTable[Type_Commande]="Achat",OrderTable[Statut]="Terminée",NOT(OrderTable[Catégorie] IN {"Linge","Accueil","Alimentation","Boissons"})),0))
 		formatString: #,0
 		lineageTag: 35ed9ca0-3036-4562-a11c-34b3d0923274
 
-	measure 'Coût personnel disponible' =
-			SUMX(
-			    VALUES(DimActivite[Activité]),
-			    VAR Act = DimActivite[Activité]
-			    RETURN
-			        SWITCH(
-			            Act,
-			            "Hébergement", CALCULATE(SUM(PayrollTable[Salaire_Base]) + SUM(PayrollTable[Primes]), PayrollTable[Département] IN {"Hébergement", "Réception", "Housekeeping"}),
-			            "Restauration", CALCULATE(SUM(PayrollTable[Salaire_Base]) + SUM(PayrollTable[Primes]), PayrollTable[Département] IN {"Restauration", "Cuisine"}),
-			            "Bar", CALCULATE(SUM(PayrollTable[Salaire_Base]) + SUM(PayrollTable[Primes]), PayrollTable[Département] = "Bar"),
-			            "Autres prestations", CALCULATE(SUM(PayrollTable[Salaire_Base]) + SUM(PayrollTable[Primes]), PayrollTable[Département] IN {"Commercial", "Événementiel", "Spa", "Blanchisserie"}),
-			            "Commun", CALCULATE(SUM(PayrollTable[Salaire_Base]) + SUM(PayrollTable[Primes]), NOT(PayrollTable[Département] IN {"Hébergement", "Réception", "Housekeeping", "Restauration", "Cuisine", "Bar", "Commercial", "Événementiel", "Spa", "Blanchisserie"})),
-			            0
-			        )
-			)
+	measure 'Coût personnel disponible' = SUMX(VALUES(DimActivite[Activité]),VAR Act=DimActivite[Activité] RETURN SWITCH(Act,"Hébergement",CALCULATE(SUM(PayrollTable[Salaire_Base])+SUM(PayrollTable[Primes]),PayrollTable[Département] IN {"Hébergement","Réception","Housekeeping"}),"Restauration",CALCULATE(SUM(PayrollTable[Salaire_Base])+SUM(PayrollTable[Primes]),PayrollTable[Département] IN {"Restauration","Cuisine"}),"Bar",CALCULATE(SUM(PayrollTable[Salaire_Base])+SUM(PayrollTable[Primes]),PayrollTable[Département]="Bar"),"Autres prestations",CALCULATE(SUM(PayrollTable[Salaire_Base])+SUM(PayrollTable[Primes]),PayrollTable[Département] IN {"Commercial","Événementiel","Spa","Blanchisserie"}),"Commun",CALCULATE(SUM(PayrollTable[Salaire_Base])+SUM(PayrollTable[Primes]),NOT(PayrollTable[Département] IN {"Hébergement","Réception","Housekeeping","Restauration","Cuisine","Bar","Commercial","Événementiel","Spa","Blanchisserie"})),0))
 		formatString: #,0
 		lineageTag: a950cb1e-7cd2-4a94-89f0-8e8578011793
 
 	measure 'Charges exploitation finance' = SUM(ChargesExploitation[Montant_XOF])
 		formatString: #,0
 		lineageTag: 9dd3b050-7dfc-4f30-9c42-c54a80deb1ff
-
-	measure 'Marge sur achats' = [CA HT finance] - [Achats directs HT finance]
+	measure 'Marge sur achats' = [CA HT finance]-[Achats directs HT finance]
 		formatString: #,0
 		lineageTag: a70754ee-7aa6-4de7-b7d2-1be1e6609def
-
-	measure 'Résultat de gestion disponible' = [CA HT finance] - [Achats directs HT finance] - [Coût personnel disponible] - [Charges exploitation finance]
+	measure 'Résultat de gestion disponible' = [CA HT finance]-[Achats directs HT finance]-[Coût personnel disponible]-[Charges exploitation finance]
 		formatString: #,0
 		lineageTag: ffe609a1-edd9-480a-b549-316cce809525
-
-	measure 'Taux de marge gestion' = DIVIDE([Résultat de gestion disponible], [CA HT finance])
+	measure 'Taux de marge gestion' = DIVIDE([Résultat de gestion disponible],[CA HT finance])
 		formatString: 0.0%
 		lineageTag: f061cf65-96dc-49c1-b93f-10e40543dc56
-
-	measure 'Budget CA' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]), BudgetMensuel[Ligne_P&L] = "Chiffre d'affaires")
+	measure 'Budget CA' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]),BudgetMensuel[Ligne_P&L]="Chiffre d'affaires")
 		formatString: #,0
 		lineageTag: ce0aadb3-248e-47f8-9a05-7e2f10271533
-
-	measure 'Budget achats directs' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]), BudgetMensuel[Ligne_P&L] = "Achats directs")
+	measure 'Budget achats directs' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]),BudgetMensuel[Ligne_P&L]="Achats directs")
 		formatString: #,0
 		lineageTag: 70131853-630f-44c4-92f0-e58f8214947d
-
-	measure 'Budget personnel' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]), BudgetMensuel[Ligne_P&L] = "Personnel")
+	measure 'Budget personnel' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]),BudgetMensuel[Ligne_P&L]="Personnel")
 		formatString: #,0
 		lineageTag: 80017eeb-d5b4-4771-86a5-3af2d3fd49fc
-
-	measure 'Budget charges exploitation' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]), BudgetMensuel[Ligne_P&L] = "Charges d'exploitation")
+	measure 'Budget charges exploitation' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]),BudgetMensuel[Ligne_P&L]="Charges d'exploitation")
 		formatString: #,0
 		lineageTag: 81a51b70-3408-4211-b670-03344c57d37a
-
-	measure 'Budget résultat gestion' = [Budget CA] - [Budget achats directs] - [Budget personnel] - [Budget charges exploitation]
+	measure 'Budget résultat gestion' = [Budget CA]-[Budget achats directs]-[Budget personnel]-[Budget charges exploitation]
 		formatString: #,0
 		lineageTag: 0dfcbe22-e9c7-48af-9253-17e27497a566
-
-	measure 'Écart résultat vs budget' = [Résultat de gestion disponible] - [Budget résultat gestion]
+	measure 'Écart résultat vs budget' = [Résultat de gestion disponible]-[Budget résultat gestion]
 		formatString: #,0
 		lineageTag: ab2bb8de-29a3-4eda-81bf-db3dd339a27e
-
-	measure 'Écart résultat %' = DIVIDE([Écart résultat vs budget], ABS([Budget résultat gestion]))
+	measure 'Écart résultat %' = DIVIDE([Écart résultat vs budget],ABS([Budget résultat gestion]))
 		formatString: 0.0%
 		lineageTag: f83fae82-c9c0-4471-bdae-8b7a937996a8
-
-	measure 'Résultat période précédente' = CALCULATE([Résultat de gestion disponible], DATEADD(DateTable[Date], -1, MONTH))
+	measure 'Résultat période précédente' = CALCULATE([Résultat de gestion disponible],DATEADD(DateTable[Date],-1,MONTH))
 		formatString: #,0
 		lineageTag: 7dd8ffab-4e9c-4a10-bfad-8bead2712c23
-
-	measure 'Évolution résultat période précédente' = DIVIDE([Résultat de gestion disponible] - [Résultat période précédente], ABS([Résultat période précédente]))
+	measure 'Évolution résultat période précédente' = DIVIDE([Résultat de gestion disponible]-[Résultat période précédente],ABS([Résultat période précédente]))
 		formatString: 0.0%
 		lineageTag: b4ab4099-4fec-4990-9f97-e082adea2c63
-
-	measure 'Couleur écart résultat' = IF([Écart résultat vs budget] >= 0, "#2FA79B", "#EB5757")
+	measure 'Couleur écart résultat' = IF([Écart résultat vs budget]>=0,"#2FA79B","#EB5757")
 		lineageTag: 1cb1e683-ba07-4265-a72b-9477f3508541
-
-	measure 'CA HT affiché' = FORMAT([CA HT finance], "#,0", "fr-FR") & " XOF"
+	measure 'CA HT affiché' = FORMAT([CA HT finance],"#,0","fr-FR")&" XOF"
 		lineageTag: 0a734f21-1af8-4d0b-895b-bd2fab2537b6
-
-	measure 'Résultat gestion affiché' = FORMAT([Résultat de gestion disponible], "#,0", "fr-FR") & " XOF"
+	measure 'Résultat gestion affiché' = FORMAT([Résultat de gestion disponible],"#,0","fr-FR")&" XOF"
 		lineageTag: 33c562c6-776a-4c73-839f-7d5c4c7b8104
+	measure 'Budget marge sur achats' = [Budget CA]-[Budget achats directs]
+		formatString: #,0
+		lineageTag: 4b274c51-4c53-4c9e-b6b0-3b20837a2cd2
+	measure 'Budget taux de marge gestion' = DIVIDE([Budget résultat gestion],[Budget CA])
+		formatString: 0.0%
+		lineageTag: a219485b-59aa-46c0-a435-4df3ba01a8ea
+	measure 'CA période précédente' = CALCULATE([CA HT finance],DATEADD(DateTable[Date],-1,MONTH))
+		formatString: #,0
+		lineageTag: e4d75b35-5ff9-4be4-bbf3-77a19b0ff351
+	measure 'Marge achats période précédente' = CALCULATE([Marge sur achats],DATEADD(DateTable[Date],-1,MONTH))
+		formatString: #,0
+		lineageTag: 89625cf5-adae-4159-b866-8949cba996ef
+	measure 'Personnel période précédente' = CALCULATE([Coût personnel disponible],DATEADD(DateTable[Date],-1,MONTH))
+		formatString: #,0
+		lineageTag: 1154574c-1bb8-4f5e-8ad6-1b8f144881ed
+	measure 'Charges période précédente' = CALCULATE([Charges exploitation finance],DATEADD(DateTable[Date],-1,MONTH))
+		formatString: #,0
+		lineageTag: a95d6547-303c-461c-b576-19d4c3f26e2e
+	measure 'Taux marge période précédente' = CALCULATE([Taux de marge gestion],DATEADD(DateTable[Date],-1,MONTH))
+		formatString: 0.0%
+		lineageTag: baedb57e-bcf2-489b-8a27-7ba18513d4aa
 
 	column Clé
 		dataType: int64
@@ -126,4 +92,4 @@ table PerformanceFinance
 
 	partition PerformanceFinance = calculated
 		mode: import
-		source = DATATABLE("Clé", INTEGER, {{1}})
+		source = DATATABLE("Clé",INTEGER,{{1}})

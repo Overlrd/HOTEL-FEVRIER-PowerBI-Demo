@@ -1,0 +1,77 @@
+table DetailPerformance
+	lineageTag: acb8afcd-9639-44ef-bbb4-600a8f6029ad
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5f2ef790-17ad-4a9b-b490-a120858e890e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+	column Source
+		dataType: string
+		lineageTag: c26ab631-bec8-47ad-9a1d-c7b7ccfd65fc
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Source]
+
+	column Ligne_P&L
+		dataType: string
+		lineageTag: fc369322-af5d-4c1d-8243-2cf88a613c7a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Ligne_P&L]
+
+	column Catégorie
+		dataType: string
+		lineageTag: 9f5d9810-7764-4feb-afb3-4b9074b64d51
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Catégorie]
+
+	column Activité
+		dataType: string
+		lineageTag: 61d01eb2-6c1e-41c1-a13d-d9d2c334fe1f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Activité]
+
+	column Tiers
+		dataType: string
+		lineageTag: f4cc3ce5-4dfa-4ab4-b636-e11b1310ac8d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Tiers]
+
+	column Référence
+		dataType: string
+		lineageTag: 5f39f0d1-b46d-4164-a979-6cc7b17b9181
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Référence]
+
+	column Montant_XOF
+		dataType: int64
+		formatString: #,0
+		lineageTag: 7da0c56b-5050-4f22-9c26-6a5fd2c4acde
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Montant_XOF]
+
+	column Commentaire
+		dataType: string
+		lineageTag: cf4c3a4b-e8e8-4b24-8bf9-7d2204ad27f7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Commentaire]
+
+	partition DetailPerformance = calculated
+		mode: import
+		source =
+				UNION(
+				 SELECTCOLUMNS(FILTER(OrderTable,OrderTable[Type_Commande]="Vente"&&OrderTable[Statut]="Terminée"),"Date",OrderTable[Date_Commande],"Source","Vente","Ligne_P&L","Chiffre d'affaires","Catégorie",OrderTable[Catégorie],"Activité",VAR Cat=UPPER(COALESCE(OrderTable[Catégorie],"")) RETURN SWITCH(TRUE(),CONTAINSSTRING(Cat,"HÉBERGEMENT")||CONTAINSSTRING(Cat,"HEBERGEMENT"),"Hébergement",CONTAINSSTRING(Cat,"RESTAUR"),"Restauration",CONTAINSSTRING(Cat,"BAR"),"Bar","Autres prestations"),"Tiers",OrderTable[Nom_Partenaire],"Référence",OrderTable[Commande_ID],"Montant_XOF",OrderTable[Montant_HT],"Commentaire","Vente terminée - montant HT"),
+				 SELECTCOLUMNS(FILTER(OrderTable,OrderTable[Type_Commande]="Achat"&&OrderTable[Statut]="Terminée"),"Date",OrderTable[Date_Commande],"Source","Achat","Ligne_P&L","Achats directs","Catégorie",OrderTable[Catégorie],"Activité",SWITCH(TRUE(),OrderTable[Catégorie] IN {"Linge","Accueil"},"Hébergement",OrderTable[Catégorie]="Alimentation","Restauration",OrderTable[Catégorie]="Boissons","Bar","Commun"),"Tiers",OrderTable[Nom_Partenaire],"Référence",OrderTable[Commande_ID],"Montant_XOF",OrderTable[Montant_HT],"Commentaire","Achat terminé - montant HT"),
+				 SELECTCOLUMNS(PayrollTable,"Date",PayrollTable[Mois],"Source","Paie","Ligne_P&L","Personnel","Catégorie",PayrollTable[Département],"Activité",SWITCH(TRUE(),PayrollTable[Département] IN {"Hébergement","Réception","Housekeeping"},"Hébergement",PayrollTable[Département] IN {"Restauration","Cuisine"},"Restauration",PayrollTable[Département]="Bar","Bar",PayrollTable[Département] IN {"Commercial","Événementiel","Spa","Blanchisserie"},"Autres prestations","Commun"),"Tiers",PayrollTable[Nom_Employé],"Référence",PayrollTable[Employé_ID]&"-"&FORMAT(PayrollTable[Mois],"yyyy-MM"),"Montant_XOF",PayrollTable[Salaire_Base]+PayrollTable[Primes],"Commentaire","Salaire de base + primes ; hors charges patronales"),
+				 SELECTCOLUMNS(ChargesExploitation,"Date",ChargesExploitation[Date],"Source","Charge","Ligne_P&L","Charges d'exploitation","Catégorie",ChargesExploitation[Catégorie],"Activité",ChargesExploitation[Activité],"Tiers",ChargesExploitation[Fournisseur],"Référence",ChargesExploitation[Référence],"Montant_XOF",ChargesExploitation[Montant_XOF],"Commentaire",ChargesExploitation[Commentaire])
+				)

@@ -1,0 +1,42 @@
+table LignePerformance
+	lineageTag: 8d94f4bd-27ec-49ac-b583-5922358273ee
+
+	measure 'Réalisé P&L' = SWITCH(SELECTEDVALUE(LignePerformance[Ligne_P&L]),"Chiffre d'affaires",[CA HT finance],"Achats directs",[Achats directs HT finance],"Marge sur achats",[Marge sur achats],"Personnel",[Coût personnel disponible],"Charges d'exploitation",[Charges exploitation finance],"Résultat de gestion",[Résultat de gestion disponible],BLANK())
+		formatString: #,0
+		lineageTag: 48984d8f-7381-48d3-b59b-7b9ea42ee97f
+
+	measure 'Budget P&L' = SWITCH(SELECTEDVALUE(LignePerformance[Ligne_P&L]),"Chiffre d'affaires",[Budget CA],"Achats directs",[Budget achats directs],"Marge sur achats",[Budget marge sur achats],"Personnel",[Budget personnel],"Charges d'exploitation",[Budget charges exploitation],"Résultat de gestion",[Budget résultat gestion],BLANK())
+		formatString: #,0
+		lineageTag: 7c7bd4c5-35b4-42e5-ae5f-a65fa7d8c944
+
+	measure 'Écart P&L favorable' = VAR L=SELECTEDVALUE(LignePerformance[Ligne_P&L]) VAR R=[Réalisé P&L] VAR B=[Budget P&L] RETURN IF(L IN {"Achats directs","Personnel","Charges d'exploitation"},B-R,R-B)
+		formatString: #,0
+		lineageTag: b82da86a-2f99-4551-843f-670f5ccfef35
+
+	measure 'Écart P&L %' = DIVIDE([Écart P&L favorable],ABS([Budget P&L]))
+		formatString: 0.0%
+		lineageTag: e5af1578-cf88-47fa-a5e1-bf68222c238b
+
+	measure 'Couleur écart P&L' = IF([Écart P&L favorable]>=0,"#2FA79B","#EB5757")
+		lineageTag: 2ca8146e-6df5-4515-b241-444232a3a3dc
+
+	column Ligne_P&L
+		dataType: string
+		lineageTag: b79825f2-41a4-45aa-9b3e-8db8d0fe54cd
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Ligne_P&L]
+		sortByColumn: Ordre
+
+	column Ordre
+		dataType: int64
+		formatString: 0
+		lineageTag: 1b49410e-82ea-4226-a63a-98d93ae9eab0
+		summarizeBy: sum
+		isNameInferred
+		isHidden
+		sourceColumn: [Ordre]
+
+	partition LignePerformance = calculated
+		mode: import
+		source = DATATABLE("Ligne_P&L",STRING,"Ordre",INTEGER,{{"Chiffre d'affaires",1},{"Achats directs",2},{"Marge sur achats",3},{"Personnel",4},{"Charges d'exploitation",5},{"Résultat de gestion",6}})

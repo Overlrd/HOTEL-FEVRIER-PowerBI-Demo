@@ -1,0 +1,27 @@
+table PontResultat
+	lineageTag: 63c3f33d-5440-4ba2-a100-e9a58c441630
+
+	measure 'Impact résultat' = SWITCH(SELECTEDVALUE(PontResultat[Étape]),"Chiffre d'affaires",[CA HT finance],"Achats directs",-[Achats directs HT finance],"Personnel",-[Coût personnel disponible],"Charges d'exploitation",-[Charges exploitation finance],BLANK())
+		formatString: #,0
+		lineageTag: b690e5c2-43ac-4aca-9e59-b4e481509168
+
+	column Étape
+		dataType: string
+		lineageTag: 8f1d1db8-e6af-43e2-b204-f6cff491b2fe
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Étape]
+		sortByColumn: Ordre
+
+	column Ordre
+		dataType: int64
+		formatString: 0
+		lineageTag: 154602e2-d572-499e-bdb5-97c85b67353e
+		summarizeBy: sum
+		isNameInferred
+		isHidden
+		sourceColumn: [Ordre]
+
+	partition PontResultat = calculated
+		mode: import
+		source = DATATABLE("Étape",STRING,"Ordre",INTEGER,{{"Chiffre d'affaires",1},{"Achats directs",2},{"Personnel",3},{"Charges d'exploitation",4}})

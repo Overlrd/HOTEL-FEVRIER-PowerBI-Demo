@@ -1,6 +1,10 @@
 table DimActivite
 	lineageTag: ae4ff9d5-a42c-4c83-a830-16bcacfe1c9d
 
+	measure 'Résultat activité avant commun' = IF(SELECTEDVALUE(DimActivite[Activité])="Commun",BLANK(),[Résultat de gestion disponible])
+		formatString: #,0
+		lineageTag: d19db7f9-6a66-4d0b-a2fa-5ac10fb9bf74
+
 	column Activité
 		dataType: string
 		lineageTag: 4669d594-0c79-47f7-bdf4-ca75f52b9ef0
@@ -20,15 +24,4 @@ table DimActivite
 
 	partition DimActivite = calculated
 		mode: import
-		source =
-				DATATABLE(
-				    "Activité", STRING,
-				    "Ordre", INTEGER,
-				    {
-				        {"Hébergement", 1},
-				        {"Restauration", 2},
-				        {"Bar", 3},
-				        {"Autres prestations", 4},
-				        {"Commun", 5}
-				    }
-				)
+		source = DATATABLE("Activité",STRING,"Ordre",INTEGER,{{"Hébergement",1},{"Restauration",2},{"Bar",3},{"Autres prestations",4},{"Commun",5}})

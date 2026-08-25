@@ -40,5 +40,8 @@ ref table BudgetMensuel
 ref table ChargesExploitation
 ref table DimActivite
 ref table PerformanceFinance
+ref table LignePerformance
+ref table PontResultat
+ref table DetailPerformance
 
 ref cultureInfo en-US
