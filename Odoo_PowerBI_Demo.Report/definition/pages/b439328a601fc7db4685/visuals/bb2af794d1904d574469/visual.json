@@ -23,11 +23,11 @@
                       "Entity": "DateTable"
                     }
                   },
-                  "Property": "Année_Mois"
+                  "Property": "Mois_Affichage"
                 }
               },
-              "queryRef": "DateTable.Année_Mois",
-              "nativeQueryRef": "Année_Mois"
+              "queryRef": "DateTable.Mois_Affichage",
+              "nativeQueryRef": "Mois_Affichage"
             }
           ]
         },
@@ -59,6 +59,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'TopCenter'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "categoryAxis": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
                 }
               }
             }

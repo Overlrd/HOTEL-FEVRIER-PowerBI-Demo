@@ -79,7 +79,7 @@
             "customFormatString": {
               "expr": {
                 "Literal": {
-                  "Value": "'#,0 \"FCFA\"'"
+                  "Value": "'#,0 \"XOF\"'"
                 }
               }
             },
@@ -87,6 +87,20 @@
               "expr": {
                 "Literal": {
                   "Value": "'center'"
+                }
+              }
+            },
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            },
+            "labelPrecision": {
+              "expr": {
+                "Literal": {
+                  "Value": "0L"
                 }
               }
             }
