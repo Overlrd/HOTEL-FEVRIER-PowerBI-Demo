@@ -88,3 +88,20 @@ relationship 1414fd49-616e-2afd-3484-9b9192d1f4fd
 	fromColumn: PayrollTable.Mois
 	toColumn: DateTable.Date
 
+relationship 52716cfb-a8f8-4802-9c33-f4aa04f76d41
+	joinOnDateBehavior: datePartOnly
+	fromColumn: BudgetMensuel.Mois
+	toColumn: DateTable.Date
+
+relationship 6889db6d-b771-440b-b7d6-18a115a1a6f8
+	joinOnDateBehavior: datePartOnly
+	fromColumn: ChargesExploitation.Date
+	toColumn: DateTable.Date
+
+relationship cf3240e3-9590-4a77-8b93-bfb31b238c78
+	fromColumn: BudgetMensuel.Activité
+	toColumn: DimActivite.Activité
+
+relationship 5758149b-5af4-4479-9c66-b749e8cd1118
+	fromColumn: ChargesExploitation.Activité
+	toColumn: DimActivite.Activité
