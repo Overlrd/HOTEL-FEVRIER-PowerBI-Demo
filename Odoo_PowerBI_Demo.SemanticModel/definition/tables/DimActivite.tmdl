@@ -1,0 +1,34 @@
+table DimActivite
+	lineageTag: ae4ff9d5-a42c-4c83-a830-16bcacfe1c9d
+
+	column Activité
+		dataType: string
+		lineageTag: 4669d594-0c79-47f7-bdf4-ca75f52b9ef0
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Activité]
+		sortByColumn: Ordre
+
+	column Ordre
+		dataType: int64
+		formatString: 0
+		lineageTag: 09f836a7-77ad-4744-ac6c-cb97b5b1b1f6
+		summarizeBy: sum
+		isNameInferred
+		isHidden
+		sourceColumn: [Ordre]
+
+	partition DimActivite = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "Activité", STRING,
+				    "Ordre", INTEGER,
+				    {
+				        {"Hébergement", 1},
+				        {"Restauration", 2},
+				        {"Bar", 3},
+				        {"Autres prestations", 4},
+				        {"Commun", 5}
+				    }
+				)
