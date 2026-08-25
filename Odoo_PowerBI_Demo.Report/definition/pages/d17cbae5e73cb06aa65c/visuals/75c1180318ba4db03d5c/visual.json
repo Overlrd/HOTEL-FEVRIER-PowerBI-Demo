@@ -23,11 +23,11 @@
                       "Entity": "DateTable"
                     }
                   },
-                  "Property": "Mois_Affichage"
+                  "Property": "Année_Mois"
                 }
               },
-              "queryRef": "DateTable.Mois_Affichage",
-              "nativeQueryRef": "Mois_Affichage"
+              "queryRef": "DateTable.Année_Mois",
+              "nativeQueryRef": "Année_Mois"
             }
           ]
         },

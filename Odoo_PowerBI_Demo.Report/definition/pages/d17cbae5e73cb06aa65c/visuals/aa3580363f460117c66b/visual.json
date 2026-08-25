@@ -23,11 +23,11 @@
                       "Entity": "OccupancyTable"
                     }
                   },
-                  "Property": "Taux d'occupation"
+                  "Property": "Taux d'occupation affiché"
                 }
               },
-              "queryRef": "OccupancyTable.Taux d'occupation",
-              "nativeQueryRef": "Taux d'occupation"
+              "queryRef": "OccupancyTable.Taux d'occupation affiché",
+              "nativeQueryRef": "Taux d'occupation affiché"
             }
           ]
         }
@@ -76,31 +76,10 @@
                 }
               }
             },
-            "customFormatString": {
-              "expr": {
-                "Literal": {
-                  "Value": "'0.0 %'"
-                }
-              }
-            },
             "horizontalAlignment": {
               "expr": {
                 "Literal": {
                   "Value": "'center'"
-                }
-              }
-            },
-            "labelDisplayUnits": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
-            },
-            "labelPrecision": {
-              "expr": {
-                "Literal": {
-                  "Value": "1L"
                 }
               }
             }

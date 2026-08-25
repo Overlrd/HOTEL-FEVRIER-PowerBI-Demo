@@ -24,6 +24,34 @@ table OccupancyTable
 		formatString: #,0
 		lineageTag: 60458962-e5f7-55d0-a1e2-25253202daeb
 
+	measure 'Taux d''occupation affiché' =
+			VAR Taux = [Taux d'occupation]
+			RETURN IF(ISBLANK(Taux), BLANK(), FORMAT(Taux, "0.0 %", "fr-FR"))
+		lineageTag: 17568429-638b-4e85-9937-f1ff0a4dc998
+
+	measure 'Revenus des chambres affichés' =
+			VAR Montant = [Revenus des chambres]
+			VAR ValeurAbsolue = ABS(Montant)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISBLANK(Montant), BLANK(),
+			    ValeurAbsolue >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			    ValeurAbsolue >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			    FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			)
+		lineageTag: d2ef5a3b-ed6c-4d29-be3c-f33058860189
+
+	measure 'Revenu par chambre disponible affiché' =
+			VAR Montant = [Revenu par chambre disponible]
+			RETURN IF(ISBLANK(Montant), BLANK(), FORMAT(Montant, "#,0", "fr-FR") & " XOF")
+		lineageTag: 9d52f4cc-6448-4c37-a0db-3137e228f259
+
+	measure 'Chambres vendues affichées' =
+			VAR Valeur = [Chambres vendues]
+			RETURN IF(ISBLANK(Valeur), BLANK(), FORMAT(Valeur, "#,0", "fr-FR"))
+		lineageTag: c9cb7a65-b923-45b1-a48f-dee075482ddf
+
 	column Date_Clé
 		dataType: int64
 		formatString: 0
@@ -136,4 +164,3 @@ table OccupancyTable
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
-

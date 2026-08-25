@@ -19,6 +19,32 @@ table InvoiceTable
 		formatString: 0
 		lineageTag: f058c75f-a77c-454d-822b-e19e007a3de6
 
+	measure 'Créances clients affichées' =
+			VAR Montant = [Créances clients]
+			VAR ValeurAbsolue = ABS(Montant)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISBLANK(Montant), BLANK(),
+			    ValeurAbsolue >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			    ValeurAbsolue >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			    FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			)
+		lineageTag: c5731963-4369-457c-9669-97108422c765
+
+	measure 'Dettes fournisseurs affichées' =
+			VAR Montant = [Dettes fournisseurs]
+			VAR ValeurAbsolue = ABS(Montant)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISBLANK(Montant), BLANK(),
+			    ValeurAbsolue >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			    ValeurAbsolue >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			    FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			)
+		lineageTag: 4444f137-8559-4237-83e3-c0f4b9209790
+
 	column Facture_ID
 		dataType: string
 		lineageTag: d51eb76b-b3bf-46de-88b7-ceda86650299
@@ -209,4 +235,3 @@ table InvoiceTable
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
-

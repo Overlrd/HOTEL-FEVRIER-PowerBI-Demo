@@ -11,6 +11,24 @@ table PayrollTable
 		formatString: 0.0%
 		lineageTag: efeffb22-eba1-57b2-843c-272002faa114
 
+	measure 'Masse salariale affichée' =
+			VAR Montant = [Masse salariale]
+			VAR ValeurAbsolue = ABS(Montant)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISBLANK(Montant), BLANK(),
+			    ValeurAbsolue >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			    ValeurAbsolue >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			    FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			)
+		lineageTag: 796c0f4f-4bea-4ac2-896b-d0c3f5b26c63
+
+	measure 'Taux de présence affiché' =
+			VAR Taux = [Taux de présence]
+			RETURN IF(ISBLANK(Taux), BLANK(), FORMAT(Taux, "0.0 %", "fr-FR"))
+		lineageTag: 67ee9afa-440f-42c7-b258-7a5553568be7
+
 	column Année_Mois
 		dataType: dateTime
 		formatString: Long Date
@@ -166,4 +184,3 @@ table PayrollTable
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
-

@@ -40,6 +40,45 @@ table CashTable
 		formatString: #,0
 		lineageTag: ff26686d-e6d5-58d2-a5a0-5b05703885c6
 
+	measure 'Solde de trésorerie affiché' =
+			VAR Montant = [Solde trésorerie]
+			VAR ValeurAbsolue = ABS(Montant)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISBLANK(Montant), BLANK(),
+			    ValeurAbsolue >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			    ValeurAbsolue >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			    FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			)
+		lineageTag: e8e56fa0-7daa-46fb-a9f0-d7f3bcd5eb66
+
+	measure 'Encaissements affichés' =
+			VAR Montant = [Encaissements]
+			VAR ValeurAbsolue = ABS(Montant)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISBLANK(Montant), BLANK(),
+			    ValeurAbsolue >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			    ValeurAbsolue >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			    FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			)
+		lineageTag: 89164933-53d3-4d5e-a258-691203528aa5
+
+	measure 'Décaissements affichés' =
+			VAR Montant = [Décaissements]
+			VAR ValeurAbsolue = ABS(Montant)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISBLANK(Montant), BLANK(),
+			    ValeurAbsolue >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			    ValeurAbsolue >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			    FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			)
+		lineageTag: 4db49593-84ec-4dd8-a807-9e13405ade2b
+
 	column Mouvement_ID
 		dataType: string
 		lineageTag: e12c7f1c-bded-45e2-8c40-559ad2216b0b
@@ -163,4 +202,3 @@ table CashTable
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
-

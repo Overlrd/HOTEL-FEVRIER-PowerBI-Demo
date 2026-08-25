@@ -46,24 +46,6 @@ table DateTable
 
 		annotation SummarizationSetBy = Automatic
 
-	column Mois_Affichage
-		dataType: string
-		lineageTag: 2bd5871c-5768-45e2-9e22-3b30ce8b3e3c
-		summarizeBy: none
-		sourceColumn: Mois_Affichage
-		sortByColumn: Mois_Tri
-
-		annotation SummarizationSetBy = Automatic
-
-	column Mois_Tri
-		dataType: int64
-		formatString: 0
-		lineageTag: 69d0bdd9-c545-47d5-a020-931046f4069b
-		summarizeBy: none
-		sourceColumn: Mois_Tri
-
-		annotation SummarizationSetBy = Automatic
-
 	column Trimestre
 		dataType: string
 		lineageTag: f9b3b434-718a-480f-a8cb-8d7ceac71a82
@@ -95,11 +77,9 @@ table DateTable
 				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
 				    Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
 				    DateTable_Table = Source{[Item="DateTable",Kind="Table"]}[Data],
-				    #"Changed Type" = Table.TransformColumnTypes(DateTable_Table,{{"Date", type date}}),
-				    #"Ajout Mois affiché" = Table.AddColumn(#"Changed Type", "Mois_Affichage", each Date.ToText([Date], "MMM yyyy", "fr-FR"), type text),
-				    #"Ajout Mois tri" = Table.AddColumn(#"Ajout Mois affiché", "Mois_Tri", each Date.Year([Date]) * 100 + Date.Month([Date]), Int64.Type)
+				    #"Changed Type" = Table.TransformColumnTypes(DateTable_Table,{{"Date", type date}})
 				in
-				    #"Ajout Mois tri"
+				    #"Changed Type"
 
 	annotation PBI_ResultType = Table
 

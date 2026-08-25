@@ -23,11 +23,11 @@
                       "Entity": "StockTable"
                     }
                   },
-                  "Property": "Valeur mouvements stock"
+                  "Property": "Valeur des mouvements de stock affichée"
                 }
               },
-              "queryRef": "StockTable.Valeur mouvements stock",
-              "nativeQueryRef": "Valeur mouvements stock"
+              "queryRef": "StockTable.Valeur des mouvements de stock affichée",
+              "nativeQueryRef": "Valeur des mouvements de stock affichée"
             }
           ]
         }
@@ -76,31 +76,10 @@
                 }
               }
             },
-            "customFormatString": {
-              "expr": {
-                "Literal": {
-                  "Value": "'0,, \"M XOF\"'"
-                }
-              }
-            },
             "horizontalAlignment": {
               "expr": {
                 "Literal": {
                   "Value": "'center'"
-                }
-              }
-            },
-            "labelDisplayUnits": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
-            },
-            "labelPrecision": {
-              "expr": {
-                "Literal": {
-                  "Value": "0L"
                 }
               }
             }

@@ -23,11 +23,11 @@
                       "Entity": "InvoiceTable"
                     }
                   },
-                  "Property": "Dettes fournisseurs"
+                  "Property": "Dettes fournisseurs affichées"
                 }
               },
-              "queryRef": "InvoiceTable.Dettes fournisseurs",
-              "nativeQueryRef": "Dettes fournisseurs"
+              "queryRef": "InvoiceTable.Dettes fournisseurs affichées",
+              "nativeQueryRef": "Dettes fournisseurs affichées"
             }
           ]
         }
@@ -76,31 +76,10 @@
                 }
               }
             },
-            "customFormatString": {
-              "expr": {
-                "Literal": {
-                  "Value": "'0,, \"M XOF\"'"
-                }
-              }
-            },
             "horizontalAlignment": {
               "expr": {
                 "Literal": {
                   "Value": "'center'"
-                }
-              }
-            },
-            "labelDisplayUnits": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
-            },
-            "labelPrecision": {
-              "expr": {
-                "Literal": {
-                  "Value": "0L"
                 }
               }
             }

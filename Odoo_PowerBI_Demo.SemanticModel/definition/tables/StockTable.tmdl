@@ -9,6 +9,24 @@ table StockTable
 		formatString: #,0
 		lineageTag: 1ea5bdbc-a43f-5c68-a324-51dc2edc5d46
 
+	measure 'Produits sous seuil affichés' =
+			VAR Valeur = [Produits sous seuil]
+			RETURN IF(ISBLANK(Valeur), BLANK(), FORMAT(Valeur, "#,0", "fr-FR"))
+		lineageTag: 6860d73e-5375-492f-b04c-d7c59ca28964
+
+	measure 'Valeur des mouvements de stock affichée' =
+			VAR Montant = [Valeur mouvements stock]
+			VAR ValeurAbsolue = ABS(Montant)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISBLANK(Montant), BLANK(),
+			    ValeurAbsolue >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			    ValeurAbsolue >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			    FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			)
+		lineageTag: c59cfe38-f890-4446-94b8-0cf749cfe9d2
+
 	column Mouvement_Stock_ID
 		dataType: string
 		lineageTag: f0343b3f-6c49-40ad-aa68-f3c4c0b429b7
@@ -192,4 +210,3 @@ table StockTable
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
-

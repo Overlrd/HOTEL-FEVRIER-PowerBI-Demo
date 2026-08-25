@@ -65,6 +65,19 @@ table OrderTable
 		formatString: 0
 		lineageTag: 3d1274f5-3699-476f-8737-ba10c84cfe07
 
+	measure 'Chiffre d''affaires affiché' =
+			VAR Montant = [Chiffre d'affaires]
+			VAR ValeurAbsolue = ABS(Montant)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISBLANK(Montant), BLANK(),
+			    ValeurAbsolue >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			    ValeurAbsolue >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			    FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			)
+		lineageTag: b57c22b0-b9a4-46da-87e4-6f78eaaef240
+
 	column Commande_ID
 		dataType: string
 		lineageTag: 49144fc1-295b-4459-8cf4-e6398b3958fb
@@ -250,4 +263,3 @@ table OrderTable
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
-

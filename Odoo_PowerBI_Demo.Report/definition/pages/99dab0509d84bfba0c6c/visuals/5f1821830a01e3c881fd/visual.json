@@ -23,11 +23,11 @@
                       "Entity": "CashTable"
                     }
                   },
-                  "Property": "Décaissements"
+                  "Property": "Décaissements affichés"
                 }
               },
-              "queryRef": "CashTable.Décaissements",
-              "nativeQueryRef": "Décaissements"
+              "queryRef": "CashTable.Décaissements affichés",
+              "nativeQueryRef": "Décaissements affichés"
             }
           ]
         }
@@ -76,31 +76,10 @@
                 }
               }
             },
-            "customFormatString": {
-              "expr": {
-                "Literal": {
-                  "Value": "'0,, \"M XOF\"'"
-                }
-              }
-            },
             "horizontalAlignment": {
               "expr": {
                 "Literal": {
                   "Value": "'center'"
-                }
-              }
-            },
-            "labelDisplayUnits": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
-            },
-            "labelPrecision": {
-              "expr": {
-                "Literal": {
-                  "Value": "0L"
                 }
               }
             }

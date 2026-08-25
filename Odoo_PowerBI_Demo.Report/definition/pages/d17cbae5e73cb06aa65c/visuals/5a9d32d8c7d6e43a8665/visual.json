@@ -23,11 +23,11 @@
                       "Entity": "OccupancyTable"
                     }
                   },
-                  "Property": "Revenus des chambres"
+                  "Property": "Revenus des chambres affichés"
                 }
               },
-              "queryRef": "OccupancyTable.Revenus des chambres",
-              "nativeQueryRef": "Revenus des chambres"
+              "queryRef": "OccupancyTable.Revenus des chambres affichés",
+              "nativeQueryRef": "Revenus des chambres affichés"
             }
           ]
         }
@@ -76,31 +76,10 @@
                 }
               }
             },
-            "customFormatString": {
-              "expr": {
-                "Literal": {
-                  "Value": "'0,, \"M XOF\"'"
-                }
-              }
-            },
             "horizontalAlignment": {
               "expr": {
                 "Literal": {
                   "Value": "'center'"
-                }
-              }
-            },
-            "labelDisplayUnits": {
-              "expr": {
-                "Literal": {
-                  "Value": "1D"
-                }
-              }
-            },
-            "labelPrecision": {
-              "expr": {
-                "Literal": {
-                  "Value": "0L"
                 }
               }
             }
