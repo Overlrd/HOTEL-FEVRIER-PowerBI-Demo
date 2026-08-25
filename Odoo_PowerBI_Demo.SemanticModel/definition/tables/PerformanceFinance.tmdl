@@ -70,19 +70,19 @@ table PerformanceFinance
 		formatString: 0.0%
 		lineageTag: f061cf65-96dc-49c1-b93f-10e40543dc56
 
-	measure 'Budget CA' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]), BudgetMensuel['Ligne_P&L'] = "Chiffre d'affaires")
+	measure 'Budget CA' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]), BudgetMensuel[Ligne_P&L] = "Chiffre d'affaires")
 		formatString: #,0
 		lineageTag: ce0aadb3-248e-47f8-9a05-7e2f10271533
 
-	measure 'Budget achats directs' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]), BudgetMensuel['Ligne_P&L'] = "Achats directs")
+	measure 'Budget achats directs' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]), BudgetMensuel[Ligne_P&L] = "Achats directs")
 		formatString: #,0
 		lineageTag: 70131853-630f-44c4-92f0-e58f8214947d
 
-	measure 'Budget personnel' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]), BudgetMensuel['Ligne_P&L'] = "Personnel")
+	measure 'Budget personnel' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]), BudgetMensuel[Ligne_P&L] = "Personnel")
 		formatString: #,0
 		lineageTag: 80017eeb-d5b4-4771-86a5-3af2d3fd49fc
 
-	measure 'Budget charges exploitation' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]), BudgetMensuel['Ligne_P&L'] = "Charges d'exploitation")
+	measure 'Budget charges exploitation' = CALCULATE(SUM(BudgetMensuel[Budget_XOF]), BudgetMensuel[Ligne_P&L] = "Charges d'exploitation")
 		formatString: #,0
 		lineageTag: 81a51b70-3408-4211-b670-03344c57d37a
 
