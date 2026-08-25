@@ -2,15 +2,16 @@ RAPPORT POWER BI — DÉMO HÔTEL 2 FÉVRIER
 
 1. Double-cliquez sur Odoo_PowerBI_Demo.pbip.
 2. Si Power BI demande d'appliquer les modifications externes, cliquez sur « Appliquer ».
-3. Attendez le chargement des quatre pages du rapport.
+3. Si une authentification est demandée, choisissez « Compte d'organisation » pour accéder au fichier SharePoint.
+4. Attendez le chargement des quatre pages du rapport.
 
 Pages incluses :
-- Synthèse DAF
-- Trésorerie & Créances
+- Tableau de bord DAF
+- Trésorerie et créances
 - Exploitation hôtelière
-- RH & Stocks
+- Ressources humaines et stocks
 
-Le fichier Excel source est attendu ici :
-C:\Users\Augustin\Documents\HOTEL2FEVRIER\Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx
+Source de données :
+- Fichier SharePoint Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx
 
 Si les données sont déjà visibles, il n'est pas nécessaire d'actualiser avant la démonstration.

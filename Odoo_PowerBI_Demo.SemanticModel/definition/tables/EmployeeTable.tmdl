@@ -34,7 +34,8 @@ table EmployeeTable
 		annotation SummarizationSetBy = Automatic
 
 	column Date_Embauche
-		dataType: string
+		dataType: dateTime
+		formatString: Long Date
 		lineageTag: bc40bdc1-fa41-4d80-81d5-43839b6014a5
 		summarizeBy: none
 		sourceColumn: Date_Embauche
@@ -42,9 +43,10 @@ table EmployeeTable
 		annotation SummarizationSetBy = Automatic
 
 	column Salaire_Base_Mensuel
-		dataType: string
+		dataType: int64
+		formatString: 0
 		lineageTag: d3b47ab4-7600-4ef1-a377-1ec032e45566
-		summarizeBy: none
+		summarizeBy: sum
 		sourceColumn: Salaire_Base_Mensuel
 
 		annotation SummarizationSetBy = Automatic
@@ -63,9 +65,10 @@ table EmployeeTable
 				let
 				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
 				    Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
-				    EmployeeTable_Table = Source{[Item="EmployeeTable",Kind="Table"]}[Data]
+				    EmployeeTable_Table = Source{[Item="EmployeeTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(EmployeeTable_Table,{{"Employé_ID", type text}, {"Nom_Employé", type text}, {"Département", type text}, {"Type_Contrat", type text}, {"Date_Embauche", type date}, {"Salaire_Base_Mensuel", Int64.Type}, {"Statut", type text}})
 				in
-				    EmployeeTable_Table
+				    #"Changed Type"
 
-	annotation PBI_ResultType = Exception
+	annotation PBI_ResultType = Table
 

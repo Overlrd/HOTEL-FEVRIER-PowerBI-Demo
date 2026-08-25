@@ -115,17 +115,17 @@
             },
             {
               "field": {
-                "Column": {
+                "Measure": {
                   "Expression": {
                     "SourceRef": {
                       "Entity": "OccupancyTable"
                     }
                   },
-                  "Property": "RevPAR"
+                  "Property": "Revenu par chambre disponible"
                 }
               },
-              "queryRef": "OccupancyTable.RevPAR",
-              "nativeQueryRef": "RevPAR"
+              "queryRef": "OccupancyTable.Revenu par chambre disponible",
+              "nativeQueryRef": "Revenu par chambre disponible"
             },
             {
               "field": {

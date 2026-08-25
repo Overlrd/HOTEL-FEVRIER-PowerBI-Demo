@@ -23,11 +23,11 @@
                       "Entity": "OccupancyTable"
                     }
                   },
-                  "Property": "RevPAR_DAF"
+                  "Property": "Revenu par chambre disponible"
                 }
               },
-              "queryRef": "OccupancyTable.RevPAR_DAF",
-              "nativeQueryRef": "RevPAR_DAF"
+              "queryRef": "OccupancyTable.Revenu par chambre disponible",
+              "nativeQueryRef": "Revenu par chambre disponible"
             }
           ]
         }
@@ -109,7 +109,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'RevPAR'"
+                  "Value": "'Revenu par chambre disponible'"
                 }
               }
             },

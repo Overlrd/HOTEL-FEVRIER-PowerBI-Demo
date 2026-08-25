@@ -7,16 +7,17 @@ table OccupancyTable
 			    SUM(OccupancyTable[Chambres_Vendues]),
 			    SUM(OccupancyTable[Chambres_Disponibles])
 			)
+		formatString: 0.0%
 		lineageTag: 615b1014-23b2-47c5-a722-e95a2b126178
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Revenu chambres' = SUM(OccupancyTable[Revenu_Chambres])
-		formatString: #,0
+	measure 'Revenus des chambres' = SUM(OccupancyTable[Revenu_Chambres])
+		formatString: #,0 "FCFA"
 		lineageTag: 94057c0a-aa0a-5bb9-900c-e8341b759d37
 
-	measure RevPAR_DAF = DIVIDE(SUM(OccupancyTable[Revenu_Chambres]), SUM(OccupancyTable[Chambres_Disponibles]))
-		formatString: #,0
+	measure 'Revenu par chambre disponible' = DIVIDE(SUM(OccupancyTable[Revenu_Chambres]), SUM(OccupancyTable[Chambres_Disponibles]))
+		formatString: #,0 "FCFA"
 		lineageTag: e0a92ad3-4c93-59fa-a9df-ab116c1e6329
 
 	measure 'Chambres vendues' = SUM(OccupancyTable[Chambres_Vendues])

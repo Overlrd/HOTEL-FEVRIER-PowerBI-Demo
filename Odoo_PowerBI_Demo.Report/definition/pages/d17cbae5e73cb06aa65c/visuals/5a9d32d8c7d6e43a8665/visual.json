@@ -23,11 +23,11 @@
                       "Entity": "OccupancyTable"
                     }
                   },
-                  "Property": "Revenu chambres"
+                  "Property": "Revenus des chambres"
                 }
               },
-              "queryRef": "OccupancyTable.Revenu chambres",
-              "nativeQueryRef": "Revenu chambres"
+              "queryRef": "OccupancyTable.Revenus des chambres",
+              "nativeQueryRef": "Revenus des chambres"
             }
           ]
         }
@@ -109,7 +109,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Revenu chambres'"
+                  "Value": "'Revenus des chambres'"
                 }
               }
             },
