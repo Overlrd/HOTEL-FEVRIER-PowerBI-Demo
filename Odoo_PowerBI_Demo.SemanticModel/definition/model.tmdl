@@ -1,5 +1,5 @@
 model Model
-	culture: fr-FR
+	culture: en-US
 	defaultPowerBIDataSourceVersion: powerBI_V3
 	sourceQueryCulture: en-US
 	valueFilterBehavior: independent
@@ -35,5 +35,5 @@ ref table ProductTable
 ref table StockTable
 ref table LocalDateTable_cc984bd5-7d24-4593-8964-011f7c72efff
 
-ref cultureInfo fr-FR
+ref cultureInfo en-US
 
