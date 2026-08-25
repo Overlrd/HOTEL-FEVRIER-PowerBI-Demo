@@ -3,11 +3,11 @@
   "name": "efe50eb7dc7e9a64fcee",
   "position": {
     "x": 510,
-    "y": 105,
-    "z": 10,
-    "height": 155,
-    "width": 430,
-    "tabOrder": 10
+    "y": 140,
+    "z": 21,
+    "height": 140,
+    "width": 250,
+    "tabOrder": 21
   },
   "visual": {
     "visualType": "cardVisual",
@@ -54,7 +54,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "28D"
+                  "Value": "24D"
                 }
               }
             },
@@ -86,7 +86,7 @@
             "horizontalAlignment": {
               "expr": {
                 "Literal": {
-                  "Value": "'left'"
+                  "Value": "'center'"
                 }
               }
             }
@@ -123,7 +123,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "11D"
                 }
               }
             },
@@ -141,7 +141,7 @@
             "horizontalAlignment": {
               "expr": {
                 "Literal": {
-                  "Value": "'left'"
+                  "Value": "'center'"
                 }
               }
             }
@@ -256,7 +256,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#D9E2EA'"
+                      "Value": "'#DDE5EC'"
                     }
                   }
                 }

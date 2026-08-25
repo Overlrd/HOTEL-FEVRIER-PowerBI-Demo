@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "1c8ae25df881c4d5ef1b",
   "position": {
-    "x": 0,
-    "y": 0,
-    "z": 0,
-    "height": 82,
-    "width": 1920,
+    "x": 230,
+    "y": 20,
+    "z": 1,
+    "height": 90,
+    "width": 1650,
     "tabOrder": 0
   },
   "visual": {
@@ -24,7 +24,7 @@
                       "fontFamily": "Segoe UI Semibold",
                       "fontSize": "25px",
                       "fontWeight": "bold",
-                      "color": "#FFFFFF"
+                      "color": "#234F99"
                     }
                   }
                 ],
@@ -37,7 +37,7 @@
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "11px",
-                      "color": "#D8E4EC"
+                      "color": "#667085"
                     }
                   }
                 ],
@@ -64,7 +64,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#12344D'"
+                      "Value": "'#FFFFFF'"
                     }
                   }
                 }
@@ -86,7 +86,32 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#E2E8F0'"
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "width": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
                 }
               }
             }
@@ -99,21 +124,21 @@
             "top": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
+                  "Value": "12D"
                 }
               }
             },
             "bottom": {
               "expr": {
                 "Literal": {
-                  "Value": "6D"
+                  "Value": "8D"
                 }
               }
             },
             "left": {
               "expr": {
                 "Literal": {
-                  "Value": "32D"
+                  "Value": "24D"
                 }
               }
             },
