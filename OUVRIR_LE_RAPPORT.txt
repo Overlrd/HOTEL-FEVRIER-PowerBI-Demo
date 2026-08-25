@@ -6,22 +6,23 @@ RAPPORT POWER BI — DÉMO HÔTEL 2 FÉVRIER
 4. Attendez le chargement des six pages visibles du rapport.
 
 Pages visibles :
-- Tableau de bord DAF
-- Trésorerie et BFR
-- Exploitation hôtelière
+- Vue d'ensemble
+- Trésorerie
+- Exploitation
 - Ressources humaines
 - Achats et stocks
 - Performance financière
 
 Pages contextuelles masquées :
-- « Détail facture et relance » s'ouvre depuis la table de recouvrement de la page Trésorerie et BFR.
-- « Détail performance » s'ouvre depuis la matrice de la page Performance financière via « Voir le détail ».
-- Les pages « Info-bulle » affichent définition, budget et comparaison de période au survol des KPI financiers.
+- « Détail facture et relance » s'ouvre depuis la page Trésorerie.
+- « Détail performance » s'ouvre depuis la page Performance financière via « Voir le détail ».
+- Les pages « Info-bulle » donnent du contexte au survol des indicateurs.
+- Les pages de détail disposent d'un bouton de retour.
 
 Source de données :
 - Fichier SharePoint Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx
 - BudgetMensuel et ChargesExploitation sont conçues pour la maintenance manuelle et la démonstration.
-- La table Excel SuiviRecouvrement est destinée à la saisie manuelle des responsables, statuts, dates, promesses, commentaires et liens documentaires.
+- La table Excel SuiviRecouvrement est destinée au suivi des responsables, statuts, dates, promesses, commentaires et liens documentaires.
 - Ne pas modifier Facture_ID dans cette table ; conserver une ligne par facture client ouverte.
 
 Périmètre financier :

@@ -1,13 +1,13 @@
 table PointsSuivi
 	lineageTag: 685db3bb-70a6-43ea-90db-5ad268372a38
 
-	measure Valeur = SWITCH(SELECTEDVALUE(PointsSuivi[Indicateur]),"Chiffre d'affaires",[CA HT affiché],"Résultat de gestion",[Résultat gestion affiché],"Taux d'occupation",[Taux d'occupation affiché],"RevPAR",[Revenu par chambre disponible affiché],"Créances échues",[Créances échues affichées],"Trésorerie disponible",[Solde de trésorerie affiché],BLANK())
+	measure Valeur = SWITCH(SELECTEDVALUE(PointsSuivi[Indicateur]),"Chiffre d'affaires",[CA HT affiché],"Résultat de gestion",[Résultat gestion affiché],"Taux d'occupation",[Taux d'occupation affiché],"Revenu par chambre disponible",[Revenu par chambre disponible affiché],"Créances échues",[Créances échues affichées],"Trésorerie disponible",[Solde de trésorerie affiché],BLANK())
 		lineageTag: b812ee5b-a4bc-43bf-a4a7-0272d3634b19
 
-	measure Comparaison = SWITCH(SELECTEDVALUE(PointsSuivi[Indicateur]),"Chiffre d'affaires","Budget : "&FORMAT([Budget CA],"#,0","fr-FR")&" XOF","Résultat de gestion","Budget : "&FORMAT([Budget résultat gestion],"#,0","fr-FR")&" XOF","Taux d'occupation",[Évolution occupation affichée],"RevPAR","Occupation : "&[Taux d'occupation affiché],"Créances échues",[Évolution créances affichée],"Trésorerie disponible",[Évolution trésorerie affichée],BLANK())
+	measure Comparaison = SWITCH(SELECTEDVALUE(PointsSuivi[Indicateur]),"Chiffre d'affaires","Budget : "&FORMAT([Budget CA],"#,0","fr-FR")&" XOF","Résultat de gestion","Budget : "&FORMAT([Budget résultat gestion],"#,0","fr-FR")&" XOF","Taux d'occupation",[Évolution occupation affichée],"Revenu par chambre disponible","Occupation : "&[Taux d'occupation affiché],"Créances échues",[Évolution créances affichée],"Trésorerie disponible",[Évolution trésorerie affichée],BLANK())
 		lineageTag: df15e437-e53b-4b71-8d4d-12660b5a138d
 
-	measure Signal = SWITCH(SELECTEDVALUE(PointsSuivi[Indicateur]),"Chiffre d'affaires",IF([CA HT finance]>=[Budget CA],"Favorable","À suivre"),"Résultat de gestion",IF([Résultat de gestion disponible]>=[Budget résultat gestion],"Favorable","À suivre"),"Taux d'occupation",IF(COALESCE([Évolution occupation dernier mois],0)>=0,"Favorable","À suivre"),"RevPAR",IF(COALESCE([Revenu par chambre disponible],0)>0,"Favorable","À suivre"),"Créances échues",IF(COALESCE([Créances échues],0)=0,"Favorable","À suivre"),"Trésorerie disponible",IF(COALESCE([Solde trésorerie],0)>=0,"Favorable","À suivre"),BLANK())
+	measure Signal = SWITCH(SELECTEDVALUE(PointsSuivi[Indicateur]),"Chiffre d'affaires",IF([CA HT finance]>=[Budget CA],"Favorable","À suivre"),"Résultat de gestion",IF([Résultat de gestion disponible]>=[Budget résultat gestion],"Favorable","À suivre"),"Taux d'occupation",IF(COALESCE([Évolution occupation dernier mois],0)>=0,"Favorable","À suivre"),"Revenu par chambre disponible",IF(COALESCE([Revenu par chambre disponible],0)>0,"Favorable","À suivre"),"Créances échues",IF(COALESCE([Créances échues],0)=0,"Favorable","À suivre"),"Trésorerie disponible",IF(COALESCE([Solde trésorerie],0)>=0,"Favorable","À suivre"),BLANK())
 		lineageTag: 94bc1236-12b4-4cd6-b60c-edf70cfd9c99
 
 	column Indicateur
@@ -29,4 +29,4 @@ table PointsSuivi
 
 	partition PointsSuivi = calculated
 		mode: import
-		source = DATATABLE("Indicateur",STRING,"Ordre",INTEGER,{{"Chiffre d'affaires",1},{"Résultat de gestion",2},{"Taux d'occupation",3},{"RevPAR",4},{"Créances échues",5},{"Trésorerie disponible",6}})
+		source = DATATABLE("Indicateur",STRING,"Ordre",INTEGER,{{"Chiffre d'affaires",1},{"Résultat de gestion",2},{"Taux d'occupation",3},{"Revenu par chambre disponible",4},{"Créances échues",5},{"Trésorerie disponible",6}})
