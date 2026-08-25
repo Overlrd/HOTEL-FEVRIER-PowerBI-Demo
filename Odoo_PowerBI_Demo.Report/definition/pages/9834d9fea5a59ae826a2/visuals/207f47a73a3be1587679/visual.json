@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "166c565a256de9c489d8",
+  "name": "207f47a73a3be1587679",
   "position": {
-    "x": 240,
-    "y": 655,
-    "z": 40,
-    "height": 385,
-    "width": 1260,
-    "tabOrder": 40
+    "x": 40,
+    "y": 345,
+    "z": 30,
+    "height": 665,
+    "width": 1840,
+    "tabOrder": 30
   },
   "visual": {
     "visualType": "tableEx",
@@ -15,20 +15,6 @@
       "queryState": {
         "Values": {
           "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "CollectionFollowUpTable"
-                    }
-                  },
-                  "Property": "Priorité_Recouvrement"
-                }
-              },
-              "queryRef": "CollectionFollowUpTable.Priorité_Recouvrement",
-              "nativeQueryRef": "Priorité"
-            },
             {
               "field": {
                 "Column": {
@@ -65,6 +51,20 @@
                       "Entity": "CollectionFollowUpTable"
                     }
                   },
+                  "Property": "Date_Facture"
+                }
+              },
+              "queryRef": "CollectionFollowUpTable.Date_Facture",
+              "nativeQueryRef": "Date facture"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CollectionFollowUpTable"
+                    }
+                  },
                   "Property": "Date_Échéance"
                 }
               },
@@ -79,11 +79,25 @@
                       "Entity": "CollectionFollowUpTable"
                     }
                   },
-                  "Property": "Retard_Jours"
+                  "Property": "Montant_TTC"
                 }
               },
-              "queryRef": "CollectionFollowUpTable.Retard_Jours",
-              "nativeQueryRef": "Retard (j)"
+              "queryRef": "CollectionFollowUpTable.Montant_TTC",
+              "nativeQueryRef": "TTC XOF"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CollectionFollowUpTable"
+                    }
+                  },
+                  "Property": "Montant_Payé"
+                }
+              },
+              "queryRef": "CollectionFollowUpTable.Montant_Payé",
+              "nativeQueryRef": "Payé XOF"
             },
             {
               "field": {
@@ -135,6 +149,20 @@
                       "Entity": "CollectionFollowUpTable"
                     }
                   },
+                  "Property": "Date_Dernière_Relance"
+                }
+              },
+              "queryRef": "CollectionFollowUpTable.Date_Dernière_Relance",
+              "nativeQueryRef": "Dernière relance"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CollectionFollowUpTable"
+                    }
+                  },
                   "Property": "Date_Prochaine_Action"
                 }
               },
@@ -149,11 +177,53 @@
                       "Entity": "CollectionFollowUpTable"
                     }
                   },
+                  "Property": "Date_Promesse"
+                }
+              },
+              "queryRef": "CollectionFollowUpTable.Date_Promesse",
+              "nativeQueryRef": "Date promise"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CollectionFollowUpTable"
+                    }
+                  },
                   "Property": "Montant_Promis"
                 }
               },
               "queryRef": "CollectionFollowUpTable.Montant_Promis",
-              "nativeQueryRef": "Promesse XOF"
+              "nativeQueryRef": "Promis XOF"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CollectionFollowUpTable"
+                    }
+                  },
+                  "Property": "Commentaire"
+                }
+              },
+              "queryRef": "CollectionFollowUpTable.Commentaire",
+              "nativeQueryRef": "Commentaire"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CollectionFollowUpTable"
+                    }
+                  },
+                  "Property": "Lien_Document"
+                }
+              },
+              "queryRef": "CollectionFollowUpTable.Lien_Document",
+              "nativeQueryRef": "Document"
             }
           ]
         }
@@ -381,7 +451,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Recouvrements prioritaires — sélectionnez une facture pour ouvrir son détail'"
+                  "Value": "'Fiche de recouvrement — les champs de suivi sont modifiables dans Excel'"
                 }
               }
             },

@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "d858b56b051cc92e831e",
   "position": {
-    "x": 240,
-    "y": 300,
+    "x": 904,
+    "y": 140,
     "z": 22,
-    "height": 140,
-    "width": 250,
+    "height": 130,
+    "width": 312,
     "tabOrder": 22
   },
   "visual": {
@@ -20,14 +20,14 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "InvoiceTable"
+                      "Entity": "CollectionFollowUpTable"
                     }
                   },
-                  "Property": "Créances clients affichées"
+                  "Property": "Encaissements attendus à 30 jours affichés"
                 }
               },
-              "queryRef": "InvoiceTable.Créances clients affichées",
-              "nativeQueryRef": "Créances clients affichées"
+              "queryRef": "CollectionFollowUpTable.Encaissements attendus à 30 jours affichés",
+              "nativeQueryRef": "Encaissements attendus à 30 jours affichés"
             }
           ]
         }
@@ -54,7 +54,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "24D"
+                  "Value": "19D"
                 }
               }
             },
@@ -70,7 +70,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#1F2937'"
+                      "Value": "'#16A69A'"
                     }
                   }
                 }
@@ -102,7 +102,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Créances clients'"
+                  "Value": "'Encaissements attendus — 30 j'"
                 }
               }
             },
@@ -116,7 +116,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "11D"
+                  "Value": "10D"
                 }
               }
             },
@@ -189,7 +189,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#F2994A'"
+                      "Value": "'#16A69A'"
                     }
                   }
                 }

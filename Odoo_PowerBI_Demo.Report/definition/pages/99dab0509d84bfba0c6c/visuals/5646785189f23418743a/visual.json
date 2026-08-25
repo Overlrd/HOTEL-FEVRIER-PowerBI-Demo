@@ -1,129 +1,69 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "19e51d22cb7da1c8a17d",
+  "name": "5646785189f23418743a",
   "position": {
-    "x": 1050,
+    "x": 1520,
     "y": 300,
-    "z": 31,
+    "z": 32,
     "height": 300,
-    "width": 450,
-    "tabOrder": 31
+    "width": 360,
+    "tabOrder": 32
   },
   "visual": {
     "visualType": "clusteredBarChart",
     "query": {
       "queryState": {
-        "Category": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "CollectionFollowUpTable"
-                    }
-                  },
-                  "Property": "Tranche_Retard_Normalisée"
-                }
-              },
-              "queryRef": "CollectionFollowUpTable.Tranche_Retard_Normalisée",
-              "nativeQueryRef": "Tranche de retard"
-            }
-          ]
-        },
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "CollectionFollowUpTable"
-                    }
-                  },
-                  "Property": "Créances suivies"
-                }
-              },
-              "queryRef": "CollectionFollowUpTable.Créances suivies",
-              "nativeQueryRef": "Créances"
-            }
-          ]
-        },
-        "Tooltips": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "CollectionFollowUpTable"
-                    }
-                  },
-                  "Property": "Créances suivies affichées"
-                }
-              },
-              "queryRef": "CollectionFollowUpTable.Créances suivies affichées",
-              "nativeQueryRef": "Montant"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "CollectionFollowUpTable"
-                    }
-                  },
-                  "Property": "Nombre de factures suivies"
-                }
-              },
-              "queryRef": "CollectionFollowUpTable.Nombre de factures suivies",
-              "nativeQueryRef": "Factures"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "CollectionFollowUpTable"
-                    }
-                  },
-                  "Property": "Plus ancien retard affiché"
-                }
-              },
-              "queryRef": "CollectionFollowUpTable.Plus ancien retard affiché",
-              "nativeQueryRef": "Plus ancien retard"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "CollectionFollowUpTable"
-                    }
-                  },
-                  "Property": "Client principal des créances"
-                }
-              },
-              "queryRef": "CollectionFollowUpTable.Client principal des créances",
-              "nativeQueryRef": "Client principal"
-            }
-          ]
-        }
+          "Category": {
+            "projections": [
+              {
+                "field": {
+                  "Column": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "InvoiceTable"
+                      }
+                    },
+                    "Property": "Nom_Partenaire"
+                  }
+                },
+                "queryRef": "InvoiceTable.Nom_Partenaire",
+                "nativeQueryRef": "Fournisseur"
+              }
+            ]
+          },
+          "Y": {
+            "projections": [
+              {
+                "field": {
+                  "Measure": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "InvoiceTable"
+                      }
+                    },
+                    "Property": "Règlements fournisseurs à 30 jours"
+                  }
+                },
+                "queryRef": "InvoiceTable.Règlements fournisseurs à 30 jours",
+                "nativeQueryRef": "À payer"
+              }
+            ]
+          }
       },
       "sortDefinition": {
         "sort": [
           {
             "field": {
-              "Column": {
+              "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "CollectionFollowUpTable"
+                    "Entity": "InvoiceTable"
                   }
                 },
-                "Property": "Tranche_Retard_Normalisée"
+                "Property": "Règlements fournisseurs à 30 jours"
               }
             },
-            "direction": "Ascending"
+            "direction": "Descending"
           }
         ],
         "isDefaultSort": false
@@ -315,7 +255,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Ancienneté des créances — cliquez pour filtrer'"
+                  "Value": "'Fournisseurs à payer sous 30 jours'"
                 }
               }
             },
@@ -329,7 +269,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "14D"
+                  "Value": "13D"
                 }
               }
             },

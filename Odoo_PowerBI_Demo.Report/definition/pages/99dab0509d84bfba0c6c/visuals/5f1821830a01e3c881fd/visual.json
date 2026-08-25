@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "5f1821830a01e3c881fd",
   "position": {
-    "x": 510,
-    "y": 300,
+    "x": 1236,
+    "y": 140,
     "z": 23,
-    "height": 140,
-    "width": 250,
+    "height": 130,
+    "width": 312,
     "tabOrder": 23
   },
   "visual": {
@@ -20,14 +20,14 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "CashTable"
+                      "Entity": "InvoiceTable"
                     }
                   },
-                  "Property": "Décaissements affichés"
+                  "Property": "Règlements fournisseurs à 30 jours affichés"
                 }
               },
-              "queryRef": "CashTable.Décaissements affichés",
-              "nativeQueryRef": "Décaissements affichés"
+              "queryRef": "InvoiceTable.Règlements fournisseurs à 30 jours affichés",
+              "nativeQueryRef": "Règlements fournisseurs à 30 jours affichés"
             }
           ]
         }
@@ -54,7 +54,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "24D"
+                  "Value": "19D"
                 }
               }
             },
@@ -70,7 +70,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#1F2937'"
+                      "Value": "'#F2A23A'"
                     }
                   }
                 }
@@ -102,7 +102,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Décaissements'"
+                  "Value": "'Règlements fournisseurs — 30 j'"
                 }
               }
             },
@@ -116,7 +116,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "11D"
+                  "Value": "10D"
                 }
               }
             },
@@ -189,7 +189,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#D64545'"
+                      "Value": "'#F2A23A'"
                     }
                   }
                 }

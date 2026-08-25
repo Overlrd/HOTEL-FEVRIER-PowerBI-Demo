@@ -45,6 +45,33 @@ table InvoiceTable
 			)
 		lineageTag: 4444f137-8559-4237-83e3-c0f4b9209790
 
+	measure 'Règlements fournisseurs à 30 jours' =
+			VAR DateFin = MAX(DateTable[Date])
+			RETURN
+			CALCULATE(
+			    SUM(InvoiceTable[Solde]),
+			    REMOVEFILTERS(DateTable),
+			    InvoiceTable[Type_Facture] = "Fournisseur",
+			    InvoiceTable[Solde] > 0,
+			    InvoiceTable[Date_Échéance] >= DateFin,
+			    InvoiceTable[Date_Échéance] <= DateFin + 30
+			)
+		formatString: 0
+		lineageTag: 34c4ef54-b93c-4a43-9780-fcf23e4087d7
+
+	measure 'Règlements fournisseurs à 30 jours affichés' =
+			VAR Montant = [Règlements fournisseurs à 30 jours]
+			VAR ValeurAbsolue = ABS(Montant)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISBLANK(Montant), "0 XOF",
+			    ValeurAbsolue >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			    ValeurAbsolue >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			    FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			)
+		lineageTag: 4919d02c-482e-4e30-b55d-f164cd49cc2a
+
 	measure 'Créances échues' =
 			CALCULATE(
 			    SUM(InvoiceTable[Solde]),

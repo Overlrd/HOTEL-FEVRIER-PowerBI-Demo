@@ -77,5 +77,4 @@ table PartnerTable
 				in
 				    #"Changed Type"
 
-	annotation PBI_ResultType = Exception
-
+	annotation PBI_ResultType = Table

@@ -1,95 +1,53 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "efe50eb7dc7e9a64fcee",
+  "name": "b7ab6f3be36193a588bd",
   "position": {
-    "x": 572,
-    "y": 140,
-    "z": 21,
-    "height": 130,
-    "width": 312,
-    "tabOrder": 21
+    "x": 1520,
+    "y": 755,
+    "z": 42,
+    "height": 120,
+    "width": 360,
+    "tabOrder": 42
   },
   "visual": {
-    "visualType": "cardVisual",
+    "visualType": "slicer",
     "query": {
       "queryState": {
-        "Data": {
+        "Values": {
           "projections": [
             {
               "field": {
-                "Measure": {
+                "Column": {
                   "Expression": {
                     "SourceRef": {
                       "Entity": "CollectionFollowUpTable"
                     }
                   },
-                  "Property": "Taux de créances échues affiché"
+                  "Property": "Tranche_Retard_Normalisée"
                 }
               },
-              "queryRef": "CollectionFollowUpTable.Taux de créances échues affiché",
-              "nativeQueryRef": "Taux de créances échues affiché"
+              "queryRef": "CollectionFollowUpTable.Tranche_Retard_Normalisée",
+              "nativeQueryRef": "Tranche_Retard_Normalisée"
             }
           ]
         }
       }
     },
     "objects": {
-      "value": [
+      "data": [
         {
           "properties": {
-            "show": {
+            "mode": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "fontFamily": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Segoe UI Semibold'"
-                }
-              }
-            },
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "21D"
-                }
-              }
-            },
-            "bold": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "fontColor": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#E76F51'"
-                    }
-                  }
-                }
-              }
-            },
-            "horizontalAlignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'center'"
+                  "Value": "'Basic'"
                 }
               }
             }
-          },
-          "selector": {
-            "id": "default"
           }
         }
       ],
-      "label": [
+      "header": [
         {
           "properties": {
             "show": {
@@ -102,21 +60,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Taux de créances échues'"
-                }
-              }
-            },
-            "fontFamily": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Segoe UI'"
-                }
-              }
-            },
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "10D"
+                  "Value": "'Tranche de retard'"
                 }
               }
             },
@@ -125,79 +69,23 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#667085'"
+                      "Value": "'#1F2937'"
                     }
                   }
                 }
               }
             },
-            "horizontalAlignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'center'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "id": "default"
-          }
-        }
-      ],
-      "outline": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          },
-          "selector": {
-            "id": "default"
-          }
-        }
-      ],
-      "accentBar": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "position": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Left'"
-                }
-              }
-            },
-            "width": {
-              "expr": {
-                "Literal": {
-                  "Value": "6D"
-                }
-              }
-            },
-            "color": {
+            "background": {
               "solid": {
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#E76F51'"
+                      "Value": "'#FFFFFF'"
                     }
                   }
                 }
               }
             }
-          },
-          "selector": {
-            "id": "default"
           }
         }
       ]
@@ -258,7 +146,7 @@
             "radius": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "8D"
                 }
               }
             },
@@ -278,28 +166,28 @@
             "top": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "0D"
                 }
               }
             },
             "bottom": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "0D"
                 }
               }
             },
             "left": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "4D"
                 }
               }
             },
             "right": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "4D"
                 }
               }
             }

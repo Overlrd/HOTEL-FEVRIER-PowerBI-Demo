@@ -1,0 +1,355 @@
+table CollectionFollowUpTable
+	lineageTag: eb8da0c9-5ae3-4599-b8b0-f5f875fc9c8c
+
+	measure 'Créances suivies' = SUM(CollectionFollowUpTable[Solde])
+		formatString: 0
+		lineageTag: ce3ffdee-5dfe-43d0-bb3d-dd9e4ab35706
+
+	measure 'Créances suivies affichées' =
+			VAR Montant = [Créances suivies]
+			VAR ValeurAbsolue = ABS(Montant)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISBLANK(Montant), "0 XOF",
+			    ValeurAbsolue >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			    ValeurAbsolue >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			    FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			)
+		lineageTag: aed32dab-d9d4-4e7c-9939-55d42d2f7745
+
+	measure 'Créances échues suivies' =
+			CALCULATE(
+			    [Créances suivies],
+			    CollectionFollowUpTable[Retard_Jours] > 0
+			)
+		formatString: 0
+		lineageTag: 9642b6e6-7086-4d2b-a3d1-796f2068a446
+
+	measure 'Taux de créances échues' = DIVIDE([Créances échues suivies], [Créances suivies])
+		formatString: 0.0%
+		lineageTag: d75d4749-a97d-4428-af2f-ecadd025d55c
+
+	measure 'Taux de créances échues affiché' =
+			VAR Taux = [Taux de créances échues]
+			RETURN IF(ISBLANK(Taux), "0,0 %", FORMAT(Taux, "0.0 %", "fr-FR"))
+		lineageTag: fd96a58f-fb80-416f-aef4-5b9976a64ec9
+
+	measure 'Encaissements attendus à 30 jours' =
+			VAR DateFin = MAX(DateTable[Date])
+			RETURN
+			CALCULATE(
+			    [Créances suivies],
+			    CollectionFollowUpTable[Date_Échéance] >= DateFin,
+			    CollectionFollowUpTable[Date_Échéance] <= DateFin + 30
+			)
+		formatString: 0
+		lineageTag: ce937bd9-5f76-4e1a-b6a4-2a05c90ab2fc
+
+	measure 'Encaissements attendus à 30 jours affichés' =
+			VAR Montant = [Encaissements attendus à 30 jours]
+			VAR ValeurAbsolue = ABS(Montant)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISBLANK(Montant), "0 XOF",
+			    ValeurAbsolue >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			    ValeurAbsolue >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			    FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			)
+		lineageTag: 22187991-018f-4225-a297-d1592ed0de15
+
+	measure 'Promesses attendues à 30 jours' =
+			VAR DateFin = MAX(DateTable[Date])
+			RETURN
+			CALCULATE(
+			    SUM(CollectionFollowUpTable[Montant_Promis]),
+			    CollectionFollowUpTable[Date_Promesse] >= DateFin,
+			    CollectionFollowUpTable[Date_Promesse] <= DateFin + 30
+			)
+		formatString: 0
+		lineageTag: 17b8e584-98a1-4162-990b-f0b5b4c3f869
+
+	measure 'Promesses attendues à 30 jours affichées' =
+			VAR Montant = [Promesses attendues à 30 jours]
+			VAR ValeurAbsolue = ABS(Montant)
+			RETURN
+			SWITCH(
+			    TRUE(),
+			    ISBLANK(Montant), "0 XOF",
+			    ValeurAbsolue >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			    ValeurAbsolue >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			    FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			)
+		lineageTag: cefb39de-7869-44ce-9bf8-c34b2fd4ce85
+
+	measure 'Nombre de factures suivies' = DISTINCTCOUNT(CollectionFollowUpTable[Facture_ID])
+		formatString: 0
+		lineageTag: 8abe82cc-14d5-4faa-8ae7-ed193b0ecd1d
+
+	measure 'Plus ancien retard' = MAX(CollectionFollowUpTable[Retard_Jours])
+		formatString: 0
+		lineageTag: fc31a087-64d1-428d-a1e1-70291b21747b
+
+	measure 'Plus ancien retard affiché' = FORMAT([Plus ancien retard], "#,0", "fr-FR") & " jours"
+		lineageTag: cdff5d07-4aa8-48d2-9110-4e1212b6ffe9
+
+	measure 'Client principal des créances' =
+			VAR Clients =
+			    TOPN(
+			        1,
+			        SUMMARIZE(
+			            CollectionFollowUpTable,
+			            CollectionFollowUpTable[Nom_Partenaire],
+			            "Montant", [Créances suivies]
+			        ),
+			        [Montant], DESC,
+			        CollectionFollowUpTable[Nom_Partenaire], ASC
+			    )
+			RETURN MAXX(Clients, CollectionFollowUpTable[Nom_Partenaire])
+		lineageTag: a2a1a46e-0eb6-4979-9c13-f03c9c1707d4
+
+	measure 'Facture sélectionnée' = SELECTEDVALUE(CollectionFollowUpTable[Facture_ID], "Sélection multiple")
+		lineageTag: f3ae5957-91f9-42a0-800f-b1cca7f4f5d1
+
+	measure 'Client sélectionné' = SELECTEDVALUE(CollectionFollowUpTable[Nom_Partenaire], "Sélection multiple")
+		lineageTag: 472db8db-c2f2-4a9b-ac0d-a0afe0ba1dda
+
+	measure 'Solde facture affiché' =
+			VAR Montant = SELECTEDVALUE(CollectionFollowUpTable[Solde])
+			RETURN IF(ISBLANK(Montant), BLANK(), FORMAT(Montant, "#,0", "fr-FR") & " XOF")
+		lineageTag: ae8fa29c-0628-4b69-944e-29063d29b44d
+
+	measure 'Retard facture affiché' =
+			VAR Jours = SELECTEDVALUE(CollectionFollowUpTable[Retard_Jours])
+			RETURN IF(ISBLANK(Jours), BLANK(), FORMAT(Jours, "#,0", "fr-FR") & " jours")
+		lineageTag: e769668c-03af-4ad9-8923-704b2629f712
+
+	measure 'Statut relance sélectionné' = SELECTEDVALUE(CollectionFollowUpTable[Statut_Relance], "Sélection multiple")
+		lineageTag: 74b312e1-28a1-431a-8d42-d5d1f67ad89a
+
+	column Facture_ID
+		dataType: string
+		lineageTag: 551717f3-bbbe-4718-851d-4219d72132a8
+		summarizeBy: none
+		sourceColumn: Facture_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Responsable
+		dataType: string
+		lineageTag: 7e8b8074-c1c2-476f-93cb-3178ae4cd04a
+		summarizeBy: none
+		sourceColumn: Responsable
+
+		annotation SummarizationSetBy = Automatic
+
+	column Statut_Relance
+		dataType: string
+		lineageTag: b06135cf-aee5-446e-ab06-4eb271c3723e
+		summarizeBy: none
+		sourceColumn: Statut_Relance
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date_Dernière_Relance
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: ca01972e-5d56-4e4d-88df-bfa87ed392c2
+		summarizeBy: none
+		sourceColumn: Date_Dernière_Relance
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Date_Prochaine_Action
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 0ab8a905-d4db-4282-8fef-9ec6a1d4feaa
+		summarizeBy: none
+		sourceColumn: Date_Prochaine_Action
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Date_Promesse
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 4fbeb969-df82-4fb5-b590-93afe9a41e81
+		summarizeBy: none
+		sourceColumn: Date_Promesse
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Montant_Promis
+		dataType: int64
+		formatString: 0
+		lineageTag: 1a24ac60-ef89-41f9-9f7b-b0e4ea0267ac
+		summarizeBy: sum
+		sourceColumn: Montant_Promis
+
+		annotation SummarizationSetBy = Automatic
+
+	column Commentaire
+		dataType: string
+		lineageTag: 8798b318-6364-4652-8aa2-f20e06050365
+		summarizeBy: none
+		sourceColumn: Commentaire
+
+		annotation SummarizationSetBy = Automatic
+
+	column Lien_Document
+		dataType: string
+		lineageTag: ffc27eb5-1d2f-46fd-8456-3ff8cdbd15f9
+		summarizeBy: none
+		sourceColumn: Lien_Document
+		dataCategory: WebUrl
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nom_Partenaire
+		dataType: string
+		lineageTag: 18da3dd9-18f6-4582-86b9-3b86b9abe38e
+		summarizeBy: none
+		sourceColumn: Nom_Partenaire
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date_Facture
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 0c938bb5-0025-4dc1-a9d2-5a4467e9229c
+		summarizeBy: none
+		sourceColumn: Date_Facture
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Date_Échéance
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: b9db741e-84a4-40ff-9cf2-e8f0fc329529
+		summarizeBy: none
+		sourceColumn: Date_Échéance
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Montant_TTC
+		dataType: int64
+		formatString: 0
+		lineageTag: 796ab534-d281-4188-9b82-4109cb7bb961
+		summarizeBy: sum
+		sourceColumn: Montant_TTC
+
+		annotation SummarizationSetBy = Automatic
+
+	column Montant_Payé
+		dataType: int64
+		formatString: 0
+		lineageTag: 2e11a1b5-b781-4b8e-9230-3e1eb852f2c4
+		summarizeBy: sum
+		sourceColumn: Montant_Payé
+
+		annotation SummarizationSetBy = Automatic
+
+	column Solde
+		dataType: int64
+		formatString: 0
+		lineageTag: daebbcce-dded-4370-9c27-13a00d7c3d40
+		summarizeBy: sum
+		sourceColumn: Solde
+
+		annotation SummarizationSetBy = Automatic
+
+	column Statut_Paiement
+		dataType: string
+		lineageTag: 8a2f3112-6ab0-43ea-bab8-b93ceda9877f
+		summarizeBy: none
+		sourceColumn: Statut_Paiement
+
+		annotation SummarizationSetBy = Automatic
+
+	column Retard_Jours
+		dataType: int64
+		formatString: 0
+		lineageTag: 6987e26c-b548-43cb-8818-e04ae57ceba7
+		summarizeBy: sum
+		sourceColumn: Retard_Jours
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tranche_Retard
+		dataType: string
+		lineageTag: 063e8bb0-1f13-4ebb-b81f-616fbf79f169
+		summarizeBy: none
+		sourceColumn: Tranche_Retard
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tranche_Retard_Normalisée
+		dataType: string
+		lineageTag: 0d8020d9-7013-4499-bd36-d54431c22a5f
+		summarizeBy: none
+		sourceColumn: Tranche_Retard_Normalisée
+		sortByColumn: Tranche_Retard_Tri
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tranche_Retard_Tri
+		dataType: int64
+		formatString: 0
+		lineageTag: e11f63ac-b332-459f-98fb-022ce6dab449
+		summarizeBy: none
+		sourceColumn: Tranche_Retard_Tri
+
+		annotation SummarizationSetBy = Automatic
+
+	column Priorité_Recouvrement
+		dataType: string
+		lineageTag: 986920ee-184a-4920-8a0f-d76e8aa5e0b4
+		summarizeBy: none
+		sourceColumn: Priorité_Recouvrement
+		sortByColumn: Priorité_Tri
+
+		annotation SummarizationSetBy = Automatic
+
+	column Priorité_Tri
+		dataType: int64
+		formatString: 0
+		lineageTag: 5ebd9f7f-3122-4ff8-8eb9-cbc080ba7821
+		summarizeBy: none
+		sourceColumn: Priorité_Tri
+
+		annotation SummarizationSetBy = Automatic
+
+	partition CollectionFollowUpTable = m
+		mode: import
+		source =
+				let
+				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
+				    Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
+				    InvoiceSource = Source{[Item="InvoiceTable",Kind="Table"]}[Data],
+				    FollowUpSource = Source{[Item="SuiviRecouvrement",Kind="Table"]}[Data],
+				    InvoiceTypes = Table.TransformColumnTypes(InvoiceSource,{{"Facture_ID", type text}, {"Type_Facture", type text}, {"Nom_Partenaire", type text}, {"Date_Facture", type date}, {"Date_Échéance", type date}, {"Montant_TTC", Int64.Type}, {"Montant_Payé", Int64.Type}, {"Solde", Int64.Type}, {"Statut_Paiement", type text}, {"Retard_Jours", Int64.Type}, {"Tranche_Retard", type text}}),
+				    FollowUpTypes = Table.TransformColumnTypes(FollowUpSource,{{"Facture_ID", type text}, {"Responsable", type text}, {"Statut_Relance", type text}, {"Date_Dernière_Relance", type date}, {"Date_Prochaine_Action", type date}, {"Date_Promesse", type date}, {"Montant_Promis", Int64.Type}, {"Commentaire", type text}, {"Lien_Document", type text}}),
+				    Merged = Table.NestedJoin(FollowUpTypes, {"Facture_ID"}, InvoiceTypes, {"Facture_ID"}, "Facture", JoinKind.Inner),
+				    Expanded = Table.ExpandTableColumn(Merged, "Facture", {"Type_Facture", "Nom_Partenaire", "Date_Facture", "Date_Échéance", "Montant_TTC", "Montant_Payé", "Solde", "Statut_Paiement", "Retard_Jours", "Tranche_Retard"}, {"Type_Facture", "Nom_Partenaire", "Date_Facture", "Date_Échéance", "Montant_TTC", "Montant_Payé", "Solde", "Statut_Paiement", "Retard_Jours", "Tranche_Retard"}),
+				    OpenClients = Table.SelectRows(Expanded, each [Type_Facture] = "Client" and [Solde] > 0),
+				    AddAging = Table.AddColumn(OpenClients, "Tranche_Retard_Normalisée", each if [Retard_Jours] <= 0 then "Non échues" else if [Retard_Jours] <= 30 then "0–30 jours" else if [Retard_Jours] <= 60 then "31–60 jours" else if [Retard_Jours] <= 90 then "61–90 jours" else "Plus de 90 jours", type text),
+				    AddAgingSort = Table.AddColumn(AddAging, "Tranche_Retard_Tri", each if [Retard_Jours] <= 0 then 0 else if [Retard_Jours] <= 30 then 1 else if [Retard_Jours] <= 60 then 2 else if [Retard_Jours] <= 90 then 3 else 4, Int64.Type),
+				    AddPriority = Table.AddColumn(AddAgingSort, "Priorité_Recouvrement", each if [Retard_Jours] > 90 or [Solde] >= 20000000 then "Critique" else if [Retard_Jours] > 60 or [Solde] >= 10000000 then "Élevée" else if [Retard_Jours] > 30 or [Solde] >= 5000000 then "Moyenne" else "Normale", type text),
+				    AddPrioritySort = Table.AddColumn(AddPriority, "Priorité_Tri", each if [Priorité_Recouvrement] = "Critique" then 4 else if [Priorité_Recouvrement] = "Élevée" then 3 else if [Priorité_Recouvrement] = "Moyenne" then 2 else 1, Int64.Type),
+				    Selected = Table.SelectColumns(AddPrioritySort,{"Facture_ID", "Responsable", "Statut_Relance", "Date_Dernière_Relance", "Date_Prochaine_Action", "Date_Promesse", "Montant_Promis", "Commentaire", "Lien_Document", "Nom_Partenaire", "Date_Facture", "Date_Échéance", "Montant_TTC", "Montant_Payé", "Solde", "Statut_Paiement", "Retard_Jours", "Tranche_Retard", "Tranche_Retard_Normalisée", "Tranche_Retard_Tri", "Priorité_Recouvrement", "Priorité_Tri"})
+				in
+				    Selected
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table

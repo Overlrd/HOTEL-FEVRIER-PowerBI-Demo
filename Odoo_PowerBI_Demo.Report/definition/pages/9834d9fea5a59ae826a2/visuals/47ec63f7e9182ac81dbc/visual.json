@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "efe50eb7dc7e9a64fcee",
+  "name": "47ec63f7e9182ac81dbc",
   "position": {
-    "x": 572,
-    "y": 140,
-    "z": 21,
-    "height": 130,
-    "width": 312,
-    "tabOrder": 21
+    "x": 776,
+    "y": 195,
+    "z": 12,
+    "height": 120,
+    "width": 344,
+    "tabOrder": 12
   },
   "visual": {
     "visualType": "cardVisual",
@@ -23,11 +23,11 @@
                       "Entity": "CollectionFollowUpTable"
                     }
                   },
-                  "Property": "Taux de créances échues affiché"
+                  "Property": "Solde facture affiché"
                 }
               },
-              "queryRef": "CollectionFollowUpTable.Taux de créances échues affiché",
-              "nativeQueryRef": "Taux de créances échues affiché"
+              "queryRef": "CollectionFollowUpTable.Solde facture affiché",
+              "nativeQueryRef": "Solde facture affiché"
             }
           ]
         }
@@ -54,7 +54,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "21D"
+                  "Value": "18D"
                 }
               }
             },
@@ -102,7 +102,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Taux de créances échues'"
+                  "Value": "'Solde à recouvrer'"
                 }
               }
             },

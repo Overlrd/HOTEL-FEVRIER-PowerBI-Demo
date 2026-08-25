@@ -3,15 +3,21 @@ RAPPORT POWER BI — DÉMO HÔTEL 2 FÉVRIER
 1. Double-cliquez sur Odoo_PowerBI_Demo.pbip.
 2. Si Power BI demande d'appliquer les modifications externes, cliquez sur « Appliquer ».
 3. Si une authentification est demandée, choisissez « Compte d'organisation » pour accéder au fichier SharePoint.
-4. Attendez le chargement des quatre pages du rapport.
+4. Attendez le chargement des cinq pages visibles du rapport.
 
 Pages incluses :
 - Tableau de bord DAF
-- Trésorerie et créances
+- Trésorerie et BFR
 - Exploitation hôtelière
-- Ressources humaines et stocks
+- Ressources humaines
+- Achats et stocks
+
+Page contextuelle :
+- « Détail facture et relance » est une page masquée. Elle s'ouvre depuis la table de recouvrement de la page Trésorerie et BFR.
 
 Source de données :
 - Fichier SharePoint Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx
+- La table Excel SuiviRecouvrement est destinée à la saisie manuelle des responsables, statuts, dates, promesses, commentaires et liens documentaires.
+- Ne pas modifier Facture_ID dans cette table ; conserver une ligne par facture client ouverte.
 
 Si les données sont déjà visibles, il n'est pas nécessaire d'actualiser avant la démonstration.
