@@ -43,5 +43,6 @@ ref table PerformanceFinance
 ref table LignePerformance
 ref table PontResultat
 ref table DetailPerformance
+ref table PointsSuivi
 
 ref cultureInfo en-US
