@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "0a1b2c3d4e5f60718293",
+  "name": "8c596efd621a90a8e2db",
   "position": {
-    "x": 790,
-    "y": 640,
-    "z": 80,
-    "height": 60,
-    "width": 1090,
-    "tabOrder": 80
+    "x": 15,
+    "y": 22,
+    "z": 61,
+    "height": 65,
+    "width": 180,
+    "tabOrder": 61
   },
   "visual": {
     "visualType": "textbox",
@@ -19,29 +19,30 @@
               {
                 "textRuns": [
                   {
-                    "value": "Points à suivre",
+                    "value": "HÔTEL 2 FÉVRIER",
                     "textStyle": {
                       "fontFamily": "Segoe UI Semibold",
                       "fontSize": "16px",
                       "fontWeight": "bold",
-                      "color": "#1F2937"
+                      "color": "#FFFFFF"
                     }
                   }
                 ],
-                "horizontalTextAlignment": "left"
+                "horizontalTextAlignment": "center"
               },
               {
                 "textRuns": [
                   {
-                    "value": "Alertes financières et opérationnelles à examiner en priorité",
+                    "value": "PILOTAGE DAF",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
-                      "fontSize": "10px",
-                      "color": "#667085"
+                      "fontSize": "9px",
+                      "fontWeight": "bold",
+                      "color": "#A7F3D0"
                     }
                   }
                 ],
-                "horizontalTextAlignment": "left"
+                "horizontalTextAlignment": "center"
               }
             ]
           }
@@ -64,7 +65,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#FFFFFF'"
+                      "Value": "'#234F99'"
                     }
                   }
                 }
@@ -86,7 +87,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
                 }
               }
             },
@@ -95,7 +96,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#DDE5EC'"
+                      "Value": "'#E2E8F0'"
                     }
                   }
                 }
@@ -124,28 +125,28 @@
             "top": {
               "expr": {
                 "Literal": {
-                  "Value": "5D"
+                  "Value": "7D"
                 }
               }
             },
             "bottom": {
               "expr": {
                 "Literal": {
-                  "Value": "5D"
+                  "Value": "4D"
                 }
               }
             },
             "left": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
+                  "Value": "4D"
                 }
               }
             },
             "right": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
+                  "Value": "4D"
                 }
               }
             }

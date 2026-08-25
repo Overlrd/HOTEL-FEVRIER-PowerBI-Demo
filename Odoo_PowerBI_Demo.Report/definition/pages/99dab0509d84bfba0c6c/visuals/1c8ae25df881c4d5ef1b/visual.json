@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Trésorerie et créances",
+                    "value": "Trésorerie et BFR",
                     "textStyle": {
                       "fontFamily": "Segoe UI Semibold",
                       "fontSize": "25px",
@@ -33,7 +33,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Suivi des flux, des soldes et du risque client",
+                    "value": "Liquidité, encaissements, décaissements et délais de paiement",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "11px",

@@ -1,40 +1,58 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "b574db2eeeb49b47f2c4",
+  "name": "2596df4d02b4f1c3be9a",
   "position": {
-    "x": 240,
-    "y": 300,
-    "z": 22,
-    "height": 140,
-    "width": 250,
-    "tabOrder": 22
+    "x": 1510,
+    "y": 34,
+    "z": 50,
+    "height": 62,
+    "width": 340,
+    "tabOrder": 1
   },
   "visual": {
-    "visualType": "cardVisual",
+    "visualType": "slicer",
+    "syncGroup": {
+      "groupName": "DateSync",
+      "fieldChanges": true,
+      "filterChanges": true
+    },
     "query": {
       "queryState": {
-        "Data": {
+        "Values": {
           "projections": [
             {
               "field": {
-                "Measure": {
+                "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "StockTable"
+                      "Entity": "DateTable"
                     }
                   },
-                  "Property": "Produits sous seuil affichés"
+                  "Property": "Date"
                 }
               },
-              "queryRef": "StockTable.Produits sous seuil affichés",
-              "nativeQueryRef": "Produits sous seuil affichés"
+              "queryRef": "DateTable.Date",
+              "nativeQueryRef": "Date"
             }
           ]
         }
       }
     },
     "objects": {
-      "value": [
+      "data": [
+        {
+          "properties": {
+            "mode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Between'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "header": [
         {
           "properties": {
             "show": {
@@ -44,24 +62,10 @@
                 }
               }
             },
-            "fontFamily": {
+            "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Segoe UI Semibold'"
-                }
-              }
-            },
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "24D"
-                }
-              }
-            },
-            "bold": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
+                  "Value": "'Période'"
                 }
               }
             },
@@ -76,128 +80,17 @@
                 }
               }
             },
-            "horizontalAlignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'center'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "id": "default"
-          }
-        }
-      ],
-      "label": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "text": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Produits sous seuil'"
-                }
-              }
-            },
-            "fontFamily": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Segoe UI'"
-                }
-              }
-            },
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "11D"
-                }
-              }
-            },
-            "fontColor": {
+            "background": {
               "solid": {
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#667085'"
-                    }
-                  }
-                }
-              }
-            },
-            "horizontalAlignment": {
-              "expr": {
-                "Literal": {
-                  "Value": "'center'"
-                }
-              }
-            }
-          },
-          "selector": {
-            "id": "default"
-          }
-        }
-      ],
-      "outline": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          },
-          "selector": {
-            "id": "default"
-          }
-        }
-      ],
-      "accentBar": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "position": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Left'"
-                }
-              }
-            },
-            "width": {
-              "expr": {
-                "Literal": {
-                  "Value": "6D"
-                }
-              }
-            },
-            "color": {
-              "solid": {
-                "color": {
-                  "expr": {
-                    "Literal": {
-                      "Value": "'#D64545'"
+                      "Value": "'#FFFFFF'"
                     }
                   }
                 }
               }
             }
-          },
-          "selector": {
-            "id": "default"
           }
         }
       ]
@@ -258,7 +151,7 @@
             "radius": {
               "expr": {
                 "Literal": {
-                  "Value": "12D"
+                  "Value": "8D"
                 }
               }
             },
@@ -278,28 +171,28 @@
             "top": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "0D"
                 }
               }
             },
             "bottom": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "0D"
                 }
               }
             },
             "left": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "4D"
                 }
               }
             },
             "right": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "4D"
                 }
               }
             }

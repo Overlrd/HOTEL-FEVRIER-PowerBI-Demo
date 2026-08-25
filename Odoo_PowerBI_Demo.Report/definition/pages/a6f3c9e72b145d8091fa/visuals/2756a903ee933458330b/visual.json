@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "f7e01b029f67b85d9a24",
+  "name": "2756a903ee933458330b",
   "position": {
     "x": 15,
-    "y": 303,
-    "z": 65,
+    "y": 237,
+    "z": 64,
     "height": 58,
     "width": 180,
-    "tabOrder": 65
+    "tabOrder": 64
   },
   "visual": {
     "visualType": "actionButton",
@@ -27,7 +27,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#24B5AE'"
+                      "Value": "'#234F99'"
                     }
                   }
                 }
@@ -56,7 +56,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#24B5AE'"
+                      "Value": "'#234F99'"
                     }
                   }
                 }
@@ -108,7 +108,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Ressources humaines'"
+                  "Value": "'Exploitation'"
                 }
               }
             },
@@ -193,7 +193,7 @@
             "navigationSection": {
               "expr": {
                 "Literal": {
-                  "Value": "'931df8dd8347317259b3'"
+                  "Value": "'d17cbae5e73cb06aa65c'"
                 }
               }
             },

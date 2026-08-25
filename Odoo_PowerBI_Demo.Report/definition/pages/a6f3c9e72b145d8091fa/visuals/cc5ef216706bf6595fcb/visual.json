@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "0a1b2c3d4e5f60718293",
+  "name": "cc5ef216706bf6595fcb",
   "position": {
-    "x": 790,
-    "y": 640,
-    "z": 80,
-    "height": 60,
-    "width": 1090,
-    "tabOrder": 80
+    "x": 0,
+    "y": 0,
+    "z": 0,
+    "height": 1080,
+    "width": 210,
+    "tabOrder": 0
   },
   "visual": {
     "visualType": "textbox",
@@ -19,25 +19,12 @@
               {
                 "textRuns": [
                   {
-                    "value": "Points à suivre",
-                    "textStyle": {
-                      "fontFamily": "Segoe UI Semibold",
-                      "fontSize": "16px",
-                      "fontWeight": "bold",
-                      "color": "#1F2937"
-                    }
-                  }
-                ],
-                "horizontalTextAlignment": "left"
-              },
-              {
-                "textRuns": [
-                  {
-                    "value": "Alertes financières et opérationnelles à examiner en priorité",
+                    "value": "",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
-                      "fontSize": "10px",
-                      "color": "#667085"
+                      "fontSize": "1px",
+                      "fontWeight": "normal",
+                      "color": "#234F99"
                     }
                   }
                 ],
@@ -64,7 +51,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#FFFFFF'"
+                      "Value": "'#234F99'"
                     }
                   }
                 }
@@ -86,7 +73,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
                 }
               }
             },
@@ -95,7 +82,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#DDE5EC'"
+                      "Value": "'#E2E8F0'"
                     }
                   }
                 }
@@ -124,28 +111,28 @@
             "top": {
               "expr": {
                 "Literal": {
-                  "Value": "5D"
+                  "Value": "0D"
                 }
               }
             },
             "bottom": {
               "expr": {
                 "Literal": {
-                  "Value": "5D"
+                  "Value": "0D"
                 }
               }
             },
             "left": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
+                  "Value": "0D"
                 }
               }
             },
             "right": {
               "expr": {
                 "Literal": {
-                  "Value": "10D"
+                  "Value": "0D"
                 }
               }
             }
