@@ -16,7 +16,7 @@ Power BI demo for Hôtel 2 Février, targeted at a DAF / finance-management audi
 
 ## Current visible pages
 
-1. `b439328a601fc7db4685` — Vue d'ensemble
+1. `b439328a601fc7db4685` — Tableau de bord
 2. `99dab0509d84bfba0c6c` — Trésorerie
 3. `d17cbae5e73cb06aa65c` — Exploitation
 4. `931df8dd8347317259b3` — Ressources humaines
@@ -30,7 +30,7 @@ Power BI demo for Hôtel 2 Février, targeted at a DAF / finance-management audi
 - `1fb9e97f0f6a47d9ac62` — Documents liés à la facture
 - `20caa08f3d1b4f0fb073` — Dossier client
 - `5da760addaad4b708968` — Détail performance
-- `72a1c9530c8b4ed8a101` — Détail activité
+- `72a1c9530c8b4ed8a101` — Détail de l'activité
 - `72b2d0641d9c4fe9b202` — Détail exploitation
 - `72c3e1752ead40fac303` — Détail RH
 - `72d4f2863fbe41abd404` — Détail stocks
@@ -70,13 +70,13 @@ Reference design approved for cleanup:
 - red for negative or unfavourable values
 - consistent rounded cards and compact spacing
 - French user-facing labels only; avoid internal model field names in subtitles
-- keep existing page names unless a deliberate navigation-wide rename is approved
+- KPI tooltip principle: the card gives the headline value; the hover tooltip gives the diagnostic / explanation rather than repeating the KPI
 
-The Vue d'ensemble page is the design reference page. Other pages should be cleaned up one by one only after this page is validated in Fabric.
+The Tableau de bord page is the visual reference page. Other pages should be cleaned up one by one after this page is stable.
 
 ## Current cleanup sequence
 
-1. Vue d'ensemble — in progress
+1. Tableau de bord — cleanup substantially complete; diagnostic tooltips awaiting Fabric validation
 2. Trésorerie
 3. Exploitation
 4. Ressources humaines
@@ -84,26 +84,38 @@ The Vue d'ensemble page is the design reference page. Other pages should be clea
 6. Performance financière
 7. Documents
 
+## Diagnostic KPI tooltips
+
+Current implementation commit: `70e402f6` — awaiting Fabric validation.
+
+Implemented without changing the Excel source:
+
+- Chiffre d'affaires: budget, budget variance in XOF and %, previous-period evolution, leading revenue activity
+- Résultat de gestion: CA HT, direct purchases, personnel, operating expenses, result vs budget, previous-period evolution
+- Trésorerie: opening balance, receipts, payments, net flow, previous-month evolution
+- Recouvrement: overdue invoice count, average delay, maximum delay, overdue share, largest overdue debtor
+- Exploitation: available/sold rooms, occupancy evolution, room revenue
+- Revenu par chambre disponible: average realised rate, previous-period RevPAR and RevPAR evolution
+
+Tooltip-only measures are kept in `PointsSuivi.tmdl` to avoid unnecessary changes to the core source tables.
+
 ## Known implementation lessons
 
 - Fabric validates report JSON more strictly than plain JSON parsing.
-- Avoid malformed duplicated formatting objects, especially `outline`, `border`, `visualLink` and table formatting arrays.
-- New visual JSON must be locally JSON-parsed before commit.
+- Avoid malformed duplicated formatting objects, especially `outline`, `border`, `visualLink`, `subTitle` and table-formatting arrays.
+- New or modified report JSON must be generated/parsed structurally before a Fabric-facing commit; do not hand-edit brace-heavy JSON when avoidable.
+- When a formatting error pattern is found, audit all sibling/generated visuals for the same pattern before retrying Fabric.
 - Prefer small, testable chunks and run Fabric `Update all` after each cleanup/feature chunk.
 - Drill-through buttons remain disabled unless Power BI has the correct visual selection context. Use normal page navigation when the intended flow starts from slicers or general page context.
 
-## Last validated functional checkpoint
+## Current checkpoint
 
-Before the Vue d'ensemble visual cleanup, Fabric accepted the report with:
+Base before diagnostic-tooltip work: `6992db7d`.
 
-- Documents page working
-- SharePoint links opening in a new tab
-- invoice -> documents flow
-- Dossier client page
-- client filter/navigation flow
+Current main implementation: `70e402f6` plus this tracking-document update.
 
-Git checkpoint before this visual cleanup: `7ab6d76b`.
+Next action: Fabric `Update all`, validate the semantic-model measures and the four redesigned tooltip pages, then visually confirm the hover experience on all six KPI cards.
 
-## Next work after Vue d'ensemble validation
+## Next work after Tableau de bord validation
 
-Continue page-by-page cleanup. No new large feature should be added until the current page cleanup is validated visually and in Fabric.
+Continue page-by-page cleanup. No additional large feature should be added until the current dashboard/tooltips are validated visually and in Fabric.
