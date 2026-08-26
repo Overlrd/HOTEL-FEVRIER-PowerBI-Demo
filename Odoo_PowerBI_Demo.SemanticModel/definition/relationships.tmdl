@@ -122,3 +122,7 @@ relationship 71ed366f-f7a1-4e6e-a8d7-d9db084ef85a
 relationship 390ab544-1039-4def-abab-c1a06eb55113
 	fromColumn: DocumentTable.Client_ID
 	toColumn: PartnerTable.Partenaire_ID
+
+relationship b6db7d37-79ce-47be-ae85-fcf3fd03017c
+	fromColumn: DocumentTable.Facture_ID
+	toColumn: CollectionFollowUpTable.Facture_ID
