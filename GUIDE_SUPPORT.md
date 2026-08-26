@@ -1,6 +1,6 @@
 # Guide support — Dashboard Hôtel 2 Février
 
-**Version : 0.5 — Correctif Fabric & libellés simplifiés**
+**Version : 0.6 — Fondation documentaire**
 
 Le dashboard comporte six pages visibles :
 - Vue d'ensemble
@@ -44,8 +44,17 @@ Elle contient aussi :
 
 Le résultat reste indicatif : amortissements, charges financières, fiscalité et charges patronales ne sont pas disponibles dans la source de démonstration.
 
+## Source documentaire
+Le classeur Excel SharePoint contient maintenant une table structurée `Documents` avec 16 pièces de démonstration.
+
+Les fichiers sont stockés sous `HOTEL2FEVRIER/POWERBI-DEMO/DOCUMENTS-DEMO/` dans trois dossiers : `Factures`, `Commandes` et `Justificatifs`.
+
+Le registre lie chaque pièce aux références existantes via `Client_ID`, `Commande_ID` et `Facture_ID`. La colonne `Document_URL` contient l'URL SharePoint du fichier.
+
+Cette phase ne modifie pas encore le modèle sémantique ni les pages Power BI. Voir `DOCUMENTS_SOURCE.md`.
+
 ## Maintenance Excel
-`BudgetMensuel` et `ChargesExploitation` restent modifiables manuellement pour la démonstration.
+`BudgetMensuel`, `ChargesExploitation` et `Documents` restent modifiables manuellement pour la démonstration.
 Utiliser `Commun` pour les coûts non affectables proprement.
 
 ## Contrôles avant démo
@@ -64,3 +73,4 @@ Utiliser `Commun` pour les coûts non affectables proprement.
 - v0.3 : performance financière, budget, charges, info-bulles et détail source.
 - v0.4 : page d'accueil restructurée, branding homogène, filtres et détails contextuels.
 - v0.5 : correction JSON des boutons de retour et simplification des libellés.
+- v0.6 : ajout du registre documentaire Excel et du stockage SharePoint de démonstration.
