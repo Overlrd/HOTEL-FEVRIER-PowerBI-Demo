@@ -10,6 +10,127 @@ table PointsSuivi
 	measure Signal = SWITCH(SELECTEDVALUE(PointsSuivi[Indicateur]),"Chiffre d'affaires",IF([CA HT finance]>=[Budget CA],"Favorable","À suivre"),"Résultat de gestion",IF([Résultat de gestion disponible]>=[Budget résultat gestion],"Favorable","À suivre"),"Taux d'occupation",IF(COALESCE([Évolution occupation dernier mois],0)>=0,"Favorable","À suivre"),"Revenu par chambre disponible",IF(COALESCE([Revenu par chambre disponible],0)>0,"Favorable","À suivre"),"Créances échues",IF(COALESCE([Créances échues],0)=0,"Favorable","À suivre"),"Trésorerie disponible",IF(COALESCE([Solde trésorerie],0)>=0,"Favorable","À suivre"),BLANK())
 		lineageTag: 94bc1236-12b4-4cd6-b60c-edf70cfd9c99
 
+	measure 'Écart CA vs budget tooltip' = [CA HT finance] - [Budget CA]
+		formatString: #,0
+		lineageTag: d18983c7-a6d9-4dc0-a968-96dbae10ec47
+
+	measure 'Écart CA vs budget % tooltip' = DIVIDE([Écart CA vs budget tooltip],[Budget CA])
+		formatString: 0.0%
+		lineageTag: 1ed49c1d-ad69-4470-9a7c-02444d7caa71
+
+	measure 'Évolution CA tooltip' = DIVIDE([CA HT finance]-[CA période précédente],ABS([CA période précédente]))
+		formatString: 0.0%
+		lineageTag: 8285286d-851b-4435-a115-0b24dd83e3fb
+
+	measure 'Activité principale CA tooltip' =
+			VAR Activites =
+				ADDCOLUMNS(
+					FILTER(VALUES(OrderTable[Activité_CA]), NOT ISBLANK(OrderTable[Activité_CA])),
+					"__CA", CALCULATE(
+						SUM(OrderTable[Montant_HT]),
+						OrderTable[Type_Commande] = "Vente",
+						OrderTable[Statut] = "Terminée"
+					)
+				)
+			VAR TopAct = TOPN(1, Activites, [__CA], DESC, OrderTable[Activité_CA], ASC)
+			VAR Nom = MAXX(TopAct, OrderTable[Activité_CA])
+			VAR Montant = MAXX(TopAct, [__CA])
+			RETURN IF(ISBLANK(Nom), BLANK(), Nom & " — " & FORMAT(Montant, "#,0", "fr-FR") & " XOF")
+		lineageTag: 657a916e-ec98-4279-9a23-de2264740d43
+
+	measure 'Solde début période tooltip' =
+			VAR DateDebut = MIN(DateTable[Date])
+			VAR DateAvant = DateDebut - 1
+			RETURN
+			SUMX(
+				CALCULATETABLE(VALUES(CashTable[Compte]), REMOVEFILTERS(DateTable)),
+				VAR CompteCourant = CashTable[Compte]
+				VAR DernierMouvement =
+					TOPN(
+						1,
+						FILTER(ALL(CashTable), CashTable[Compte] = CompteCourant && CashTable[Date] <= DateAvant),
+						CashTable[Date], DESC,
+						CashTable[Mouvement_ID], DESC
+					)
+				RETURN MAXX(DernierMouvement, CashTable[Solde_Après_Mouvement])
+			)
+		formatString: #,0
+		lineageTag: 9d9ace50-f716-490e-a302-2c6346431035
+
+	measure 'Nombre factures échues tooltip' =
+			CALCULATE(
+				DISTINCTCOUNT(InvoiceTable[Facture_ID]),
+				InvoiceTable[Type_Facture] = "Client",
+				InvoiceTable[Solde] > 0,
+				InvoiceTable[Retard_Jours] > 0
+			)
+		formatString: #,0
+		lineageTag: 41108ec4-f60d-41ca-941b-41b1ccbc4638
+
+	measure 'Retard moyen créances tooltip' =
+			CALCULATE(
+				AVERAGE(InvoiceTable[Retard_Jours]),
+				InvoiceTable[Type_Facture] = "Client",
+				InvoiceTable[Solde] > 0,
+				InvoiceTable[Retard_Jours] > 0
+			)
+		formatString: 0.0
+		lineageTag: e6562ce1-b532-48bf-813a-83fee6e63df3
+
+	measure 'Retard maximum créances tooltip' =
+			CALCULATE(
+				MAX(InvoiceTable[Retard_Jours]),
+				InvoiceTable[Type_Facture] = "Client",
+				InvoiceTable[Solde] > 0,
+				InvoiceTable[Retard_Jours] > 0
+			)
+		formatString: #,0
+		lineageTag: bfd0ee54-c094-4597-b56e-e84b7f384b05
+
+	measure 'Part créances échues tooltip' = DIVIDE([Créances échues],[Créances clients])
+		formatString: 0.0%
+		lineageTag: c9bbfe8d-1dac-445a-b3ab-0cd2f8f1d0fc
+
+	measure 'Plus gros débiteur échu tooltip' =
+			VAR Clients =
+				CALCULATETABLE(
+					VALUES(InvoiceTable[Nom_Partenaire]),
+					InvoiceTable[Type_Facture] = "Client",
+					InvoiceTable[Solde] > 0,
+					InvoiceTable[Retard_Jours] > 0
+				)
+			VAR AvecSolde =
+				ADDCOLUMNS(
+					Clients,
+					"__Solde", CALCULATE(
+						SUM(InvoiceTable[Solde]),
+						InvoiceTable[Type_Facture] = "Client",
+						InvoiceTable[Solde] > 0,
+						InvoiceTable[Retard_Jours] > 0
+					)
+				)
+			VAR TopClient = TOPN(1, AvecSolde, [__Solde], DESC, InvoiceTable[Nom_Partenaire], ASC)
+			VAR Nom = MAXX(TopClient, InvoiceTable[Nom_Partenaire])
+			VAR Solde = MAXX(TopClient, [__Solde])
+			RETURN IF(ISBLANK(Nom), BLANK(), Nom & " — " & FORMAT(Solde, "#,0", "fr-FR") & " XOF")
+		lineageTag: a3896131-f6bd-49b3-88ef-6943ab20fb80
+
+	measure 'Chambres disponibles tooltip' = SUM(OccupancyTable[Chambres_Disponibles])
+		formatString: #,0
+		lineageTag: 1704e244-83ff-43ab-baf4-38681f5a0cd7
+
+	measure 'Tarif moyen tooltip' = DIVIDE([Revenus des chambres],[Chambres vendues])
+		formatString: #,0
+		lineageTag: abff0a2b-accf-42c0-87e6-44ad3ccbebe6
+
+	measure 'RevPAR période précédente tooltip' = CALCULATE([Revenu par chambre disponible],DATEADD(DateTable[Date],-1,MONTH))
+		formatString: #,0
+		lineageTag: 463d850c-0902-4024-9403-6e062e3f6639
+
+	measure 'Évolution RevPAR tooltip' = DIVIDE([Revenu par chambre disponible]-[RevPAR période précédente tooltip],ABS([RevPAR période précédente tooltip]))
+		formatString: 0.0%
+		lineageTag: fcf36513-1399-4d80-bf19-d98c08c4211b
+
 	column Indicateur
 		dataType: string
 		lineageTag: 48e38195-3bbb-40ef-ab48-79047c185725
