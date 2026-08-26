@@ -70,13 +70,13 @@ Reference design approved for cleanup:
 - red for negative or unfavourable values
 - consistent rounded cards and compact spacing
 - French user-facing labels only; avoid internal model field names in subtitles
-- KPI tooltip principle: the card gives the headline value; the hover tooltip gives the diagnostic / explanation rather than repeating the KPI
+- KPI tooltip principle: the card gives the headline value; the hover tooltip gives only 2–3 supporting values, not a second report page
 
 The Tableau de bord page is the visual reference page. Other pages should be cleaned up one by one after this page is stable.
 
 ## Current cleanup sequence
 
-1. Tableau de bord — cleanup substantially complete; diagnostic tooltips awaiting Fabric validation
+1. Tableau de bord — cleanup substantially complete; compact KPI tooltips awaiting Fabric validation
 2. Trésorerie
 3. Exploitation
 4. Ressources humaines
@@ -84,20 +84,22 @@ The Tableau de bord page is the visual reference page. Other pages should be cle
 6. Performance financière
 7. Documents
 
-## Diagnostic KPI tooltips
+## Compact KPI tooltips
 
-Current implementation commit: `70e402f6` — awaiting Fabric validation.
+Current report implementation commit: `3f9bffc3` — awaiting Fabric validation.
 
-Implemented without changing the Excel source:
+The detailed diagnostic measures added earlier are retained, but the visible hover experience is now intentionally compact:
 
-- Chiffre d'affaires: budget, budget variance in XOF and %, previous-period evolution, leading revenue activity
-- Résultat de gestion: CA HT, direct purchases, personnel, operating expenses, result vs budget, previous-period evolution
-- Trésorerie: opening balance, receipts, payments, net flow, previous-month evolution
-- Recouvrement: overdue invoice count, average delay, maximum delay, overdue share, largest overdue debtor
-- Exploitation: available/sold rooms, occupancy evolution, room revenue
-- Revenu par chambre disponible: average realised rate, previous-period RevPAR and RevPAR evolution
+- Chiffre d'affaires: Budget, Écart budget %, Vs mois précédent
+- Résultat de gestion: Budget, Écart budget %, Vs mois précédent
+- Trésorerie: Encaissements, Décaissements, Flux net
+- Créances échues: Nombre de factures, Retard moyen, Plus gros débiteur
+- Taux d'occupation: Chambres vendues, Chambres disponibles, Vs mois précédent
+- Revenu par chambre disponible: Tarif moyen, Vs mois précédent
 
-Tooltip-only measures are kept in `PointsSuivi.tmdl` to avoid unnecessary changes to the core source tables.
+Each KPI now points to its own hidden tooltip page, approximately 320 px wide and 150–160 px high. No table or horizontal scrolling is used. The semantic model and Excel source were not changed in this compacting pass.
+
+Legacy detailed diagnostic tooltip pages remain hidden and are no longer linked from these six KPI cards; they can be removed later after the compact version is validated.
 
 ## Known implementation lessons
 
@@ -110,11 +112,11 @@ Tooltip-only measures are kept in `PointsSuivi.tmdl` to avoid unnecessary change
 
 ## Current checkpoint
 
-Base before diagnostic-tooltip work: `6992db7d`.
+Previous detailed-tooltip checkpoint: `89ecd121`.
 
-Current main implementation: `70e402f6` plus this tracking-document update.
+Current compact-tooltip report implementation: `3f9bffc3`.
 
-Next action: Fabric `Update all`, validate the semantic-model measures and the four redesigned tooltip pages, then visually confirm the hover experience on all six KPI cards.
+Next action: Fabric `Update all`, then visually confirm the hover experience on all six KPI cards. If accepted, `3f9bffc3` becomes the validated report baseline before moving to the Trésorerie page cleanup.
 
 ## Next work after Tableau de bord validation
 
