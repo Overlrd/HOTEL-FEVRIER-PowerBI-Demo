@@ -1,0 +1,154 @@
+table DocumentTable
+	lineageTag: bf60742d-9759-4487-ace4-5922780f5bd6
+
+	measure 'Nombre de documents' = COUNTROWS(DocumentTable)
+		formatString: 0
+		lineageTag: 4e03712d-a562-4efa-897b-cd24f94c58df
+
+	measure 'Documents disponibles' = CALCULATE([Nombre de documents], DocumentTable[Statut_Document] = "Disponible")
+		formatString: 0
+		lineageTag: c69d6391-84e2-468d-984c-f8e72c282a2f
+
+	measure 'Documents manquants' = CALCULATE([Nombre de documents], DocumentTable[Statut_Document] = "Manquant")
+		formatString: 0
+		lineageTag: 1ad18161-4b7f-4bfe-b47f-cbb64c5617f0
+
+	column Document_ID
+		dataType: string
+		lineageTag: 0c3fec15-963b-484d-b462-3dae901bf14b
+		summarizeBy: none
+		sourceColumn: Document_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type_Document
+		dataType: string
+		lineageTag: 4a25b72e-db26-4f21-8e87-36a80988a62f
+		summarizeBy: none
+		sourceColumn: Type_Document
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reference
+		dataType: string
+		lineageTag: 4c708cf7-2509-4d74-a8b1-e6b1aa44265d
+		summarizeBy: none
+		sourceColumn: Reference
+
+		annotation SummarizationSetBy = Automatic
+
+	column Client_ID
+		dataType: string
+		lineageTag: 4fb6d7db-b66c-4765-b370-251dd4043ad0
+		summarizeBy: none
+		sourceColumn: Client_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nom_Client
+		dataType: string
+		lineageTag: c895f829-f356-4022-9ee4-3600f72867b5
+		summarizeBy: none
+		sourceColumn: Nom_Client
+
+		annotation SummarizationSetBy = Automatic
+
+	column Entite_Type
+		dataType: string
+		lineageTag: c2489e02-20d0-4ec1-819f-ab0dfb6432a4
+		summarizeBy: none
+		sourceColumn: Entite_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Entite_ID
+		dataType: string
+		lineageTag: a42f6c46-d936-4a6b-9818-e355ef81ca14
+		summarizeBy: none
+		sourceColumn: Entite_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Commande_ID
+		dataType: string
+		lineageTag: c7729b49-33fd-465c-b65b-9bb2328b5eaa
+		summarizeBy: none
+		sourceColumn: Commande_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Facture_ID
+		dataType: string
+		lineageTag: f9330967-d2ee-4af5-b854-74f680408399
+		summarizeBy: none
+		sourceColumn: Facture_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date_Document
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: b19329e2-ed11-4493-8240-375c93f36257
+		summarizeBy: none
+		sourceColumn: Date_Document
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Montant
+		dataType: int64
+		formatString: 0
+		lineageTag: 4cd9099f-31fb-4285-8108-1239245d2ea0
+		summarizeBy: sum
+		sourceColumn: Montant
+
+		annotation SummarizationSetBy = Automatic
+
+	column Statut_Document
+		dataType: string
+		lineageTag: 2f854bde-3bbb-425d-b1be-538a6a54dff9
+		summarizeBy: none
+		sourceColumn: Statut_Document
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nom_Fichier
+		dataType: string
+		lineageTag: 895d69a6-71f7-4339-b4da-2d5330379fe6
+		summarizeBy: none
+		sourceColumn: Nom_Fichier
+
+		annotation SummarizationSetBy = Automatic
+
+	column Document_URL
+		dataType: string
+		lineageTag: 0d440c07-62df-4cfa-9715-78c4699f2f0e
+		summarizeBy: none
+		sourceColumn: Document_URL
+		dataCategory: WebUrl
+
+		annotation SummarizationSetBy = Automatic
+
+	column Dossier
+		dataType: string
+		lineageTag: 42401d8e-339b-4361-9828-b4ff29364769
+		summarizeBy: none
+		sourceColumn: Dossier
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DocumentTable = m
+		mode: import
+		source =
+				let
+				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
+				    Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
+				    DocumentTable_Table = Source{[Item="Documents",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(DocumentTable_Table,{{"Document_ID", type text}, {"Type_Document", type text}, {"Reference", type text}, {"Client_ID", type text}, {"Nom_Client", type text}, {"Entite_Type", type text}, {"Entite_ID", type text}, {"Commande_ID", type text}, {"Facture_ID", type text}, {"Date_Document", type date}, {"Montant", Int64.Type}, {"Statut_Document", type text}, {"Nom_Fichier", type text}, {"Document_URL", type text}, {"Dossier", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table

@@ -118,3 +118,7 @@ relationship 9bde7761-3439-4673-83a5-6d85bc0e74f8
 relationship 71ed366f-f7a1-4e6e-a8d7-d9db084ef85a
 	fromColumn: DetailPerformance.Ligne_P&L
 	toColumn: LignePerformance.Ligne_P&L
+
+relationship 390ab544-1039-4def-abab-c1a06eb55113
+	fromColumn: DocumentTable.Client_ID
+	toColumn: PartnerTable.Partenaire_ID
