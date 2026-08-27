@@ -1,0 +1,360 @@
+table HRAttendanceTable
+	lineageTag: 9bfb87e6-c948-4cb6-8f04-86a96b71575b
+
+	measure 'Date RH de référence' =
+			CALCULATE(
+				MAX(HRAttendanceTable[Date]),
+				REMOVEFILTERS(EmployeeTable),
+				REMOVEFILTERS(HRAttendanceTable[Employé_ID]),
+				REMOVEFILTERS(HRAttendanceTable[Nom_Employé]),
+				REMOVEFILTERS(HRAttendanceTable[Département])
+			)
+		formatString: Long Date
+		lineageTag: a5722c6d-dac1-4b08-8bdf-81d989573d06
+
+	measure 'Date RH affichée' =
+			VAR D = [Date RH de référence]
+			RETURN IF(ISBLANK(D), BLANK(), FORMAT(D, "dd MMM yyyy", "fr-FR"))
+		lineageTag: 6dcd3ac5-9ba8-4e3b-ae72-bb602c22f93f
+
+	measure 'Effectif prévu' =
+			VAR RefDate = [Date RH de référence]
+			RETURN
+			CALCULATE(
+				DISTINCTCOUNT(HRAttendanceTable[Employé_ID]),
+				HRAttendanceTable[Date] = RefDate
+			)
+		formatString: #,0
+		lineageTag: 66f21688-6c8f-40cb-9024-7c10139ee895
+
+	measure 'Présents du jour' =
+			VAR RefDate = [Date RH de référence]
+			RETURN
+			CALCULATE(
+				DISTINCTCOUNT(HRAttendanceTable[Employé_ID]),
+				HRAttendanceTable[Date] = RefDate,
+				HRAttendanceTable[Statut] = "Présent"
+			)
+		formatString: #,0
+		lineageTag: 5c86d573-4ef1-4a26-bec9-e75a55df0037
+
+	measure 'Taux de présence jour' = DIVIDE([Présents du jour], [Effectif prévu])
+		formatString: 0.0%
+		lineageTag: 093a42c0-d08b-42fe-950d-93c716fe7e8d
+
+	measure 'Présence du jour affichée' =
+			VAR Taux = [Taux de présence jour]
+			RETURN
+			IF(
+				ISBLANK(Taux),
+				BLANK(),
+				FORMAT(Taux, "0.0 %", "fr-FR")
+					& " (" & FORMAT([Présents du jour], "0", "fr-FR")
+					& "/" & FORMAT([Effectif prévu], "0", "fr-FR") & ")"
+			)
+		lineageTag: 621a1561-8907-40cf-889d-a5e7d0f0b492
+
+	measure 'Absences non planifiées jour' =
+			VAR RefDate = [Date RH de référence]
+			RETURN
+			CALCULATE(
+				DISTINCTCOUNT(HRAttendanceTable[Employé_ID]),
+				HRAttendanceTable[Date] = RefDate,
+				HRAttendanceTable[Non_Planifiée] = TRUE()
+			)
+		formatString: #,0
+		lineageTag: 4b76ec6e-a399-4bc5-b526-4538f9914c81
+
+	measure 'Absences non planifiées affichées' =
+			FORMAT([Absences non planifiées jour], "0", "fr-FR")
+		lineageTag: 9a77fa2f-8e8d-4be4-b727-27d969dc2ae3
+
+	measure 'Heures supplémentaires mois RH' =
+			VAR RefDate = [Date RH de référence]
+			VAR MoisRef = DATE(YEAR(RefDate), MONTH(RefDate), 1)
+			RETURN
+			CALCULATE(
+				SUM(PayrollTable[Heures_Sup]),
+				REMOVEFILTERS(DateTable),
+				PayrollTable[Mois] = MoisRef
+			)
+		formatString: #,0
+		lineageTag: 9a7c8588-7d75-44c2-a084-c1d1738b455a
+
+	measure 'Heures supplémentaires affichées' =
+			FORMAT([Heures supplémentaires mois RH], "0", "fr-FR") & " h"
+		lineageTag: d350214e-1200-4fa6-95d7-6d04dca7fe45
+
+	measure 'Coût personnel mois RH' =
+			VAR RefDate = [Date RH de référence]
+			VAR MoisRef = DATE(YEAR(RefDate), MONTH(RefDate), 1)
+			RETURN
+			CALCULATE(
+				SUM(PayrollTable[Salaire_Base]) + SUM(PayrollTable[Primes]),
+				REMOVEFILTERS(DateTable),
+				PayrollTable[Mois] = MoisRef
+			)
+		formatString: #,0
+		lineageTag: 2db0ca51-2b34-4076-966d-3932fab2f296
+
+	measure 'Coût personnel mois affiché' =
+			VAR Montant = [Coût personnel mois RH]
+			VAR ValeurAbsolue = ABS(Montant)
+			RETURN
+			SWITCH(
+				TRUE(),
+				ISBLANK(Montant), BLANK(),
+				ValeurAbsolue >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+				ValeurAbsolue >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+				FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			)
+		lineageTag: 383e9b28-28bb-4256-a62d-d3cc52952fb9
+
+	measure 'Budget personnel mois RH' =
+			VAR RefDate = [Date RH de référence]
+			VAR MoisRef = DATE(YEAR(RefDate), MONTH(RefDate), 1)
+			RETURN
+			CALCULATE(
+				SUM(BudgetMensuel[Budget_XOF]),
+				REMOVEFILTERS(DateTable),
+				BudgetMensuel[Mois] = MoisRef,
+				BudgetMensuel[Ligne_P&L] = "Personnel"
+			)
+		formatString: #,0
+		lineageTag: 25b65ea6-413d-41c5-855f-704ea72bfeac
+
+	measure 'Écart personnel vs budget RH' = [Coût personnel mois RH] - [Budget personnel mois RH]
+		formatString: #,0
+		lineageTag: 43ba5489-e050-4ed5-b84b-2f168506f2a2
+
+	measure 'Écart personnel vs budget % RH' =
+			DIVIDE([Écart personnel vs budget RH], ABS([Budget personnel mois RH]))
+		formatString: 0.0%
+		lineageTag: d097a84c-9bdd-4345-abfc-ab3617bbda90
+
+	measure 'Couleur présence RH' =
+			VAR Taux = [Taux de présence jour]
+			RETURN IF(ISBLANK(Taux), "#667085", IF(Taux >= 0.95, "#16A69A", IF(Taux >= 0.90, "#F2A23A", "#D64550")))
+		lineageTag: 609436cc-bec2-449d-ac44-c0a3cc81d5b5
+
+	measure 'Couleur coût personnel RH' =
+			IF([Écart personnel vs budget RH] <= 0, "#16A69A", "#D64550")
+		lineageTag: 88d0273c-e224-4fcf-948e-02c965b30dd2
+
+	measure 'Couleur absences RH' =
+			VAR N = [Absences non planifiées jour]
+			RETURN IF(N = 0, "#16A69A", IF(N <= 2, "#F2A23A", "#D64550"))
+		lineageTag: 3506527f-32c8-4393-b769-72492778f887
+
+	measure 'Alerte RH' =
+			VAR RefDate = [Date RH de référence]
+			VAR MoisRef = DATE(YEAR(RefDate), MONTH(RefDate), 1)
+			VAR AbsenceJour =
+				CALCULATE(
+					COUNTROWS(HRAttendanceTable),
+					HRAttendanceTable[Date] = RefDate,
+					HRAttendanceTable[Non_Planifiée] = TRUE()
+				)
+			VAR AbsencesMois =
+				CALCULATE(
+					MAX(PayrollTable[Jours_Absents]),
+					REMOVEFILTERS(DateTable),
+					PayrollTable[Mois] = MoisRef
+				)
+			VAR HeuresSup =
+				CALCULATE(
+					MAX(PayrollTable[Heures_Sup]),
+					REMOVEFILTERS(DateTable),
+					PayrollTable[Mois] = MoisRef
+				)
+			RETURN
+			SWITCH(
+				TRUE(),
+				AbsenceJour > 0, "Absence non planifiée",
+				AbsencesMois >= 3, "Absences élevées",
+				HeuresSup >= 10, "Heures sup. élevées",
+				BLANK()
+			)
+		lineageTag: fefda544-4327-4136-aa76-9961bd02611b
+
+	measure 'Niveau alerte RH' =
+			VAR Alerte = [Alerte RH]
+			RETURN
+			SWITCH(
+				Alerte,
+				"Absence non planifiée", "Élevé",
+				"Absences élevées", "Élevé",
+				"Heures sup. élevées", "Moyen",
+				BLANK()
+			)
+		lineageTag: 7f25ddcf-e52b-4e0b-aaaf-18579dbba05c
+
+	measure 'Valeur alerte RH' =
+			VAR RefDate = [Date RH de référence]
+			VAR MoisRef = DATE(YEAR(RefDate), MONTH(RefDate), 1)
+			VAR Alerte = [Alerte RH]
+			VAR AbsencesMois =
+				CALCULATE(
+					MAX(PayrollTable[Jours_Absents]),
+					REMOVEFILTERS(DateTable),
+					PayrollTable[Mois] = MoisRef
+				)
+			VAR HeuresSup =
+				CALCULATE(
+					MAX(PayrollTable[Heures_Sup]),
+					REMOVEFILTERS(DateTable),
+					PayrollTable[Mois] = MoisRef
+				)
+			RETURN
+			SWITCH(
+				Alerte,
+				"Absence non planifiée", "Aujourd'hui",
+				"Absences élevées", FORMAT(AbsencesMois, "0", "fr-FR") & " j d'absence",
+				"Heures sup. élevées", FORMAT(HeuresSup, "0", "fr-FR") & " h supplémentaires",
+				BLANK()
+			)
+		lineageTag: 8cd6c2a3-72d0-44f1-91ee-4c1ed8cf3449
+
+	measure 'Afficher alerte RH' = IF(NOT ISBLANK([Alerte RH]), 1, 0)
+		formatString: 0
+		lineageTag: 730e9199-f163-479b-ab70-8c55f1e2464e
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 8095bb86-42d3-48bf-9a87-1b4281d6fe18
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+	column Date_Clé
+		dataType: string
+		lineageTag: fbf66898-c3de-4207-aa87-b126b57cd13a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date_Clé]
+
+	column Employé_ID
+		dataType: string
+		lineageTag: 08bf51f4-2c33-4ee8-a913-f1c53622f482
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Employé_ID]
+
+	column Nom_Employé
+		dataType: string
+		lineageTag: b81df61b-9e4d-4869-bdfc-1e2bf021709e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Nom_Employé]
+
+	column Département
+		dataType: string
+		lineageTag: 4920112a-2235-49ad-9144-9c2d681af2e8
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Département]
+
+	column Statut
+		dataType: string
+		lineageTag: 5b48f37e-5a40-43f1-af6c-e18ccf2024d3
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Statut]
+
+	column Non_Planifiée
+		dataType: boolean
+		lineageTag: d43920c3-4269-48d0-b5fa-fe73885b5848
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Non_Planifiée]
+
+	column Heures_Sup_Jour
+		dataType: int64
+		formatString: 0
+		lineageTag: d244eec2-85fb-40a1-9fef-d0f7aa0edb35
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Heures_Sup_Jour]
+
+	column Heures_Sup_Mois
+		dataType: int64
+		formatString: 0
+		lineageTag: 7b96ff3e-67d8-4e13-8ea5-f7a4a1187e45
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Heures_Sup_Mois]
+
+	column Jours_Absents_Mois
+		dataType: int64
+		formatString: 0
+		lineageTag: 321b8008-62d8-4f4a-9b5e-025973d51f92
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Jours_Absents_Mois]
+
+	partition HRAttendanceTable = calculated
+		mode: import
+		source =
+				VAR MaxSourceDate = CALCULATE(MAX(DateTable[Date]), ALL(DateTable))
+				VAR BasePaie =
+					SELECTCOLUMNS(
+						FILTER(PayrollTable, PayrollTable[Mois] <= MaxSourceDate),
+						"__Mois", PayrollTable[Mois],
+						"__EmployeID", PayrollTable[Employé_ID],
+						"__Nom", PayrollTable[Nom_Employé],
+						"__Departement", PayrollTable[Département],
+						"__JoursOuvres", PayrollTable[Jours_Ouvrés],
+						"__JoursPresents", PayrollTable[Jours_Présents],
+						"__JoursAbsents", PayrollTable[Jours_Absents],
+						"__HeuresSup", PayrollTable[Heures_Sup]
+					)
+				RETURN
+				GENERATE(
+					BasePaie,
+					VAR MoisRef = [__Mois]
+					VAR EmployeID = [__EmployeID]
+					VAR NomEmploye = [__Nom]
+					VAR Departement = [__Departement]
+					VAR JoursOuvres = MAX(1, [__JoursOuvres])
+					VAR JoursPresents = MAX(0, MIN([__JoursPresents], JoursOuvres))
+					VAR JoursAbsents = MAX(0, [__JoursAbsents])
+					VAR HeuresSup = MAX(0, [__HeuresSup])
+					VAR FinMois = MIN(EOMONTH(MoisRef, 0), MaxSourceDate)
+					VAR JoursDisponibles = MAX(1, DAY(FinMois))
+					VAR Seed = VALUE(RIGHT(EmployeID, 3))
+					VAR Slots0 = GENERATESERIES(1, JoursOuvres, 1)
+					VAR Slots1 =
+						ADDCOLUMNS(
+							Slots0,
+							"__IndicePresence", MOD([Value] + Seed - 2, JoursOuvres) + 1,
+							"__DateCalc", MoisRef + ROUNDUP(DIVIDE([Value] * JoursDisponibles, JoursOuvres), 0) - 1
+						)
+					VAR Slots2 =
+						ADDCOLUMNS(
+							Slots1,
+							"__EstPresent", [__IndicePresence] <= JoursPresents,
+							"__NonPlan", [__IndicePresence] > JoursPresents && MOD([__IndicePresence] + Seed, 3) <> 0,
+							"__HeuresJour",
+								IF(
+									[__IndicePresence] <= JoursPresents,
+									QUOTIENT(HeuresSup, MAX(1, JoursPresents))
+										+ IF([__IndicePresence] <= MOD(HeuresSup, MAX(1, JoursPresents)), 1, 0),
+									0
+								)
+						)
+					RETURN
+					SELECTCOLUMNS(
+						Slots2,
+						"Date", [__DateCalc],
+						"Date_Clé", FORMAT([__DateCalc], "yyyymmdd"),
+						"Employé_ID", EmployeID,
+						"Nom_Employé", NomEmploye,
+						"Département", Departement,
+						"Statut", IF([__EstPresent], "Présent", IF([__NonPlan], "Absent", "Congé")),
+						"Non_Planifiée", [__NonPlan],
+						"Heures_Sup_Jour", [__HeuresJour],
+						"Heures_Sup_Mois", HeuresSup,
+						"Jours_Absents_Mois", JoursAbsents
+					)
+				)
