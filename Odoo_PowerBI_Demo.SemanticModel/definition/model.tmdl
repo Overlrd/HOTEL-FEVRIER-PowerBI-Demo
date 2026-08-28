@@ -9,7 +9,7 @@ model Model
 
 annotation __PBI_TimeIntelligenceEnabled = 1
 
-annotation PBI_QueryOrder = ["CashTable","DateTable","EmployeeTable","InvoiceTable","CollectionFollowUpTable","OccupancyTable","OrderTable","PartnerTable","PayrollTable","ProductTable","StockTable","BudgetMensuel","ChargesExploitation","DocumentTable"]
+annotation PBI_QueryOrder = ["CashTable","DateTable","EmployeeTable","InvoiceTable","CollectionFollowUpTable","OccupancyTable","OrderTable","PartnerTable","PayrollTable","HRAttendanceTable","ProductTable","StockTable","BudgetMensuel","ChargesExploitation","DocumentTable"]
 
 annotation PBI_ProTooling = ["DevMode"]
 
@@ -31,6 +31,7 @@ ref table LocalDateTable_360deeae-5e06-4cde-9935-b880ade67f79
 ref table LocalDateTable_f9d9161a-d48e-41a5-8634-fd76754e1afb
 ref table PartnerTable
 ref table PayrollTable
+ref table HRAttendanceTable
 ref table LocalDateTable_f8c88e25-3ee1-4bf1-bf44-67deeed4ddf4
 ref table ProductTable
 ref table StockTable

@@ -126,3 +126,12 @@ relationship 390ab544-1039-4def-abab-c1a06eb55113
 relationship b6db7d37-79ce-47be-ae85-fcf3fd03017c
 	fromColumn: DocumentTable.Facture_ID
 	toColumn: CollectionFollowUpTable.Facture_ID
+
+
+relationship 7d56cc0c-c78f-42a7-8d35-50b034143524
+	fromColumn: HRAttendanceTable.Date_Clé
+	toColumn: DateTable.Date_Clé
+
+relationship 54367b83-2682-4c8f-bb51-952e4f0f11ab
+	fromColumn: HRAttendanceTable.Employé_ID
+	toColumn: EmployeeTable.Employé_ID
