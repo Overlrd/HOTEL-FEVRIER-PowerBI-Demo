@@ -29,10 +29,9 @@ table ComplianceTrackingTable
 
 	measure 'Dossiers à jour' =
 			COALESCE(
-			    SUMX(
-			        ComplianceTrackingTable,
-			        VAR Statut = CALCULATE([Statut du dossier])
-			        RETURN IF(Statut IN {"À jour", "Fait hors délai"}, 1, 0)
+			    CALCULATE(
+			        COUNTROWS(ComplianceTrackingTable),
+			        ComplianceTrackingTable[Statut lecture] IN {"À jour", "Fait hors délai"}
 			    ),
 			    0
 			)
@@ -41,10 +40,9 @@ table ComplianceTrackingTable
 
 	measure 'Actions immédiates' =
 			COALESCE(
-			    SUMX(
-			        ComplianceTrackingTable,
-			        VAR Statut = CALCULATE([Statut du dossier])
-			        RETURN IF(Statut IN {"En retard", "Paiement en attente", "Écart à justifier", "Urgent"}, 1, 0)
+			    CALCULATE(
+			        COUNTROWS(ComplianceTrackingTable),
+			        ComplianceTrackingTable[Statut lecture] IN {"En retard", "Paiement en attente", "Urgent"}
 			    ),
 			    0
 			)
@@ -53,10 +51,9 @@ table ComplianceTrackingTable
 
 	measure 'À faire bientôt' =
 			COALESCE(
-			    SUMX(
-			        ComplianceTrackingTable,
-			        VAR Statut = CALCULATE([Statut du dossier])
-			        RETURN IF(Statut = "À faire bientôt", 1, 0)
+			    CALCULATE(
+			        COUNTROWS(ComplianceTrackingTable),
+			        ComplianceTrackingTable[Statut lecture] = "À faire bientôt"
 			    ),
 			    0
 			)
@@ -65,10 +62,9 @@ table ComplianceTrackingTable
 
 	measure 'Dossiers à confirmer' =
 			COALESCE(
-			    SUMX(
-			        ComplianceTrackingTable,
-			        VAR Statut = CALCULATE([Statut du dossier])
-			        RETURN IF(Statut = "À confirmer", 1, 0)
+			    CALCULATE(
+			        COUNTROWS(ComplianceTrackingTable),
+			        ComplianceTrackingTable[Statut lecture] = "À confirmer"
 			    ),
 			    0
 			)
@@ -77,10 +73,9 @@ table ComplianceTrackingTable
 
 	measure 'Dossiers à préparer' =
 			COALESCE(
-			    SUMX(
-			        ComplianceTrackingTable,
-			        VAR Statut = CALCULATE([Statut du dossier])
-			        RETURN IF(Statut = "À préparer", 1, 0)
+			    CALCULATE(
+			        COUNTROWS(ComplianceTrackingTable),
+			        ComplianceTrackingTable[Statut lecture] = "À préparer"
 			    ),
 			    0
 			)
@@ -153,60 +148,7 @@ table ComplianceTrackingTable
 	measure 'Organisme sélectionné' = SELECTEDVALUE(ComplianceObligationTable[Organisme], "Organisme à confirmer")
 		lineageTag: d7c53c77-c727-4056-8805-5567ae1f944e
 
-	measure 'Statut du dossier' =
-			VAR SuiviID = SELECTEDVALUE(ComplianceTrackingTable[Suivi_ID])
-			VAR StatutSaisi = TRIM(COALESCE(SELECTEDVALUE(ComplianceTrackingTable[Statut_Saisi]), ""))
-			VAR ObligationID = SELECTEDVALUE(ComplianceTrackingTable[Obligation_ID])
-			VAR Applicabilite =
-			    COALESCE(
-			        LOOKUPVALUE(
-			            ComplianceObligationTable[Applicabilité],
-			            ComplianceObligationTable[Obligation_ID], ObligationID
-			        ),
-			        ""
-			    )
-			VAR DateReference = SELECTEDVALUE(ComplianceTrackingTable[Date_Référence])
-			VAR DateEcheance = SELECTEDVALUE(ComplianceTrackingTable[Date_Échéance])
-			VAR DateDeclaration = SELECTEDVALUE(ComplianceTrackingTable[Date_Déclaration])
-			VAR DatePaiement = SELECTEDVALUE(ComplianceTrackingTable[Date_Paiement])
-			VAR MontantDu = COALESCE(SELECTEDVALUE(ComplianceTrackingTable[Montant_Dû]), 0)
-			VAR MontantPaye = COALESCE(SELECTEDVALUE(ComplianceTrackingTable[Montant_Payé]), 0)
-			VAR EcartComptable =
-			    COALESCE(
-			        CALCULATE(
-			            SUMX(
-			                ComplianceReconciliationTable,
-			                ABS(COALESCE(ComplianceReconciliationTable[Écart_Comptabilité], 0))
-			            )
-			        ),
-			        0
-			    )
-			VAR Jours =
-			    IF(
-			        NOT ISBLANK(DateEcheance) && NOT ISBLANK(DateReference),
-			        DATEDIFF(DateReference, DateEcheance, DAY)
-			    )
-			RETURN
-			    SWITCH(
-			        TRUE(),
-			        ISBLANK(SuiviID), "Sélection multiple",
-			        StatutSaisi = "À confirmer" || Applicabilite = "À confirmer", "À confirmer",
-			        ISBLANK(DateEcheance) || ISBLANK(DateReference), "À confirmer",
-			        EcartComptable > 0, "Écart à justifier",
-			        StatutSaisi = "Clôturé"
-			            && (
-			                (NOT ISBLANK(DateDeclaration) && DateDeclaration > DateEcheance)
-			                    || (NOT ISBLANK(DatePaiement) && DatePaiement > DateEcheance)
-			            ), "Fait hors délai",
-			        StatutSaisi = "Clôturé", "À jour",
-			        DateEcheance < DateReference
-			            && NOT ISBLANK(DateDeclaration)
-			            && MontantDu > MontantPaye, "Paiement en attente",
-			        DateEcheance < DateReference, "En retard",
-			        Jours <= 7, "Urgent",
-			        Jours <= 30, "À faire bientôt",
-			        "À préparer"
-			    )
+	measure 'Statut du dossier' = SELECTEDVALUE(ComplianceTrackingTable[Statut lecture], "Sélection multiple")
 		lineageTag: 93a05393-4d17-4e12-bcfa-92b03219e099
 
 	measure 'Référence du dossier' = SELECTEDVALUE(ComplianceTrackingTable[Suivi_ID], "")
@@ -237,48 +179,7 @@ table ComplianceTrackingTable
 			RETURN FORMAT(Reste, "#,0", "fr-FR") & " XOF"
 		lineageTag: 99fc02ef-36db-4f20-8a2b-7ed513b30db2
 
-	measure 'Action du dossier' =
-			VAR Statut = [Statut du dossier]
-			VAR ObligationID = SELECTEDVALUE(ComplianceTrackingTable[Obligation_ID])
-			VAR PreuveRequise =
-			    LOOKUPVALUE(
-			        ComplianceObligationTable[Preuve_Requise],
-			        ComplianceObligationTable[Obligation_ID], ObligationID
-			    )
-			VAR NombrePieces = CALCULATE(COUNTROWS(ComplianceReconciliationTable))
-			VAR Disponibles =
-			    CALCULATE(
-			        COUNTROWS(ComplianceReconciliationTable),
-			        ComplianceReconciliationTable[Statut_Preuve] = "Disponible"
-			    )
-			VAR ACompleter =
-			    CALCULATE(
-			        COUNTROWS(ComplianceReconciliationTable),
-			        ComplianceReconciliationTable[Statut_Preuve] IN {"Manquant", "À obtenir"}
-			    )
-			VAR EtatPiece =
-			    SWITCH(
-			        TRUE(),
-			        PreuveRequise = FALSE(), "Non requise",
-			        ISBLANK(PreuveRequise) || NombrePieces = 0, "À confirmer",
-			        Disponibles = NombrePieces, "Disponible",
-			        ACompleter > 0, "À compléter",
-			        "À confirmer"
-			    )
-			RETURN
-			    SWITCH(
-			        TRUE(),
-			        Statut = "En retard", "Régulariser l'échéance",
-			        Statut = "Paiement en attente", "Effectuer le paiement",
-			        Statut = "Écart à justifier", "Expliquer l'écart comptable",
-			        Statut = "Urgent", "Finaliser le dossier",
-			        Statut = "À faire bientôt", "Préparer le dossier",
-			        Statut = "À confirmer", "Confirmer l'applicabilité",
-			        EtatPiece = "À compléter", "Joindre le justificatif",
-			        Statut = "À préparer", "Aucune action immédiate",
-			        Statut = "Fait hors délai", "Archivé — hors délai",
-			        "Dossier à jour"
-			    )
+	measure 'Action du dossier' = SELECTEDVALUE(ComplianceTrackingTable[Action lecture], "Consulter le dossier")
 		lineageTag: 91dd15af-daa5-4a30-87a2-893524101bd1
 
 	column Suivi_ID
@@ -394,6 +295,75 @@ table ComplianceTrackingTable
 		lineageTag: 5c7abf79-6f28-4795-b7bf-b748bc8eca04
 		summarizeBy: none
 		sourceColumn: Contrôle_Obligation
+
+	column 'Statut lecture' =
+			VAR StatutSaisi = TRIM(COALESCE(ComplianceTrackingTable[Statut_Saisi], ""))
+			VAR DateRef = ComplianceTrackingTable[Date_Référence]
+			VAR DateEch = ComplianceTrackingTable[Date_Échéance]
+			VAR DateDecl = ComplianceTrackingTable[Date_Déclaration]
+			VAR DatePay = ComplianceTrackingTable[Date_Paiement]
+			VAR MontantDu = COALESCE(ComplianceTrackingTable[Montant_Dû], 0)
+			VAR MontantPaye = COALESCE(ComplianceTrackingTable[Montant_Payé], 0)
+			VAR Jours = IF(NOT ISBLANK(DateRef) && NOT ISBLANK(DateEch), DATEDIFF(DateRef, DateEch, DAY))
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        StatutSaisi = "À confirmer", "À confirmer",
+			        ISBLANK(DateRef) || ISBLANK(DateEch), "À confirmer",
+			        StatutSaisi = "Clôturé" &&
+			            (
+			                (NOT ISBLANK(DateDecl) && DateDecl > DateEch)
+			                    || (NOT ISBLANK(DatePay) && DatePay > DateEch)
+			            ), "Fait hors délai",
+			        StatutSaisi = "Clôturé", "À jour",
+			        DateEch < DateRef && NOT ISBLANK(DateDecl) && MontantDu > MontantPaye, "Paiement en attente",
+			        DateEch < DateRef, "En retard",
+			        Jours <= 7, "Urgent",
+			        Jours <= 30, "À faire bientôt",
+			        "À préparer"
+			    )
+		dataType: string
+		lineageTag: 5d54d8c9-7759-43a3-891f-0a8c696c0aa1
+		summarizeBy: none
+
+	column 'Jours restants lecture' =
+			IF(
+			    ISBLANK(ComplianceTrackingTable[Date_Échéance]) || ISBLANK(ComplianceTrackingTable[Date_Référence]),
+			    BLANK(),
+			    DATEDIFF(ComplianceTrackingTable[Date_Référence], ComplianceTrackingTable[Date_Échéance], DAY)
+			)
+		dataType: int64
+		formatString: 0
+		lineageTag: 3952c5f0-f469-4ff0-b58f-f629032b969b
+		summarizeBy: none
+
+	column 'Reste paiement lecture' =
+			MAX(
+			    0,
+			    COALESCE(ComplianceTrackingTable[Montant_Dû], 0)
+			        - COALESCE(ComplianceTrackingTable[Montant_Payé], 0)
+			)
+		dataType: int64
+		formatString: #,0
+		lineageTag: 63ed7f15-4837-4a44-92f6-2dd1a2c64a9d
+		summarizeBy: sum
+
+	column 'Action lecture' =
+			SWITCH(
+			    ComplianceTrackingTable[Statut lecture],
+			    "En retard", "Régulariser l'échéance",
+			    "Paiement en attente", "Effectuer le paiement",
+			    "Urgent", "Finaliser le dossier",
+			    "À faire bientôt", "Préparer le dossier",
+			    "À confirmer", "Confirmer les informations",
+			    "À préparer", "Aucune action immédiate",
+			    "Fait hors délai", "Archivé — hors délai",
+			    "Dossier à jour"
+			)
+		dataType: string
+		lineageTag: 042fe9f8-2bb2-4383-a98e-5f099f1a4e1e
+		summarizeBy: none
+
 
 	partition ComplianceTrackingTable = m
 		mode: import
