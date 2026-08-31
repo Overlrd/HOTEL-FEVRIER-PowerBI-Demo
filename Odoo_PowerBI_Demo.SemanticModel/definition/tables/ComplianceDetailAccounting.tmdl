@@ -1,0 +1,86 @@
+table ComplianceDetailAccounting
+	lineageTag: 20888888-8888-4888-8888-888888888000
+
+	column 'Rapprochement_ID'
+		dataType: string
+		lineageTag: 20888888-8888-4888-8888-888888888001
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Rapprochement_ID]
+
+	column 'Organisme'
+		dataType: string
+		lineageTag: 20888888-8888-4888-8888-888888888002
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Organisme]
+
+	column 'Obligation'
+		dataType: string
+		lineageTag: 20888888-8888-4888-8888-888888888003
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Obligation]
+
+	column 'Montant comptable'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 20888888-8888-4888-8888-888888888004
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Montant comptable]
+
+	column 'Montant déclaré'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 20888888-8888-4888-8888-888888888005
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Montant déclaré]
+
+	column 'Montant payé'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 20888888-8888-4888-8888-888888888006
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Montant payé]
+
+	column 'Écart'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 20888888-8888-4888-8888-888888888007
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Écart]
+
+	column 'Source'
+		dataType: string
+		lineageTag: 20888888-8888-4888-8888-888888888008
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Source]
+
+	partition ComplianceDetailAccounting = calculated
+		mode: import
+		source =
+				SELECTCOLUMNS(
+				    FILTER(
+				        ComplianceReconciliationTable,
+				        ABS(COALESCE(ComplianceReconciliationTable[Écart_Comptabilité], 0)) > 0
+				    ),
+				    "Rapprochement_ID", ComplianceReconciliationTable[Rapprochement_ID],
+				    "Organisme",
+				        VAR Suivi = ComplianceReconciliationTable[Suivi_ID]
+				        VAR ObligationID = LOOKUPVALUE(ComplianceTrackingTable[Obligation_ID], ComplianceTrackingTable[Suivi_ID], Suivi)
+				        RETURN LOOKUPVALUE(ComplianceObligationTable[Organisme], ComplianceObligationTable[Obligation_ID], ObligationID),
+				    "Obligation",
+				        VAR Suivi2 = ComplianceReconciliationTable[Suivi_ID]
+				        VAR ObligationID2 = LOOKUPVALUE(ComplianceTrackingTable[Obligation_ID], ComplianceTrackingTable[Suivi_ID], Suivi2)
+				        RETURN LOOKUPVALUE(ComplianceObligationTable[Obligation], ComplianceObligationTable[Obligation_ID], ObligationID2),
+				    "Montant comptable", ComplianceReconciliationTable[Montant_Comptable],
+				    "Montant déclaré", ComplianceReconciliationTable[Montant_Déclaré],
+				    "Montant payé", ComplianceReconciliationTable[Montant_Payé],
+				    "Écart", ComplianceReconciliationTable[Écart_Comptabilité],
+				    "Source", ComplianceReconciliationTable[Source_ID]
+				)

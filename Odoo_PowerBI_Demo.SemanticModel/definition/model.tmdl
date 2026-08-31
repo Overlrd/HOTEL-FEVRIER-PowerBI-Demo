@@ -51,4 +51,13 @@ ref table ComplianceTrackingTable
 ref table ComplianceReconciliationTable
 ref table EmployeeComplianceTable
 
+ref table ComplianceDetailCurrent
+ref table ComplianceDetailActions
+ref table ComplianceDetailSoon
+ref table ComplianceDetailConfirm
+ref table ComplianceDetailPayments
+ref table ComplianceDetailAll
+ref table ComplianceDetailDocuments
+ref table ComplianceDetailAccounting
+
 ref cultureInfo en-US

@@ -1,0 +1,82 @@
+table ComplianceDetailDocuments
+	lineageTag: 20777777-7777-4777-8777-777777777000
+
+	column 'Rapprochement_ID'
+		dataType: string
+		lineageTag: 20777777-7777-4777-8777-777777777001
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Rapprochement_ID]
+
+	column 'Organisme'
+		dataType: string
+		lineageTag: 20777777-7777-4777-8777-777777777002
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Organisme]
+
+	column 'Obligation'
+		dataType: string
+		lineageTag: 20777777-7777-4777-8777-777777777003
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Obligation]
+
+	column 'État de la pièce'
+		dataType: string
+		lineageTag: 20777777-7777-4777-8777-777777777004
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [État de la pièce]
+
+	column 'Type de source'
+		dataType: string
+		lineageTag: 20777777-7777-4777-8777-777777777005
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Type de source]
+
+	column 'Document_ID'
+		dataType: string
+		lineageTag: 20777777-7777-4777-8777-777777777006
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Document_ID]
+
+	column 'Ouvrir'
+		dataType: string
+		lineageTag: 20777777-7777-4777-8777-777777777007
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Ouvrir]
+
+	column 'Commentaire'
+		dataType: string
+		lineageTag: 20777777-7777-4777-8777-777777777008
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Commentaire]
+
+	partition ComplianceDetailDocuments = calculated
+		mode: import
+		source =
+				SELECTCOLUMNS(
+				    FILTER(
+				        ComplianceReconciliationTable,
+				        ComplianceReconciliationTable[Statut_Preuve] <> "Disponible"
+				    ),
+				    "Rapprochement_ID", ComplianceReconciliationTable[Rapprochement_ID],
+				    "Organisme",
+				        VAR Suivi = ComplianceReconciliationTable[Suivi_ID]
+				        VAR ObligationID = LOOKUPVALUE(ComplianceTrackingTable[Obligation_ID], ComplianceTrackingTable[Suivi_ID], Suivi)
+				        RETURN LOOKUPVALUE(ComplianceObligationTable[Organisme], ComplianceObligationTable[Obligation_ID], ObligationID),
+				    "Obligation",
+				        VAR Suivi2 = ComplianceReconciliationTable[Suivi_ID]
+				        VAR ObligationID2 = LOOKUPVALUE(ComplianceTrackingTable[Obligation_ID], ComplianceTrackingTable[Suivi_ID], Suivi2)
+				        RETURN LOOKUPVALUE(ComplianceObligationTable[Obligation], ComplianceObligationTable[Obligation_ID], ObligationID2),
+				    "État de la pièce", ComplianceReconciliationTable[Statut_Preuve],
+				    "Type de source", ComplianceReconciliationTable[Type_Source],
+				    "Document_ID", ComplianceReconciliationTable[Document_ID],
+				    "Ouvrir", ComplianceReconciliationTable[Preuve_URL],
+				    "Commentaire", ComplianceReconciliationTable[Commentaire]
+				)
