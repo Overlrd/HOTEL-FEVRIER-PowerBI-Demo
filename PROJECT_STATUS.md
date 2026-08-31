@@ -35,7 +35,8 @@ Power BI demo for Hôtel 2 Février, targeted at a DAF / finance-management audi
 - `72b2d0641d9c4fe9b202` — Détail exploitation
 - `72c3e1752ead40fac303` — Détail RH
 - `72d4f2863fbe41abd404` — Détail stocks
-- `4b21d0e4f8c35e9b0d12` — Détail conformité
+- `4b21d0e4f8c35e9b0d12` — Dossier d’obligation
+- `4c32e1f5a9d46f0c1e23` — Détail des situations CNSS
 
 ## Document base
 
@@ -54,14 +55,16 @@ Current demo document count: 24.
 
 ## Fiscalité et conformité
 
-Implemented on branch `feature/fiscalite-conformite`:
+Initial scope implemented on `feature/fiscalite-conformite`; dossier redesign implemented on `feature/compliance-dossier-redesign`:
 
 - Excel tables `ComplianceObligationTable`, `ComplianceTrackingTable`, `ComplianceReconciliationTable` and `EmployeeComplianceTable`;
 - semantic-model relationships to dates, employees, cash movements and documents;
 - DAX status, aging, payment, evidence, reconciliation and CNSS indicators;
-- visible page `Fiscalité & conformité` plus hidden drillthrough page `Détail conformité`;
+- visible paper-style page `Fiscalité & conformité`, hidden drillthrough page `Dossier d’obligation` and hidden page `Détail des situations CNSS`;
 - navigation from all eight visible pages;
 - eight fictitious compliance evidence records in `Documents` and nine explicitly marked fictitious PDF files under `DOCUMENTS-DEMO/Conformite`.
+
+The redesign removes the global blue sidebar, analytical charts and nominal employee grid from the main compliance page. It uses narrative status cards, a prioritized obligation register, a documentary panel and a non-nominal CNSS summary. Status measures now map the source values `Clôturé`, `Ouvert` and `À confirmer` to operational states used by the report. The reconciliation-to-cash relationship is inactive to prevent an ambiguous filter path to `DateTable`.
 
 The dashboard is a control framework, not a legal conclusion. Applicability and client-side ownership remain `À confirmer`; official-source URLs and verification dates are stored in the obligation register.
 
@@ -85,7 +88,7 @@ The dashboard is a control framework, not a legal conclusion. Applicability and 
 - French user-facing labels only; avoid internal model field names in subtitles
 - KPI tooltip principle: the card gives the headline value; the hover tooltip gives only 2–3 supporting values, not a second report page
 
-The Tableau de bord page remains the visual reference page.
+The Tableau de bord page remains the visual reference for analytical pages. **Fiscalité & conformité** is the deliberate exception: it follows a warm paper-dossier system because the task is administrative review rather than performance analysis.
 
 ## Current cleanup sequence
 
@@ -109,4 +112,4 @@ The Tableau de bord page remains the visual reference page.
 
 ## Current checkpoint
 
-Next action: open the feature branch in Power BI/Fabric, run `Update all`, refresh the semantic model, then validate the new compliance page, drillthrough, links and cross-filtering.
+Next action: open `feature/compliance-dossier-redesign` in Power BI/Fabric, run `Update all`, refresh the semantic model, then validate the compliance overview, obligation drillthrough, CNSS navigation, links and filtering before merge.
