@@ -1,0 +1,130 @@
+table ComplianceReconciliationTable
+	lineageTag: 0e47d483-6b32-4a23-a9f8-6b848565e458
+
+	measure 'Justificatifs manquants' = CALCULATE(COUNTROWS(ComplianceReconciliationTable), ComplianceReconciliationTable[Statut_Preuve] <> "Disponible")
+		formatString: 0
+		lineageTag: 32382d33-14c4-4636-973c-48ff206d9e58
+
+	measure 'Écart comptable total' = SUMX(ComplianceReconciliationTable, ABS(ComplianceReconciliationTable[Écart_Comptabilité]))
+		formatString: #,0
+		lineageTag: a4e857ea-1903-4465-9963-eabd3cd0c206
+
+	measure 'Écart comptable affiché' =
+			VAR Montant = [Écart comptable total]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(Montant), BLANK(),
+			        ABS(Montant) >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			        FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			    )
+		lineageTag: 9c6bb172-e810-48f2-9c7a-f1c191a9c2ae
+
+	column Rapprochement_ID
+		dataType: string
+		lineageTag: db94d07d-0265-48b9-b59d-cfb897c93683
+		summarizeBy: none
+		sourceColumn: Rapprochement_ID
+
+	column Suivi_ID
+		dataType: string
+		lineageTag: e1e9bd58-20a4-4d12-8491-e00d4648e5f1
+		summarizeBy: none
+		sourceColumn: Suivi_ID
+
+	column Type_Source
+		dataType: string
+		lineageTag: 4b627046-98a0-4dab-81ea-0a8eaf02fd67
+		summarizeBy: none
+		sourceColumn: Type_Source
+
+	column Source_ID
+		dataType: string
+		lineageTag: 103f5763-1c40-4460-8a1a-115027f278b5
+		summarizeBy: none
+		sourceColumn: Source_ID
+
+	column Mouvement_ID
+		dataType: string
+		lineageTag: ad92e7e0-e7a2-4330-aa5c-9f1d871c669c
+		summarizeBy: none
+		sourceColumn: Mouvement_ID
+
+	column Document_ID
+		dataType: string
+		lineageTag: 4f03a08f-81d7-42d6-8cec-10248ef0e2fd
+		summarizeBy: none
+		sourceColumn: Document_ID
+
+	column Montant_Comptable
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9094c7fd-be76-4277-aa9d-e8bd36dcbd38
+		summarizeBy: sum
+		sourceColumn: Montant_Comptable
+
+	column Montant_Déclaré
+		dataType: int64
+		formatString: #,0
+		lineageTag: 4d18bc2c-6a32-4bbe-a9ec-e7c2b8e0d1bb
+		summarizeBy: sum
+		sourceColumn: Montant_Déclaré
+
+	column Montant_Payé
+		dataType: int64
+		formatString: #,0
+		lineageTag: d7ed182b-9827-4859-a6a3-077b5a0a93d5
+		summarizeBy: sum
+		sourceColumn: Montant_Payé
+
+	column Écart_Comptabilité
+		dataType: int64
+		formatString: #,0
+		lineageTag: 62071bbd-e24b-435d-9e34-e5c54e00984d
+		summarizeBy: sum
+		sourceColumn: Écart_Comptabilité
+
+	column Statut_Preuve
+		dataType: string
+		lineageTag: b5ca7b7e-e8e0-45c8-bcf0-cf9aaec4754d
+		summarizeBy: none
+		sourceColumn: Statut_Preuve
+
+	column Preuve_URL
+		dataType: string
+		lineageTag: e9d6568c-1a42-4357-b796-58a2678ce4a1
+		summarizeBy: none
+		sourceColumn: Preuve_URL
+		dataCategory: WebUrl
+
+	column Commentaire
+		dataType: string
+		lineageTag: 4eb70ed9-2be5-460f-abd9-c1e65655b548
+		summarizeBy: none
+		sourceColumn: Commentaire
+
+	column Contrôle_Suivi
+		dataType: string
+		lineageTag: 4177e09b-1ef8-4931-9f69-31ae5d06ee61
+		summarizeBy: none
+		sourceColumn: Contrôle_Suivi
+
+	column Contrôle_Preuve
+		dataType: string
+		lineageTag: 50c58d11-b2f7-4e59-9059-a8126584aca2
+		summarizeBy: none
+		sourceColumn: Contrôle_Preuve
+
+	partition ComplianceReconciliationTable = m
+		mode: import
+		source =
+				let
+				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
+				    Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
+				    ComplianceReconciliationTable_Table = Source{[Item="ComplianceReconciliationTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(ComplianceReconciliationTable_Table,{{"Rapprochement_ID", type text}, {"Suivi_ID", type text}, {"Type_Source", type text}, {"Source_ID", type text}, {"Mouvement_ID", type text}, {"Document_ID", type text}, {"Montant_Comptable", Int64.Type}, {"Montant_Déclaré", Int64.Type}, {"Montant_Payé", Int64.Type}, {"Écart_Comptabilité", Int64.Type}, {"Statut_Preuve", type text}, {"Preuve_URL", type text}, {"Commentaire", type text}, {"Contrôle_Suivi", type text}, {"Contrôle_Preuve", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+	annotation PBI_ResultType = Table

@@ -1,0 +1,135 @@
+table ComplianceObligationTable
+	lineageTag: 2f4e758d-c815-4423-ac6c-a3428e5765a4
+
+	measure 'Nombre d''obligations actives' = CALCULATE(COUNTROWS(ComplianceObligationTable), ComplianceObligationTable[Actif] = TRUE())
+		formatString: 0
+		lineageTag: d2211f59-98d5-4a11-900b-ac77a8d43b64
+
+	measure 'Obligations à valider' = CALCULATE(COUNTROWS(ComplianceObligationTable), ComplianceObligationTable[Applicabilité] = "À confirmer")
+		formatString: 0
+		lineageTag: 31fca0a5-0403-4bff-b196-0aa59ca75847
+
+	column Obligation_ID
+		dataType: string
+		lineageTag: cbd56d3f-f923-4695-a23a-5584051a3798
+		summarizeBy: none
+		sourceColumn: Obligation_ID
+
+	column Domaine
+		dataType: string
+		lineageTag: a36a043a-abfe-4262-83b6-82b89fb80489
+		summarizeBy: none
+		sourceColumn: Domaine
+
+	column Organisme
+		dataType: string
+		lineageTag: 71239d0d-8637-484f-81ab-65358e7b198c
+		summarizeBy: none
+		sourceColumn: Organisme
+
+	column Obligation
+		dataType: string
+		lineageTag: 3afd2c26-1f16-4b3e-b22e-f9f1eccda955
+		summarizeBy: none
+		sourceColumn: Obligation
+
+	column Périodicité
+		dataType: string
+		lineageTag: 7d771da2-fc85-4cfa-908d-9af69c2ea6f8
+		summarizeBy: none
+		sourceColumn: Périodicité
+
+	column Applicabilité
+		dataType: string
+		lineageTag: f2bf19a9-c999-4917-bd69-fa896400e82b
+		summarizeBy: none
+		sourceColumn: Applicabilité
+
+	column Criticité
+		dataType: string
+		lineageTag: d4202781-e3b8-46f8-b7c0-7eda76170e65
+		summarizeBy: none
+		sourceColumn: Criticité
+
+	column Délai_Règle
+		dataType: string
+		lineageTag: 5a39f029-3a7a-49fc-9f93-656cb4d50b20
+		summarizeBy: none
+		sourceColumn: Délai_Règle
+
+	column Déclaration_Requise
+		dataType: boolean
+		lineageTag: c6cd9d25-28d1-47f7-994f-af9bd2fc0fa2
+		summarizeBy: none
+		sourceColumn: Déclaration_Requise
+
+	column Paiement_Requis
+		dataType: boolean
+		lineageTag: 69dca673-f8fd-44ed-a43f-de6264cfd71b
+		summarizeBy: none
+		sourceColumn: Paiement_Requis
+
+	column Preuve_Requise
+		dataType: boolean
+		lineageTag: 9a41ec8e-8f63-4858-b076-75c844d7b4e8
+		summarizeBy: none
+		sourceColumn: Preuve_Requise
+
+	column Responsable_Client
+		dataType: string
+		lineageTag: a403bef8-2f9c-4fac-aaba-c6f0b7ade060
+		summarizeBy: none
+		sourceColumn: Responsable_Client
+
+	column Source_URL
+		dataType: string
+		lineageTag: 6a9a4548-5e18-4778-871f-25428849d384
+		summarizeBy: none
+		sourceColumn: Source_URL
+		dataCategory: WebUrl
+
+	column Source_Version
+		dataType: string
+		lineageTag: 7555309c-ddd0-49b2-9b76-f32a250ed469
+		summarizeBy: none
+		sourceColumn: Source_Version
+
+	column Dernière_Vérification
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: c018a925-ab96-4ca6-a13c-232fa936b7f5
+		summarizeBy: none
+		sourceColumn: Dernière_Vérification
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Actif
+		dataType: boolean
+		lineageTag: 16530248-71ae-42ad-b8e9-8b9406f7e7c7
+		summarizeBy: none
+		sourceColumn: Actif
+
+	column Notes
+		dataType: string
+		lineageTag: deb68afb-a6a6-4fda-b0e2-f0b5694adf8f
+		summarizeBy: none
+		sourceColumn: Notes
+
+	column Contrôle_ID
+		dataType: string
+		lineageTag: 9b2dc688-436c-4246-848c-04233de287e3
+		summarizeBy: none
+		sourceColumn: Contrôle_ID
+
+	partition ComplianceObligationTable = m
+		mode: import
+		source =
+				let
+				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
+				    Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
+				    ComplianceObligationTable_Table = Source{[Item="ComplianceObligationTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(ComplianceObligationTable_Table,{{"Obligation_ID", type text}, {"Domaine", type text}, {"Organisme", type text}, {"Obligation", type text}, {"Périodicité", type text}, {"Applicabilité", type text}, {"Criticité", type text}, {"Délai_Règle", type text}, {"Déclaration_Requise", type logical}, {"Paiement_Requis", type logical}, {"Preuve_Requise", type logical}, {"Responsable_Client", type text}, {"Source_URL", type text}, {"Source_Version", type text}, {"Dernière_Vérification", type date}, {"Actif", type logical}, {"Notes", type text}, {"Contrôle_ID", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+	annotation PBI_ResultType = Table

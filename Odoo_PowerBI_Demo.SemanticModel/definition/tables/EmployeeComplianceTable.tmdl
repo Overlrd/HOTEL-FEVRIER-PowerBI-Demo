@@ -1,0 +1,146 @@
+table EmployeeComplianceTable
+	lineageTag: 805e8ca1-0fae-4050-a4ec-ebc31a68df1b
+
+	measure 'Salariés contrôlés' = DISTINCTCOUNT(EmployeeComplianceTable[Employé_ID])
+		formatString: 0
+		lineageTag: bdf71d5f-a3d5-40fc-b840-90d3cc5aa108
+
+	measure 'Salariés à régulariser' =
+			CALCULATE(
+			    DISTINCTCOUNT(EmployeeComplianceTable[Employé_ID]),
+			    FILTER(EmployeeComplianceTable, NOT ISBLANK(EmployeeComplianceTable[Anomalie]) && EmployeeComplianceTable[Anomalie] <> "Aucune")
+			)
+		formatString: 0
+		lineageTag: b133d68c-fb25-4381-a53e-81aa51312db4
+
+	measure 'Base CNSS contrôlée' = SUM(EmployeeComplianceTable[Base_CNSS])
+		formatString: #,0
+		lineageTag: 9506ca67-6bbb-496b-a208-197145230f71
+
+	measure 'Cotisations patronales' = SUM(EmployeeComplianceTable[Cotisation_Patronale])
+		formatString: #,0
+		lineageTag: 54a20d6d-48f1-4dc2-99f7-f9ce01f3ed81
+
+	measure 'Cotisations salariales' = SUM(EmployeeComplianceTable[Cotisation_Salariale])
+		formatString: #,0
+		lineageTag: c272c661-8c9a-4a58-90e5-94fb69f1debc
+
+	column Contrôle_Salarié_ID
+		dataType: string
+		lineageTag: 672639b5-a951-4673-a9d0-ec313987f9be
+		summarizeBy: none
+		sourceColumn: Contrôle_Salarié_ID
+
+	column Employé_ID
+		dataType: string
+		lineageTag: 6b41f543-bea7-45c6-91c6-cdad4e1d9dcc
+		summarizeBy: none
+		sourceColumn: Employé_ID
+
+	column Nom_Employé
+		dataType: string
+		lineageTag: cbee5a6a-2169-4833-82ce-84c0a7a5d010
+		summarizeBy: none
+		sourceColumn: Nom_Employé
+
+	column Département
+		dataType: string
+		lineageTag: 326d2b03-2be9-47fb-a542-b4c3662e4a5b
+		summarizeBy: none
+		sourceColumn: Département
+
+	column Date_Embauche
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 24cc632a-dee3-4d13-9d9e-cdba50d5cc30
+		summarizeBy: none
+		sourceColumn: Date_Embauche
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Statut_CNSS
+		dataType: string
+		lineageTag: 6643cd61-13fb-4fde-88c1-09b921edf700
+		summarizeBy: none
+		sourceColumn: Statut_CNSS
+
+	column Numéro_CNSS
+		dataType: string
+		lineageTag: 677227b2-8451-481e-8113-7b74c13ab177
+		summarizeBy: none
+		sourceColumn: Numéro_CNSS
+
+	column Date_Immatriculation
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 71aa229e-a827-408e-a929-c4fb2d871ec0
+		summarizeBy: none
+		sourceColumn: Date_Immatriculation
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Délai_Immatriculation_Jours
+		dataType: int64
+		formatString: 0
+		lineageTag: 8f8cc994-cf79-48db-873a-2a6bfb63ccb8
+		summarizeBy: none
+		sourceColumn: Délai_Immatriculation_Jours
+
+	column Salaire_Base
+		dataType: int64
+		formatString: #,0
+		lineageTag: b111a052-f940-40ab-999d-08a6181c1885
+		summarizeBy: sum
+		sourceColumn: Salaire_Base
+
+	column Primes_Cotisables
+		dataType: int64
+		formatString: #,0
+		lineageTag: ca9165b7-b64d-4857-83a6-63cb132e21c3
+		summarizeBy: sum
+		sourceColumn: Primes_Cotisables
+
+	column Base_CNSS
+		dataType: int64
+		formatString: #,0
+		lineageTag: 8844ed26-32cd-43c9-b2f4-6c5cde08452f
+		summarizeBy: sum
+		sourceColumn: Base_CNSS
+
+	column Cotisation_Patronale
+		dataType: int64
+		formatString: #,0
+		lineageTag: f0ade6b3-d2bc-4148-8ff0-822e422ea3a6
+		summarizeBy: sum
+		sourceColumn: Cotisation_Patronale
+
+	column Cotisation_Salariale
+		dataType: int64
+		formatString: #,0
+		lineageTag: c1955a00-c125-4055-8cb1-513b14126256
+		summarizeBy: sum
+		sourceColumn: Cotisation_Salariale
+
+	column Anomalie
+		dataType: string
+		lineageTag: 1fb49669-96cb-4745-97da-28c47e26055b
+		summarizeBy: none
+		sourceColumn: Anomalie
+
+	column Contrôle_Employé
+		dataType: string
+		lineageTag: fd749379-3964-4ed2-b32a-435320e2f9d3
+		summarizeBy: none
+		sourceColumn: Contrôle_Employé
+
+	partition EmployeeComplianceTable = m
+		mode: import
+		source =
+				let
+				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
+				    Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
+				    EmployeeComplianceTable_Table = Source{[Item="EmployeeComplianceTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(EmployeeComplianceTable_Table,{{"Contrôle_Salarié_ID", type text}, {"Employé_ID", type text}, {"Nom_Employé", type text}, {"Département", type text}, {"Date_Embauche", type date}, {"Statut_CNSS", type text}, {"Numéro_CNSS", type text}, {"Date_Immatriculation", type date}, {"Délai_Immatriculation_Jours", Int64.Type}, {"Salaire_Base", Int64.Type}, {"Primes_Cotisables", Int64.Type}, {"Base_CNSS", Int64.Type}, {"Cotisation_Patronale", Int64.Type}, {"Cotisation_Salariale", Int64.Type}, {"Anomalie", type text}, {"Contrôle_Employé", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+	annotation PBI_ResultType = Table

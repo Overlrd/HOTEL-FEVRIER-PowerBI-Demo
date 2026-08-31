@@ -9,7 +9,7 @@ model Model
 
 annotation __PBI_TimeIntelligenceEnabled = 1
 
-annotation PBI_QueryOrder = ["CashTable","DateTable","EmployeeTable","InvoiceTable","CollectionFollowUpTable","OccupancyTable","OrderTable","PartnerTable","PayrollTable","HRAttendanceTable","ProductTable","StockTable","BudgetMensuel","ChargesExploitation","DocumentTable"]
+annotation PBI_QueryOrder = ["CashTable","DateTable","EmployeeTable","InvoiceTable","CollectionFollowUpTable","OccupancyTable","OrderTable","PartnerTable","PayrollTable","HRAttendanceTable","ProductTable","StockTable","BudgetMensuel","ChargesExploitation","DocumentTable","ComplianceObligationTable","ComplianceTrackingTable","ComplianceReconciliationTable","EmployeeComplianceTable"]
 
 annotation PBI_ProTooling = ["DevMode"]
 
@@ -46,5 +46,9 @@ ref table PontResultat
 ref table DetailPerformance
 ref table PointsSuivi
 ref table DocumentTable
+ref table ComplianceObligationTable
+ref table ComplianceTrackingTable
+ref table ComplianceReconciliationTable
+ref table EmployeeComplianceTable
 
 ref cultureInfo en-US

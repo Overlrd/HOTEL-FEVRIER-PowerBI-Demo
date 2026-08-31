@@ -1,0 +1,233 @@
+table ComplianceTrackingTable
+	lineageTag: 6ae5b441-1c3a-4ade-9a10-139511a79146
+
+	measure 'Échéances suivies' = COUNTROWS(ComplianceTrackingTable)
+		formatString: 0
+		lineageTag: 935268b5-c378-4449-893d-53c96ab29a0d
+
+	measure 'Obligations suivies' = DISTINCTCOUNT(ComplianceTrackingTable[Obligation_ID])
+		formatString: 0
+		lineageTag: 2e15d9c7-9caa-4862-b8b7-c5f9c8677d2f
+
+	measure 'Échéances conformes' =
+			CALCULATE(
+			    COUNTROWS(ComplianceTrackingTable),
+			    ComplianceTrackingTable[Statut opérationnel] IN {"Conforme", "Conforme hors délai"}
+			)
+		formatString: 0
+		lineageTag: eb844e53-92f8-4310-9574-cb42c6dace0b
+
+	measure 'Échéances à traiter' =
+			CALCULATE(
+			    COUNTROWS(ComplianceTrackingTable),
+			    ComplianceTrackingTable[Statut opérationnel] IN {"En retard", "Déclaré - non payé", "Justificatif manquant", "Écart à justifier", "Urgent"}
+			)
+		formatString: 0
+		lineageTag: 43cb74a9-c303-4e29-a377-bb7481963734
+
+	measure 'Taux de conformité' =
+			VAR BaseÉvaluable =
+			    CALCULATE(
+			        COUNTROWS(ComplianceTrackingTable),
+			        NOT (ComplianceTrackingTable[Statut opérationnel] IN {"À préparer", "Non applicable", "À valider"})
+			    )
+			RETURN DIVIDE([Échéances conformes], BaseÉvaluable)
+		formatString: 0.0%
+		lineageTag: 44d0dfc0-e5e0-4599-9158-3c00507b1f49
+
+	measure 'Échéances dans 30 jours' =
+			VAR DateRéférence = MAX(ComplianceTrackingTable[Date_Référence])
+			RETURN
+			    CALCULATE(
+			        COUNTROWS(ComplianceTrackingTable),
+			        FILTER(
+			            ComplianceTrackingTable,
+			            ComplianceTrackingTable[Date_Échéance] >= DateRéférence
+			                && ComplianceTrackingTable[Date_Échéance] <= DateRéférence + 30
+			                && NOT (ComplianceTrackingTable[Statut opérationnel] IN {"Conforme", "Non applicable"})
+			        )
+			    )
+		formatString: 0
+		lineageTag: 5b046117-da6f-4d69-ae10-54cdecd8cacc
+
+	measure 'Montant restant à payer' =
+			SUMX(
+			    ComplianceTrackingTable,
+			    MAX(0, COALESCE(ComplianceTrackingTable[Montant_Dû], 0) - COALESCE(ComplianceTrackingTable[Montant_Payé], 0))
+			)
+		formatString: #,0
+		lineageTag: fbcd8f99-07b4-4c73-857b-d1c1a23adff8
+
+	measure 'Montant restant affiché' =
+			VAR Montant = [Montant restant à payer]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(Montant), BLANK(),
+			        ABS(Montant) >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			        ABS(Montant) >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			        FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			    )
+		lineageTag: 19493d71-c0ab-44d5-b3db-d1407cf5b78b
+
+	measure 'Date de référence conformité' = FORMAT(MAX(ComplianceTrackingTable[Date_Référence]), "dd MMM yyyy", "fr-FR")
+		lineageTag: 681d2190-6c72-4709-bc14-094c2d2765ff
+
+	column Suivi_ID
+		dataType: string
+		lineageTag: a227bd48-be55-4c69-95a0-bfcac43eeb6e
+		summarizeBy: none
+		sourceColumn: Suivi_ID
+
+	column Obligation_ID
+		dataType: string
+		lineageTag: 48d68a0f-d5b7-42fb-ab11-fdf3c3b3f884
+		summarizeBy: none
+		sourceColumn: Obligation_ID
+
+	column Période
+		dataType: string
+		lineageTag: 000d4758-7936-4c12-acce-7600f90d63c9
+		summarizeBy: none
+		sourceColumn: Période
+
+	column Date_Clé
+		dataType: int64
+		formatString: 0
+		lineageTag: 7aafdbec-8eb4-4fa8-bb8e-91d4df8aeab9
+		summarizeBy: none
+		sourceColumn: Date_Clé
+
+	column Date_Échéance
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 6b8d631e-3d1c-4693-af46-609c92003eb5
+		summarizeBy: none
+		sourceColumn: Date_Échéance
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Date_Référence
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 548f71c5-f294-4a33-926e-dbc914683bf2
+		summarizeBy: none
+		sourceColumn: Date_Référence
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Date_Déclaration
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 06d44871-ea90-4912-9e4b-ce5c9d7e9970
+		summarizeBy: none
+		sourceColumn: Date_Déclaration
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Date_Paiement
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 47856a98-b2c8-4ee3-bcf8-43732641d4eb
+		summarizeBy: none
+		sourceColumn: Date_Paiement
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Montant_Déclaré
+		dataType: int64
+		formatString: #,0
+		lineageTag: abd369b0-87e0-428d-b99c-2278a976c712
+		summarizeBy: sum
+		sourceColumn: Montant_Déclaré
+
+	column Montant_Dû
+		dataType: int64
+		formatString: #,0
+		lineageTag: d4ca4c60-6e25-4555-a798-7c7642db41e4
+		summarizeBy: sum
+		sourceColumn: Montant_Dû
+
+	column Montant_Payé
+		dataType: int64
+		formatString: #,0
+		lineageTag: 987a6873-6ecd-4915-9c6f-fcb29bf560cc
+		summarizeBy: sum
+		sourceColumn: Montant_Payé
+
+	column Responsable_Client
+		dataType: string
+		lineageTag: bbee5e55-4cf8-4421-a7f3-ce3307ce0a02
+		summarizeBy: none
+		sourceColumn: Responsable_Client
+
+	column Référence_Déclaration
+		dataType: string
+		lineageTag: dd657b26-ae3a-4265-9a13-ea429a550320
+		summarizeBy: none
+		sourceColumn: Référence_Déclaration
+
+	column Référence_Paiement
+		dataType: string
+		lineageTag: 57d82ddd-3b63-4ff2-8bf6-601a9d6cec25
+		summarizeBy: none
+		sourceColumn: Référence_Paiement
+
+	column Statut_Saisi
+		dataType: string
+		lineageTag: 0228f108-c464-4372-b94d-666e8b491be8
+		summarizeBy: none
+		sourceColumn: Statut_Saisi
+
+	column Commentaire
+		dataType: string
+		lineageTag: 039f2080-22a0-451c-820c-8f1e0306a438
+		summarizeBy: none
+		sourceColumn: Commentaire
+
+	column Contrôle_Obligation
+		dataType: string
+		lineageTag: 5c7abf79-6f28-4795-b7bf-b748bc8eca04
+		summarizeBy: none
+		sourceColumn: Contrôle_Obligation
+
+	column 'Statut opérationnel' =
+			VAR StatutSaisi = TRIM(COALESCE(ComplianceTrackingTable[Statut_Saisi], ""))
+			VAR DateRéférence = ComplianceTrackingTable[Date_Référence]
+			VAR DateÉchéance = ComplianceTrackingTable[Date_Échéance]
+			VAR Jours = IF(NOT ISBLANK(DateÉchéance) && NOT ISBLANK(DateRéférence), DATEDIFF(DateRéférence, DateÉchéance, DAY))
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        StatutSaisi <> "", StatutSaisi,
+			        ISBLANK(DateÉchéance) || ISBLANK(DateRéférence), "À valider",
+			        DateÉchéance < DateRéférence, "En retard",
+			        Jours <= 7, "Urgent",
+			        Jours <= 30, "À venir",
+			        "À préparer"
+			    )
+		dataType: string
+		lineageTag: f42ee752-5a81-46c7-8a35-c12bb475aa0f
+		summarizeBy: none
+
+	column Jours_Restants = IF(ISBLANK(ComplianceTrackingTable[Date_Échéance]) || ISBLANK(ComplianceTrackingTable[Date_Référence]), BLANK(), DATEDIFF(ComplianceTrackingTable[Date_Référence], ComplianceTrackingTable[Date_Échéance], DAY))
+		dataType: int64
+		formatString: 0
+		lineageTag: 3bd7758b-84be-4293-bc2a-94687d076678
+		summarizeBy: none
+
+	column Écart_Paiement = MAX(0, COALESCE(ComplianceTrackingTable[Montant_Dû], 0) - COALESCE(ComplianceTrackingTable[Montant_Payé], 0))
+		dataType: int64
+		formatString: #,0
+		lineageTag: aecff65d-832a-4228-ad5e-0422d444fa56
+		summarizeBy: sum
+
+	partition ComplianceTrackingTable = m
+		mode: import
+		source =
+				let
+				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
+				    Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
+				    ComplianceTrackingTable_Table = Source{[Item="ComplianceTrackingTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(ComplianceTrackingTable_Table,{{"Suivi_ID", type text}, {"Obligation_ID", type text}, {"Période", type text}, {"Date_Clé", Int64.Type}, {"Date_Échéance", type date}, {"Date_Référence", type date}, {"Date_Déclaration", type date}, {"Date_Paiement", type date}, {"Montant_Déclaré", Int64.Type}, {"Montant_Dû", Int64.Type}, {"Montant_Payé", Int64.Type}, {"Responsable_Client", type text}, {"Référence_Déclaration", type text}, {"Référence_Paiement", type text}, {"Statut_Saisi", type text}, {"Commentaire", type text}, {"Contrôle_Obligation", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+	annotation PBI_ResultType = Table
