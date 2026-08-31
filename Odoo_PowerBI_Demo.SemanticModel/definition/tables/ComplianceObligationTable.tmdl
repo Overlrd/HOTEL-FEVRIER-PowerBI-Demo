@@ -1,6 +1,14 @@
 table ComplianceObligationTable
 	lineageTag: 2f4e758d-c815-4423-ac6c-a3428e5765a4
 
+	measure 'Nombre d''obligations actives' = CALCULATE(COUNTROWS(ComplianceObligationTable), ComplianceObligationTable[Actif] = TRUE())
+		formatString: 0
+		lineageTag: d2211f59-98d5-4a11-900b-ac77a8d43b64
+
+	measure 'Obligations à valider' = CALCULATE(COUNTROWS(ComplianceObligationTable), ComplianceObligationTable[Applicabilité] = "À confirmer")
+		formatString: 0
+		lineageTag: 31fca0a5-0403-4bff-b196-0aa59ca75847
+
 	column Obligation_ID
 		dataType: string
 		lineageTag: cbd56d3f-f923-4695-a23a-5584051a3798

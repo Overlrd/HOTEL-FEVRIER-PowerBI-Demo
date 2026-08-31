@@ -1,6 +1,30 @@
 table EmployeeComplianceTable
 	lineageTag: 805e8ca1-0fae-4050-a4ec-ebc31a68df1b
 
+	measure 'Salariés contrôlés' = DISTINCTCOUNT(EmployeeComplianceTable[Employé_ID])
+		formatString: 0
+		lineageTag: bdf71d5f-a3d5-40fc-b840-90d3cc5aa108
+
+	measure 'Salariés à régulariser' =
+			CALCULATE(
+			    DISTINCTCOUNT(EmployeeComplianceTable[Employé_ID]),
+			    FILTER(EmployeeComplianceTable, NOT ISBLANK(EmployeeComplianceTable[Anomalie]) && EmployeeComplianceTable[Anomalie] <> "Aucune")
+			)
+		formatString: 0
+		lineageTag: b133d68c-fb25-4381-a53e-81aa51312db4
+
+	measure 'Base CNSS contrôlée' = SUM(EmployeeComplianceTable[Base_CNSS])
+		formatString: #,0
+		lineageTag: 9506ca67-6bbb-496b-a208-197145230f71
+
+	measure 'Cotisations patronales' = SUM(EmployeeComplianceTable[Cotisation_Patronale])
+		formatString: #,0
+		lineageTag: 54a20d6d-48f1-4dc2-99f7-f9ce01f3ed81
+
+	measure 'Cotisations salariales' = SUM(EmployeeComplianceTable[Cotisation_Salariale])
+		formatString: #,0
+		lineageTag: c272c661-8c9a-4a58-90e5-94fb69f1debc
+
 	column Contrôle_Salarié_ID
 		dataType: string
 		lineageTag: 672639b5-a951-4673-a9d0-ec313987f9be

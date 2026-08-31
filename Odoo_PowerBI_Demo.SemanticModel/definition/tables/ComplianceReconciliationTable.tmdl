@@ -1,6 +1,25 @@
 table ComplianceReconciliationTable
 	lineageTag: 0e47d483-6b32-4a23-a9f8-6b848565e458
 
+	measure 'Justificatifs manquants' = CALCULATE(COUNTROWS(ComplianceReconciliationTable), ComplianceReconciliationTable[Statut_Preuve] <> "Disponible")
+		formatString: 0
+		lineageTag: 32382d33-14c4-4636-973c-48ff206d9e58
+
+	measure 'Écart comptable total' = SUMX(ComplianceReconciliationTable, ABS(ComplianceReconciliationTable[Écart_Comptabilité]))
+		formatString: #,0
+		lineageTag: a4e857ea-1903-4465-9963-eabd3cd0c206
+
+	measure 'Écart comptable affiché' =
+			VAR Montant = [Écart comptable total]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(Montant), BLANK(),
+			        ABS(Montant) >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			        FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			    )
+		lineageTag: 9c6bb172-e810-48f2-9c7a-f1c191a9c2ae
+
 	column Rapprochement_ID
 		dataType: string
 		lineageTag: db94d07d-0265-48b9-b59d-cfb897c93683

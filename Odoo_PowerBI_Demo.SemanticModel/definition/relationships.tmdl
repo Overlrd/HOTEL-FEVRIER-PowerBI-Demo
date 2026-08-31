@@ -135,3 +135,27 @@ relationship 7d56cc0c-c78f-42a7-8d35-50b034143524
 relationship 54367b83-2682-4c8f-bb51-952e4f0f11ab
 	fromColumn: HRAttendanceTable.Employé_ID
 	toColumn: EmployeeTable.Employé_ID
+
+relationship 4e210e9c-1a7e-4ddf-9344-8df81c5a9844
+	fromColumn: ComplianceTrackingTable.Obligation_ID
+	toColumn: ComplianceObligationTable.Obligation_ID
+
+relationship 8629b575-496c-4d3c-889b-bc33fca6555d
+	fromColumn: ComplianceTrackingTable.Date_Clé
+	toColumn: DateTable.Date_Clé
+
+relationship e41c4393-2d84-44a5-96c0-5e52db779d19
+	fromColumn: ComplianceReconciliationTable.Suivi_ID
+	toColumn: ComplianceTrackingTable.Suivi_ID
+
+relationship 387a8cf4-f413-42ad-a466-df4dc3be0edb
+	fromColumn: ComplianceReconciliationTable.Mouvement_ID
+	toColumn: CashTable.Mouvement_ID
+
+relationship 083d8ec4-f7fa-4c0d-8082-0246c6299f96
+	fromColumn: ComplianceReconciliationTable.Document_ID
+	toColumn: DocumentTable.Document_ID
+
+relationship 071e0622-5072-49d5-a58f-1e0afdc9130a
+	fromColumn: EmployeeComplianceTable.Employé_ID
+	toColumn: EmployeeTable.Employé_ID

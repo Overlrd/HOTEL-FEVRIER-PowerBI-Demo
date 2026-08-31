@@ -1,6 +1,78 @@
 table ComplianceTrackingTable
 	lineageTag: 6ae5b441-1c3a-4ade-9a10-139511a79146
 
+	measure 'Échéances suivies' = COUNTROWS(ComplianceTrackingTable)
+		formatString: 0
+		lineageTag: 935268b5-c378-4449-893d-53c96ab29a0d
+
+	measure 'Obligations suivies' = DISTINCTCOUNT(ComplianceTrackingTable[Obligation_ID])
+		formatString: 0
+		lineageTag: 2e15d9c7-9caa-4862-b8b7-c5f9c8677d2f
+
+	measure 'Échéances conformes' =
+			CALCULATE(
+			    COUNTROWS(ComplianceTrackingTable),
+			    ComplianceTrackingTable[Statut opérationnel] IN {"Conforme", "Conforme hors délai"}
+			)
+		formatString: 0
+		lineageTag: eb844e53-92f8-4310-9574-cb42c6dace0b
+
+	measure 'Échéances à traiter' =
+			CALCULATE(
+			    COUNTROWS(ComplianceTrackingTable),
+			    ComplianceTrackingTable[Statut opérationnel] IN {"En retard", "Déclaré - non payé", "Justificatif manquant", "Écart à justifier", "Urgent"}
+			)
+		formatString: 0
+		lineageTag: 43cb74a9-c303-4e29-a377-bb7481963734
+
+	measure 'Taux de conformité' =
+			VAR BaseÉvaluable =
+			    CALCULATE(
+			        COUNTROWS(ComplianceTrackingTable),
+			        NOT (ComplianceTrackingTable[Statut opérationnel] IN {"À préparer", "Non applicable", "À valider"})
+			    )
+			RETURN DIVIDE([Échéances conformes], BaseÉvaluable)
+		formatString: 0.0%
+		lineageTag: 44d0dfc0-e5e0-4599-9158-3c00507b1f49
+
+	measure 'Échéances dans 30 jours' =
+			VAR DateRéférence = MAX(ComplianceTrackingTable[Date_Référence])
+			RETURN
+			    CALCULATE(
+			        COUNTROWS(ComplianceTrackingTable),
+			        FILTER(
+			            ComplianceTrackingTable,
+			            ComplianceTrackingTable[Date_Échéance] >= DateRéférence
+			                && ComplianceTrackingTable[Date_Échéance] <= DateRéférence + 30
+			                && NOT (ComplianceTrackingTable[Statut opérationnel] IN {"Conforme", "Non applicable"})
+			        )
+			    )
+		formatString: 0
+		lineageTag: 5b046117-da6f-4d69-ae10-54cdecd8cacc
+
+	measure 'Montant restant à payer' =
+			SUMX(
+			    ComplianceTrackingTable,
+			    MAX(0, COALESCE(ComplianceTrackingTable[Montant_Dû], 0) - COALESCE(ComplianceTrackingTable[Montant_Payé], 0))
+			)
+		formatString: #,0
+		lineageTag: fbcd8f99-07b4-4c73-857b-d1c1a23adff8
+
+	measure 'Montant restant affiché' =
+			VAR Montant = [Montant restant à payer]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(Montant), BLANK(),
+			        ABS(Montant) >= 1000000000, FORMAT(DIVIDE(Montant, 1000000000), "0.00", "fr-FR") & " Md XOF",
+			        ABS(Montant) >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			        FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			    )
+		lineageTag: 19493d71-c0ab-44d5-b3db-d1407cf5b78b
+
+	measure 'Date de référence conformité' = FORMAT(MAX(ComplianceTrackingTable[Date_Référence]), "dd MMM yyyy", "fr-FR")
+		lineageTag: 681d2190-6c72-4709-bc14-094c2d2765ff
+
 	column Suivi_ID
 		dataType: string
 		lineageTag: a227bd48-be55-4c69-95a0-bfcac43eeb6e
@@ -114,6 +186,37 @@ table ComplianceTrackingTable
 		lineageTag: 5c7abf79-6f28-4795-b7bf-b748bc8eca04
 		summarizeBy: none
 		sourceColumn: Contrôle_Obligation
+
+	column 'Statut opérationnel' =
+			VAR StatutSaisi = TRIM(COALESCE(ComplianceTrackingTable[Statut_Saisi], ""))
+			VAR DateRéférence = ComplianceTrackingTable[Date_Référence]
+			VAR DateÉchéance = ComplianceTrackingTable[Date_Échéance]
+			VAR Jours = IF(NOT ISBLANK(DateÉchéance) && NOT ISBLANK(DateRéférence), DATEDIFF(DateRéférence, DateÉchéance, DAY))
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        StatutSaisi <> "", StatutSaisi,
+			        ISBLANK(DateÉchéance) || ISBLANK(DateRéférence), "À valider",
+			        DateÉchéance < DateRéférence, "En retard",
+			        Jours <= 7, "Urgent",
+			        Jours <= 30, "À venir",
+			        "À préparer"
+			    )
+		dataType: string
+		lineageTag: f42ee752-5a81-46c7-8a35-c12bb475aa0f
+		summarizeBy: none
+
+	column Jours_Restants = IF(ISBLANK(ComplianceTrackingTable[Date_Échéance]) || ISBLANK(ComplianceTrackingTable[Date_Référence]), BLANK(), DATEDIFF(ComplianceTrackingTable[Date_Référence], ComplianceTrackingTable[Date_Échéance], DAY))
+		dataType: int64
+		formatString: 0
+		lineageTag: 3bd7758b-84be-4293-bc2a-94687d076678
+		summarizeBy: none
+
+	column Écart_Paiement = MAX(0, COALESCE(ComplianceTrackingTable[Montant_Dû], 0) - COALESCE(ComplianceTrackingTable[Montant_Payé], 0))
+		dataType: int64
+		formatString: #,0
+		lineageTag: aecff65d-832a-4228-ad5e-0422d444fa56
+		summarizeBy: sum
 
 	partition ComplianceTrackingTable = m
 		mode: import
