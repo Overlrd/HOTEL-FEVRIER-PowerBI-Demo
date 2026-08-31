@@ -1,6 +1,6 @@
 # HOTEL 2 FEVRIER — Project Status
 
-Last updated: 2026-08-26
+Last updated: 2026-08-31
 
 ## Purpose
 
@@ -23,6 +23,7 @@ Power BI demo for Hôtel 2 Février, targeted at a DAF / finance-management audi
 5. `a6f3c9e72b145d8091fa` — Achats et stocks
 6. `e5a591c45102421280f3` — Performance financière
 7. `1fa8d86ede5f462ebf51` — Documents
+8. `4a10c9f3e7b24d8a9c01` — Fiscalité & conformité
 
 ## Important hidden/detail pages
 
@@ -34,13 +35,14 @@ Power BI demo for Hôtel 2 Février, targeted at a DAF / finance-management audi
 - `72b2d0641d9c4fe9b202` — Détail exploitation
 - `72c3e1752ead40fac303` — Détail RH
 - `72d4f2863fbe41abd404` — Détail stocks
+- `4b21d0e4f8c35e9b0d12` — Détail conformité
 
 ## Document base
 
 Implemented and validated:
 
 - SharePoint folder `DOCUMENTS-DEMO`
-- Subfolders: `Factures`, `Commandes`, `Justificatifs`
+- Subfolders: `Factures`, `Commandes`, `Justificatifs`, `Conformite`
 - Excel structured table: `Documents`
 - Semantic model table: `DocumentTable`
 - Documents page with filters and clickable SharePoint links
@@ -48,7 +50,20 @@ Implemented and validated:
 - Client dossier with profile, invoices, orders and documents
 - Documents/client filter is based on `PartnerTable`
 
-Current demo document count: 16.
+Current demo document count: 24.
+
+## Fiscalité et conformité
+
+Implemented on branch `feature/fiscalite-conformite`:
+
+- Excel tables `ComplianceObligationTable`, `ComplianceTrackingTable`, `ComplianceReconciliationTable` and `EmployeeComplianceTable`;
+- semantic-model relationships to dates, employees, cash movements and documents;
+- DAX status, aging, payment, evidence, reconciliation and CNSS indicators;
+- visible page `Fiscalité & conformité` plus hidden drillthrough page `Détail conformité`;
+- navigation from all eight visible pages;
+- eight fictitious compliance evidence records in `Documents` and nine explicitly marked fictitious PDF files under `DOCUMENTS-DEMO/Conformite`.
+
+The dashboard is a control framework, not a legal conclusion. Applicability and client-side ownership remain `À confirmer`; official-source URLs and verification dates are stored in the obligation register.
 
 ## Financial-model conventions
 
@@ -60,8 +75,6 @@ Current demo document count: 16.
 
 ## Design direction
 
-Reference design approved for cleanup:
-
 - blue/navy primary theme inspired by the DAF mockup
 - light blue/grey page background
 - white content cards
@@ -72,52 +85,28 @@ Reference design approved for cleanup:
 - French user-facing labels only; avoid internal model field names in subtitles
 - KPI tooltip principle: the card gives the headline value; the hover tooltip gives only 2–3 supporting values, not a second report page
 
-The Tableau de bord page is the visual reference page. Other pages should be cleaned up one by one after this page is stable.
+The Tableau de bord page remains the visual reference page.
 
 ## Current cleanup sequence
 
-1. Tableau de bord — cleanup substantially complete; compact KPI tooltips awaiting Fabric validation
+1. Tableau de bord
 2. Trésorerie
 3. Exploitation
 4. Ressources humaines
 5. Achats et stocks
 6. Performance financière
 7. Documents
-
-## Compact KPI tooltips
-
-Current report implementation commit: `3f9bffc3` — awaiting Fabric validation.
-
-The detailed diagnostic measures added earlier are retained, but the visible hover experience is now intentionally compact:
-
-- Chiffre d'affaires: Budget, Écart budget %, Vs mois précédent
-- Résultat de gestion: Budget, Écart budget %, Vs mois précédent
-- Trésorerie: Encaissements, Décaissements, Flux net
-- Créances échues: Nombre de factures, Retard moyen, Plus gros débiteur
-- Taux d'occupation: Chambres vendues, Chambres disponibles, Vs mois précédent
-- Revenu par chambre disponible: Tarif moyen, Vs mois précédent
-
-Each KPI now points to its own hidden tooltip page, approximately 320 px wide and 150–160 px high. No table or horizontal scrolling is used. The semantic model and Excel source were not changed in this compacting pass.
-
-Legacy detailed diagnostic tooltip pages remain hidden and are no longer linked from these six KPI cards; they can be removed later after the compact version is validated.
+8. Fiscalité & conformité
 
 ## Known implementation lessons
 
 - Fabric validates report JSON more strictly than plain JSON parsing.
 - Avoid malformed duplicated formatting objects, especially `outline`, `border`, `visualLink`, `subTitle` and table-formatting arrays.
-- New or modified report JSON must be generated/parsed structurally before a Fabric-facing commit; do not hand-edit brace-heavy JSON when avoidable.
+- New or modified report JSON must be generated/parsed structurally before a Fabric-facing commit.
 - When a formatting error pattern is found, audit all sibling/generated visuals for the same pattern before retrying Fabric.
 - Prefer small, testable chunks and run Fabric `Update all` after each cleanup/feature chunk.
-- Drill-through buttons remain disabled unless Power BI has the correct visual selection context. Use normal page navigation when the intended flow starts from slicers or general page context.
+- Drillthrough starts from a row carrying `Suivi_ID`; use right-click > Extraire when no selected-row drillthrough button context is available.
 
 ## Current checkpoint
 
-Previous detailed-tooltip checkpoint: `89ecd121`.
-
-Current compact-tooltip report implementation: `3f9bffc3`.
-
-Next action: Fabric `Update all`, then visually confirm the hover experience on all six KPI cards. If accepted, `3f9bffc3` becomes the validated report baseline before moving to the Trésorerie page cleanup.
-
-## Next work after Tableau de bord validation
-
-Continue page-by-page cleanup. No additional large feature should be added until the current dashboard/tooltips are validated visually and in Fabric.
+Next action: open the feature branch in Power BI/Fabric, run `Update all`, refresh the semantic model, then validate the new compliance page, drillthrough, links and cross-filtering.
