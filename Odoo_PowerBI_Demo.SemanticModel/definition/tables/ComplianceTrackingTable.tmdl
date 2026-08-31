@@ -29,9 +29,10 @@ table ComplianceTrackingTable
 
 	measure 'Dossiers à jour' =
 			COALESCE(
-			    CALCULATE(
-			        COUNTROWS(ComplianceTrackingTable),
-			        FILTER(ComplianceTrackingTable, ComplianceTrackingTable[Statut opérationnel] IN {"À jour", "Fait hors délai"})
+			    SUMX(
+			        ComplianceTrackingTable,
+			        VAR Statut = CALCULATE([Statut du dossier])
+			        RETURN IF(Statut IN {"À jour", "Fait hors délai"}, 1, 0)
 			    ),
 			    0
 			)
@@ -40,9 +41,10 @@ table ComplianceTrackingTable
 
 	measure 'Actions immédiates' =
 			COALESCE(
-			    CALCULATE(
-			        COUNTROWS(ComplianceTrackingTable),
-			        FILTER(ComplianceTrackingTable, ComplianceTrackingTable[Statut opérationnel] IN {"En retard", "Paiement en attente", "Écart à justifier", "Urgent"})
+			    SUMX(
+			        ComplianceTrackingTable,
+			        VAR Statut = CALCULATE([Statut du dossier])
+			        RETURN IF(Statut IN {"En retard", "Paiement en attente", "Écart à justifier", "Urgent"}, 1, 0)
 			    ),
 			    0
 			)
@@ -51,9 +53,10 @@ table ComplianceTrackingTable
 
 	measure 'À faire bientôt' =
 			COALESCE(
-			    CALCULATE(
-			        COUNTROWS(ComplianceTrackingTable),
-			        FILTER(ComplianceTrackingTable, ComplianceTrackingTable[Statut opérationnel] = "À faire bientôt")
+			    SUMX(
+			        ComplianceTrackingTable,
+			        VAR Statut = CALCULATE([Statut du dossier])
+			        RETURN IF(Statut = "À faire bientôt", 1, 0)
 			    ),
 			    0
 			)
@@ -62,14 +65,28 @@ table ComplianceTrackingTable
 
 	measure 'Dossiers à confirmer' =
 			COALESCE(
-			    CALCULATE(
-			        COUNTROWS(ComplianceTrackingTable),
-			        FILTER(ComplianceTrackingTable, ComplianceTrackingTable[Statut opérationnel] = "À confirmer")
+			    SUMX(
+			        ComplianceTrackingTable,
+			        VAR Statut = CALCULATE([Statut du dossier])
+			        RETURN IF(Statut = "À confirmer", 1, 0)
 			    ),
 			    0
 			)
 		formatString: 0
 		lineageTag: 9d9e2d57-426c-40a8-92dd-a5bfd3a7a0b8
+
+	measure 'Dossiers à préparer' =
+			COALESCE(
+			    SUMX(
+			        ComplianceTrackingTable,
+			        VAR Statut = CALCULATE([Statut du dossier])
+			        RETURN IF(Statut = "À préparer", 1, 0)
+			    ),
+			    0
+			)
+		formatString: 0
+		lineageTag: 03ce9a3a-5b57-4d64-8962-b4ea4f2c2c10
+
 
 	measure 'Montant restant à payer' =
 			SUMX(
@@ -95,27 +112,21 @@ table ComplianceTrackingTable
 		lineageTag: 681d2190-6c72-4709-bc14-094c2d2765ff
 
 	measure 'État global conformité' =
-			VAR Lignes = COUNTROWS(ComplianceTrackingTable)
-			VAR StatutsDisponibles =
-			    COUNTROWS(
-			        FILTER(
-			            ComplianceTrackingTable,
-			            NOT ISBLANK(ComplianceTrackingTable[Statut opérationnel])
-			                && ComplianceTrackingTable[Statut opérationnel] <> ""
-			        )
-			    )
-			VAR ÀPréparer =
-			    COUNTROWS(
-			        FILTER(ComplianceTrackingTable, ComplianceTrackingTable[Statut opérationnel] = "À préparer")
-			    )
+			VAR Lignes = [Échéances suivies]
+			VAR Actions = [Actions immédiates]
+			VAR Bientot = [À faire bientôt]
+			VAR AConfirmer = [Dossiers à confirmer]
+			VAR APreparer = [Dossiers à préparer]
+			VAR Pieces = COALESCE([Pièces à compléter], 0)
+			VAR EcartComptable = ABS(COALESCE([Écart comptable total], 0))
+			VAR Salaries = COALESCE([Salariés à régulariser], 0)
 			RETURN
 			    SWITCH(
 			        TRUE(),
-			        Lignes = 0 || StatutsDisponibles = 0, "DONNÉES À ACTUALISER",
-			        [Actions immédiates] > 0, "ATTENTION REQUISE",
-			        [À faire bientôt] > 0, "À PRÉPARER",
-			        [Dossiers à confirmer] > 0, "À CONFIRMER",
-			        ÀPréparer > 0, "À PRÉPARER",
+			        Lignes = 0, "DONNÉES À ACTUALISER",
+			        Actions > 0 || Pieces > 0 || EcartComptable > 0 || Salaries > 0, "ATTENTION REQUISE",
+			        AConfirmer > 0, "À CONFIRMER",
+			        Bientot > 0 || APreparer > 0, "À PRÉPARER",
 			        "DOSSIER À JOUR"
 			    )
 		lineageTag: 5ecca656-9097-4e8c-a574-95fe42774d12
@@ -142,7 +153,60 @@ table ComplianceTrackingTable
 	measure 'Organisme sélectionné' = SELECTEDVALUE(ComplianceObligationTable[Organisme], "Organisme à confirmer")
 		lineageTag: d7c53c77-c727-4056-8805-5567ae1f944e
 
-	measure 'Statut du dossier' = SELECTEDVALUE(ComplianceTrackingTable[Statut opérationnel], "Sélection multiple")
+	measure 'Statut du dossier' =
+			VAR SuiviID = SELECTEDVALUE(ComplianceTrackingTable[Suivi_ID])
+			VAR StatutSaisi = TRIM(COALESCE(SELECTEDVALUE(ComplianceTrackingTable[Statut_Saisi]), ""))
+			VAR ObligationID = SELECTEDVALUE(ComplianceTrackingTable[Obligation_ID])
+			VAR Applicabilite =
+			    COALESCE(
+			        LOOKUPVALUE(
+			            ComplianceObligationTable[Applicabilité],
+			            ComplianceObligationTable[Obligation_ID], ObligationID
+			        ),
+			        ""
+			    )
+			VAR DateReference = SELECTEDVALUE(ComplianceTrackingTable[Date_Référence])
+			VAR DateEcheance = SELECTEDVALUE(ComplianceTrackingTable[Date_Échéance])
+			VAR DateDeclaration = SELECTEDVALUE(ComplianceTrackingTable[Date_Déclaration])
+			VAR DatePaiement = SELECTEDVALUE(ComplianceTrackingTable[Date_Paiement])
+			VAR MontantDu = COALESCE(SELECTEDVALUE(ComplianceTrackingTable[Montant_Dû]), 0)
+			VAR MontantPaye = COALESCE(SELECTEDVALUE(ComplianceTrackingTable[Montant_Payé]), 0)
+			VAR EcartComptable =
+			    COALESCE(
+			        CALCULATE(
+			            SUMX(
+			                ComplianceReconciliationTable,
+			                ABS(COALESCE(ComplianceReconciliationTable[Écart_Comptabilité], 0))
+			            )
+			        ),
+			        0
+			    )
+			VAR Jours =
+			    IF(
+			        NOT ISBLANK(DateEcheance) && NOT ISBLANK(DateReference),
+			        DATEDIFF(DateReference, DateEcheance, DAY)
+			    )
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(SuiviID), "Sélection multiple",
+			        StatutSaisi = "À confirmer" || Applicabilite = "À confirmer", "À confirmer",
+			        ISBLANK(DateEcheance) || ISBLANK(DateReference), "À confirmer",
+			        EcartComptable > 0, "Écart à justifier",
+			        StatutSaisi = "Clôturé"
+			            && (
+			                (NOT ISBLANK(DateDeclaration) && DateDeclaration > DateEcheance)
+			                    || (NOT ISBLANK(DatePaiement) && DatePaiement > DateEcheance)
+			            ), "Fait hors délai",
+			        StatutSaisi = "Clôturé", "À jour",
+			        DateEcheance < DateReference
+			            && NOT ISBLANK(DateDeclaration)
+			            && MontantDu > MontantPaye, "Paiement en attente",
+			        DateEcheance < DateReference, "En retard",
+			        Jours <= 7, "Urgent",
+			        Jours <= 30, "À faire bientôt",
+			        "À préparer"
+			    )
 		lineageTag: 93a05393-4d17-4e12-bcfa-92b03219e099
 
 	measure 'Référence du dossier' = SELECTEDVALUE(ComplianceTrackingTable[Suivi_ID], "")
@@ -156,7 +220,7 @@ table ComplianceTrackingTable
 	measure 'Résumé du dossier' =
 			VAR Organisme = [Organisme sélectionné]
 			VAR Statut = [Statut du dossier]
-			VAR Action = SELECTEDVALUE(ComplianceTrackingTable[Action requise], "Consulter les éléments du dossier")
+			VAR Action = [Action du dossier]
 			RETURN Organisme & " • " & Statut & " — " & Action
 		lineageTag: 296763a6-3dce-40ec-8b81-23ca8edd6687
 
@@ -165,6 +229,57 @@ table ComplianceTrackingTable
 
 	measure 'Montant payé affiché' = FORMAT(COALESCE(SUM(ComplianceTrackingTable[Montant_Payé]), 0), "#,0", "fr-FR") & " XOF"
 		lineageTag: 5c63a3e1-6976-47b3-9811-5385ce43545b
+
+	measure 'Reste à payer dossier affiché' =
+			VAR Du = COALESCE(SELECTEDVALUE(ComplianceTrackingTable[Montant_Dû]), 0)
+			VAR Paye = COALESCE(SELECTEDVALUE(ComplianceTrackingTable[Montant_Payé]), 0)
+			VAR Reste = MAX(0, Du - Paye)
+			RETURN FORMAT(Reste, "#,0", "fr-FR") & " XOF"
+		lineageTag: 99fc02ef-36db-4f20-8a2b-7ed513b30db2
+
+	measure 'Action du dossier' =
+			VAR Statut = [Statut du dossier]
+			VAR ObligationID = SELECTEDVALUE(ComplianceTrackingTable[Obligation_ID])
+			VAR PreuveRequise =
+			    LOOKUPVALUE(
+			        ComplianceObligationTable[Preuve_Requise],
+			        ComplianceObligationTable[Obligation_ID], ObligationID
+			    )
+			VAR NombrePieces = CALCULATE(COUNTROWS(ComplianceReconciliationTable))
+			VAR Disponibles =
+			    CALCULATE(
+			        COUNTROWS(ComplianceReconciliationTable),
+			        ComplianceReconciliationTable[Statut_Preuve] = "Disponible"
+			    )
+			VAR ACompleter =
+			    CALCULATE(
+			        COUNTROWS(ComplianceReconciliationTable),
+			        ComplianceReconciliationTable[Statut_Preuve] IN {"Manquant", "À obtenir"}
+			    )
+			VAR EtatPiece =
+			    SWITCH(
+			        TRUE(),
+			        PreuveRequise = FALSE(), "Non requise",
+			        ISBLANK(PreuveRequise) || NombrePieces = 0, "À confirmer",
+			        Disponibles = NombrePieces, "Disponible",
+			        ACompleter > 0, "À compléter",
+			        "À confirmer"
+			    )
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        Statut = "En retard", "Régulariser l'échéance",
+			        Statut = "Paiement en attente", "Effectuer le paiement",
+			        Statut = "Écart à justifier", "Expliquer l'écart comptable",
+			        Statut = "Urgent", "Finaliser le dossier",
+			        Statut = "À faire bientôt", "Préparer le dossier",
+			        Statut = "À confirmer", "Confirmer l'applicabilité",
+			        EtatPiece = "À compléter", "Joindre le justificatif",
+			        Statut = "À préparer", "Aucune action immédiate",
+			        Statut = "Fait hors délai", "Archivé — hors délai",
+			        "Dossier à jour"
+			    )
+		lineageTag: 91dd15af-daa5-4a30-87a2-893524101bd1
 
 	column Suivi_ID
 		dataType: string
@@ -280,149 +395,16 @@ table ComplianceTrackingTable
 		summarizeBy: none
 		sourceColumn: Contrôle_Obligation
 
-	column 'Statut opérationnel'
-		dataType: string
-		lineageTag: f42ee752-5a81-46c7-8a35-c12bb475aa0f
-		summarizeBy: none
-		sourceColumn: Statut opérationnel
-
-	column Jours_Restants
-		dataType: int64
-		formatString: 0
-		lineageTag: 3bd7758b-84be-4293-bc2a-94687d076678
-		summarizeBy: none
-		sourceColumn: Jours_Restants
-
-	column Écart_Paiement
-		dataType: int64
-		formatString: #,0
-		lineageTag: aecff65d-832a-4228-ad5e-0422d444fa56
-		summarizeBy: sum
-		sourceColumn: Écart_Paiement
-
-	column 'État pièce'
-		dataType: string
-		lineageTag: 2e827960-b312-4b2a-86fb-28da66c76500
-		summarizeBy: none
-		sourceColumn: État pièce
-
-	column 'Action requise'
-		dataType: string
-		lineageTag: d94647bd-123b-4945-a54a-78fb8fcc5afd
-		summarizeBy: none
-		sourceColumn: Action requise
-
-	column Priorité_Affichage
-		dataType: int64
-		formatString: 0
-		lineageTag: 97faa598-6bd2-49ee-9f99-0c17843d4803
-		summarizeBy: none
-		sourceColumn: Priorité_Affichage
-
 	partition ComplianceTrackingTable = m
 		mode: import
 		source =
 				let
 				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
 				    Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
-				    TrackingRaw = Source{[Item="ComplianceTrackingTable",Kind="Table"]}[Data],
-				    #"Changed Type" = Table.TransformColumnTypes(TrackingRaw,{{"Suivi_ID", type text}, {"Obligation_ID", type text}, {"Période", type text}, {"Date_Clé", Int64.Type}, {"Date_Échéance", type date}, {"Date_Référence", type date}, {"Date_Déclaration", type date}, {"Date_Paiement", type date}, {"Montant_Déclaré", Int64.Type}, {"Montant_Dû", Int64.Type}, {"Montant_Payé", Int64.Type}, {"Responsable_Client", type text}, {"Référence_Déclaration", type text}, {"Référence_Paiement", type text}, {"Statut_Saisi", type text}, {"Commentaire", type text}, {"Contrôle_Obligation", type text}}),
-				    ObligationsRaw = Source{[Item="ComplianceObligationTable",Kind="Table"]}[Data],
-				    ObligationsTyped = Table.TransformColumnTypes(ObligationsRaw,{{"Obligation_ID", type text}, {"Applicabilité", type text}, {"Preuve_Requise", type logical}}),
-				    ObligationLookup = Table.SelectColumns(ObligationsTyped,{"Obligation_ID", "Applicabilité", "Preuve_Requise"}),
-				    #"Merged obligations" = Table.NestedJoin(#"Changed Type", {"Obligation_ID"}, ObligationLookup, {"Obligation_ID"}, "_Obligation", JoinKind.LeftOuter),
-				    #"Expanded obligations" = Table.ExpandTableColumn(#"Merged obligations", "_Obligation", {"Applicabilité", "Preuve_Requise"}, {"Applicabilité_Mat", "Preuve_Requise_Mat"}),
-				    ReconciliationRaw = Source{[Item="ComplianceReconciliationTable",Kind="Table"]}[Data],
-				    ReconciliationTyped = Table.TransformColumnTypes(ReconciliationRaw,{{"Suivi_ID", type text}, {"Écart_Comptabilité", Int64.Type}, {"Statut_Preuve", type text}}),
-				    ReconciliationGrouped = Table.Group(
-				        ReconciliationTyped,
-				        {"Suivi_ID"},
-				        {
-				            {"Écart_Comptable_Mat", each List.Sum(List.Transform(List.RemoveNulls([Écart_Comptabilité]), each Number.Abs(_))), type number},
-				            {"Nombre_Pièces_Mat", each Table.RowCount(_), Int64.Type},
-				            {"Pièces_Disponibles_Mat", each Table.RowCount(Table.SelectRows(_, each [Statut_Preuve] = "Disponible")), Int64.Type},
-				            {"Pièces_ÀCompléter_Mat", each Table.RowCount(Table.SelectRows(_, each List.Contains({"Manquant", "À obtenir"}, [Statut_Preuve]))), Int64.Type}
-				        }
-				    ),
-				    #"Merged reconciliation" = Table.NestedJoin(#"Expanded obligations", {"Suivi_ID"}, ReconciliationGrouped, {"Suivi_ID"}, "_Reconciliation", JoinKind.LeftOuter),
-				    #"Expanded reconciliation" = Table.ExpandTableColumn(#"Merged reconciliation", "_Reconciliation", {"Écart_Comptable_Mat", "Nombre_Pièces_Mat", "Pièces_Disponibles_Mat", "Pièces_ÀCompléter_Mat"}, {"Écart_Comptable_Mat", "Nombre_Pièces_Mat", "Pièces_Disponibles_Mat", "Pièces_ÀCompléter_Mat"}),
-				    #"Added days remaining" = Table.AddColumn(#"Expanded reconciliation", "Jours_Restants", each if [Date_Échéance] = null or [Date_Référence] = null then null else Duration.Days([Date_Échéance] - [Date_Référence]), Int64.Type),
-				    #"Added payment gap" = Table.AddColumn(#"Added days remaining", "Écart_Paiement", each List.Max({0, (if [Montant_Dû] = null then 0 else [Montant_Dû]) - (if [Montant_Payé] = null then 0 else [Montant_Payé])}), Int64.Type),
-				    #"Added operational status" = Table.AddColumn(
-				        #"Added payment gap",
-				        "Statut opérationnel",
-				        each
-				            let
-				                StatutSaisi = Text.Trim(if [Statut_Saisi] = null then "" else Text.From([Statut_Saisi])),
-				                Applicabilite = Text.Trim(if [Applicabilité_Mat] = null then "" else Text.From([Applicabilité_Mat])),
-				                EcartComptable = if [Écart_Comptable_Mat] = null then 0 else Number.From([Écart_Comptable_Mat]),
-				                MontantDu = if [Montant_Dû] = null then 0 else [Montant_Dû],
-				                MontantPaye = if [Montant_Payé] = null then 0 else [Montant_Payé],
-				                Jours = [Jours_Restants]
-				            in
-				                if StatutSaisi = "À confirmer" or Applicabilite = "À confirmer" then "À confirmer"
-				                else if [Date_Échéance] = null or [Date_Référence] = null then "À confirmer"
-				                else if EcartComptable > 0 then "Écart à justifier"
-				                else if StatutSaisi = "Clôturé" and (([Date_Déclaration] <> null and [Date_Déclaration] > [Date_Échéance]) or ([Date_Paiement] <> null and [Date_Paiement] > [Date_Échéance])) then "Fait hors délai"
-				                else if StatutSaisi = "Clôturé" then "À jour"
-				                else if [Date_Échéance] < [Date_Référence] and [Date_Déclaration] <> null and MontantDu > MontantPaye then "Paiement en attente"
-				                else if [Date_Échéance] < [Date_Référence] then "En retard"
-				                else if Jours <> null and Jours <= 7 then "Urgent"
-				                else if Jours <> null and Jours <= 30 then "À faire bientôt"
-				                else "À préparer",
-				        type text
-				    ),
-				    #"Added evidence state" = Table.AddColumn(
-				        #"Added operational status",
-				        "État pièce",
-				        each
-				            let
-				                PreuveRequise = [Preuve_Requise_Mat],
-				                NombrePieces = if [Nombre_Pièces_Mat] = null then 0 else [Nombre_Pièces_Mat],
-				                Disponibles = if [Pièces_Disponibles_Mat] = null then 0 else [Pièces_Disponibles_Mat],
-				                ACompleter = if [Pièces_ÀCompléter_Mat] = null then 0 else [Pièces_ÀCompléter_Mat]
-				            in
-				                if PreuveRequise = false then "Non requise"
-				                else if PreuveRequise = null or NombrePieces = 0 then "À confirmer"
-				                else if Disponibles = NombrePieces then "Disponible"
-				                else if ACompleter > 0 then "À compléter"
-				                else "À confirmer",
-				        type text
-				    ),
-				    #"Added required action" = Table.AddColumn(
-				        #"Added evidence state",
-				        "Action requise",
-				        each
-				            if [#"Statut opérationnel"] = "En retard" then "Régulariser l'échéance"
-				            else if [#"Statut opérationnel"] = "Paiement en attente" then "Effectuer le paiement"
-				            else if [#"Statut opérationnel"] = "Écart à justifier" then "Expliquer l'écart comptable"
-				            else if [#"Statut opérationnel"] = "Urgent" then "Finaliser le dossier"
-				            else if [#"Statut opérationnel"] = "À faire bientôt" then "Préparer le dossier"
-				            else if [#"Statut opérationnel"] = "À confirmer" then "Confirmer l'applicabilité"
-				            else if [#"État pièce"] = "À compléter" then "Joindre le justificatif"
-				            else if [#"Statut opérationnel"] = "À préparer" then "Aucune action immédiate"
-				            else if [#"Statut opérationnel"] = "Fait hors délai" then "Archivé — hors délai"
-				            else "Dossier à jour",
-				        type text
-				    ),
-				    #"Added display priority" = Table.AddColumn(
-				        #"Added required action",
-				        "Priorité_Affichage",
-				        each
-				            if [#"Statut opérationnel"] = "En retard" then 1
-				            else if [#"Statut opérationnel"] = "Paiement en attente" then 2
-				            else if [#"Statut opérationnel"] = "Écart à justifier" then 3
-				            else if [#"Statut opérationnel"] = "Urgent" then 4
-				            else if [#"Statut opérationnel"] = "À faire bientôt" then 5
-				            else if [#"Statut opérationnel"] = "À confirmer" then 6
-				            else if [#"Statut opérationnel"] = "À préparer" then 7
-				            else if [#"Statut opérationnel"] = "Fait hors délai" then 8
-				            else 9,
-				        Int64.Type
-				    ),
-				    #"Removed helper columns" = Table.RemoveColumns(#"Added display priority", {"Applicabilité_Mat", "Preuve_Requise_Mat", "Écart_Comptable_Mat", "Nombre_Pièces_Mat", "Pièces_Disponibles_Mat", "Pièces_ÀCompléter_Mat"})
+				    ComplianceTrackingTable_Table = Source{[Item="ComplianceTrackingTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(ComplianceTrackingTable_Table,{{"Suivi_ID", type text}, {"Obligation_ID", type text}, {"Période", type text}, {"Date_Clé", Int64.Type}, {"Date_Échéance", type date}, {"Date_Référence", type date}, {"Date_Déclaration", type date}, {"Date_Paiement", type date}, {"Montant_Déclaré", Int64.Type}, {"Montant_Dû", Int64.Type}, {"Montant_Payé", Int64.Type}, {"Responsable_Client", type text}, {"Référence_Déclaration", type text}, {"Référence_Paiement", type text}, {"Statut_Saisi", type text}, {"Commentaire", type text}, {"Contrôle_Obligation", type text}})
 				in
-				    #"Removed helper columns"
+				    #"Changed Type"
 
 	annotation PBI_NavigationStepName = Navigation
 	annotation PBI_ResultType = Table
