@@ -149,6 +149,7 @@ relationship e41c4393-2d84-44a5-96c0-5e52db779d19
 	toColumn: ComplianceTrackingTable.Suivi_ID
 
 relationship 387a8cf4-f413-42ad-a466-df4dc3be0edb
+	isActive: false
 	fromColumn: ComplianceReconciliationTable.Mouvement_ID
 	toColumn: CashTable.Mouvement_ID
 
