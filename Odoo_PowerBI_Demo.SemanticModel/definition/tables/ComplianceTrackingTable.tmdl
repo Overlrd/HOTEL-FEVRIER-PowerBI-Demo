@@ -1,0 +1,130 @@
+table ComplianceTrackingTable
+	lineageTag: 6ae5b441-1c3a-4ade-9a10-139511a79146
+
+	column Suivi_ID
+		dataType: string
+		lineageTag: a227bd48-be55-4c69-95a0-bfcac43eeb6e
+		summarizeBy: none
+		sourceColumn: Suivi_ID
+
+	column Obligation_ID
+		dataType: string
+		lineageTag: 48d68a0f-d5b7-42fb-ab11-fdf3c3b3f884
+		summarizeBy: none
+		sourceColumn: Obligation_ID
+
+	column Période
+		dataType: string
+		lineageTag: 000d4758-7936-4c12-acce-7600f90d63c9
+		summarizeBy: none
+		sourceColumn: Période
+
+	column Date_Clé
+		dataType: int64
+		formatString: 0
+		lineageTag: 7aafdbec-8eb4-4fa8-bb8e-91d4df8aeab9
+		summarizeBy: none
+		sourceColumn: Date_Clé
+
+	column Date_Échéance
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 6b8d631e-3d1c-4693-af46-609c92003eb5
+		summarizeBy: none
+		sourceColumn: Date_Échéance
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Date_Référence
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 548f71c5-f294-4a33-926e-dbc914683bf2
+		summarizeBy: none
+		sourceColumn: Date_Référence
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Date_Déclaration
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 06d44871-ea90-4912-9e4b-ce5c9d7e9970
+		summarizeBy: none
+		sourceColumn: Date_Déclaration
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Date_Paiement
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 47856a98-b2c8-4ee3-bcf8-43732641d4eb
+		summarizeBy: none
+		sourceColumn: Date_Paiement
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Montant_Déclaré
+		dataType: int64
+		formatString: #,0
+		lineageTag: abd369b0-87e0-428d-b99c-2278a976c712
+		summarizeBy: sum
+		sourceColumn: Montant_Déclaré
+
+	column Montant_Dû
+		dataType: int64
+		formatString: #,0
+		lineageTag: d4ca4c60-6e25-4555-a798-7c7642db41e4
+		summarizeBy: sum
+		sourceColumn: Montant_Dû
+
+	column Montant_Payé
+		dataType: int64
+		formatString: #,0
+		lineageTag: 987a6873-6ecd-4915-9c6f-fcb29bf560cc
+		summarizeBy: sum
+		sourceColumn: Montant_Payé
+
+	column Responsable_Client
+		dataType: string
+		lineageTag: bbee5e55-4cf8-4421-a7f3-ce3307ce0a02
+		summarizeBy: none
+		sourceColumn: Responsable_Client
+
+	column Référence_Déclaration
+		dataType: string
+		lineageTag: dd657b26-ae3a-4265-9a13-ea429a550320
+		summarizeBy: none
+		sourceColumn: Référence_Déclaration
+
+	column Référence_Paiement
+		dataType: string
+		lineageTag: 57d82ddd-3b63-4ff2-8bf6-601a9d6cec25
+		summarizeBy: none
+		sourceColumn: Référence_Paiement
+
+	column Statut_Saisi
+		dataType: string
+		lineageTag: 0228f108-c464-4372-b94d-666e8b491be8
+		summarizeBy: none
+		sourceColumn: Statut_Saisi
+
+	column Commentaire
+		dataType: string
+		lineageTag: 039f2080-22a0-451c-820c-8f1e0306a438
+		summarizeBy: none
+		sourceColumn: Commentaire
+
+	column Contrôle_Obligation
+		dataType: string
+		lineageTag: 5c7abf79-6f28-4795-b7bf-b748bc8eca04
+		summarizeBy: none
+		sourceColumn: Contrôle_Obligation
+
+	partition ComplianceTrackingTable = m
+		mode: import
+		source =
+				let
+				    Files = SharePoint.Files("https://ivorygoldconsulting-my.sharepoint.com/personal/augustin_kpadonou_ivorygoldglobal_com", [ApiVersion = 15]),
+				    Source = Excel.Workbook(Files{[Name="Hotel_2_Fevrier_Donnees_Demo_PowerBI.xlsx"]}[Content], null, true),
+				    ComplianceTrackingTable_Table = Source{[Item="ComplianceTrackingTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(ComplianceTrackingTable_Table,{{"Suivi_ID", type text}, {"Obligation_ID", type text}, {"Période", type text}, {"Date_Clé", Int64.Type}, {"Date_Échéance", type date}, {"Date_Référence", type date}, {"Date_Déclaration", type date}, {"Date_Paiement", type date}, {"Montant_Déclaré", Int64.Type}, {"Montant_Dû", Int64.Type}, {"Montant_Payé", Int64.Type}, {"Responsable_Client", type text}, {"Référence_Déclaration", type text}, {"Référence_Paiement", type text}, {"Statut_Saisi", type text}, {"Commentaire", type text}, {"Contrôle_Obligation", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+	annotation PBI_ResultType = Table
