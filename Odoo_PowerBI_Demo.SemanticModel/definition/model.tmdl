@@ -58,6 +58,6 @@ ref table ComplianceDetailConfirm
 ref table ComplianceDetailPayments
 ref table ComplianceDetailAll
 ref table ComplianceDetailDocuments
-ref table ComplianceDetailAccounting
+ref table ComplianceDetailPrepare
 
 ref cultureInfo en-US

@@ -28,57 +28,27 @@ table ComplianceTrackingTable
 		lineageTag: 5b046117-da6f-4d69-ae10-54cdecd8cacc
 
 	measure 'Dossiers à jour' =
-			COALESCE(
-			    CALCULATE(
-			        COUNTROWS(ComplianceTrackingTable),
-			        ComplianceTrackingTable[Statut lecture] IN {"À jour", "Fait hors délai"}
-			    ),
-			    0
-			)
+			COALESCE(COUNTROWS(ComplianceDetailCurrent), 0)
 		formatString: 0
 		lineageTag: 3b60ee55-d714-4f67-92cf-875b95bbdb15
 
 	measure 'Actions immédiates' =
-			COALESCE(
-			    CALCULATE(
-			        COUNTROWS(ComplianceTrackingTable),
-			        ComplianceTrackingTable[Statut lecture] IN {"En retard", "Paiement en attente", "Urgent"}
-			    ),
-			    0
-			)
+			COALESCE(COUNTROWS(ComplianceDetailActions), 0)
 		formatString: 0
 		lineageTag: 6ee4691f-e13b-4d3d-9a97-5255676c8cad
 
 	measure 'À faire bientôt' =
-			COALESCE(
-			    CALCULATE(
-			        COUNTROWS(ComplianceTrackingTable),
-			        ComplianceTrackingTable[Statut lecture] = "À faire bientôt"
-			    ),
-			    0
-			)
+			COALESCE(COUNTROWS(ComplianceDetailSoon), 0)
 		formatString: 0
 		lineageTag: a1adec64-4260-4a3c-b3f9-8113e13c56f2
 
 	measure 'Dossiers à confirmer' =
-			COALESCE(
-			    CALCULATE(
-			        COUNTROWS(ComplianceTrackingTable),
-			        ComplianceTrackingTable[Statut lecture] = "À confirmer"
-			    ),
-			    0
-			)
+			COALESCE(COUNTROWS(ComplianceDetailConfirm), 0)
 		formatString: 0
 		lineageTag: 9d9e2d57-426c-40a8-92dd-a5bfd3a7a0b8
 
 	measure 'Dossiers à préparer' =
-			COALESCE(
-			    CALCULATE(
-			        COUNTROWS(ComplianceTrackingTable),
-			        ComplianceTrackingTable[Statut lecture] = "À préparer"
-			    ),
-			    0
-			)
+			COALESCE(COUNTROWS(ComplianceDetailPrepare), 0)
 		formatString: 0
 		lineageTag: 03ce9a3a-5b57-4d64-8962-b4ea4f2c2c10
 
@@ -106,6 +76,10 @@ table ComplianceTrackingTable
 	measure 'Date de référence conformité' = FORMAT(MAX(ComplianceTrackingTable[Date_Référence]), "dd MMM yyyy", "fr-FR")
 		lineageTag: 681d2190-6c72-4709-bc14-094c2d2765ff
 
+	measure 'Statut conformité affiché' =
+			[État global conformité] & "  ·  " & [Date de référence conformité]
+		lineageTag: aabfc61a-5c77-4f54-a63c-3223b8dccf01
+
 	measure 'État global conformité' =
 			VAR Lignes = [Échéances suivies]
 			VAR Actions = [Actions immédiates]
@@ -113,13 +87,12 @@ table ComplianceTrackingTable
 			VAR AConfirmer = [Dossiers à confirmer]
 			VAR APreparer = [Dossiers à préparer]
 			VAR Pieces = COALESCE([Pièces à compléter], 0)
-			VAR EcartComptable = ABS(COALESCE([Écart comptable total], 0))
 			VAR Salaries = COALESCE([Salariés à régulariser], 0)
 			RETURN
 			    SWITCH(
 			        TRUE(),
 			        Lignes = 0, "DONNÉES À ACTUALISER",
-			        Actions > 0 || Pieces > 0 || EcartComptable > 0 || Salaries > 0, "ATTENTION REQUISE",
+			        Actions > 0 || Pieces > 0 || Salaries > 0, "ATTENTION REQUISE",
 			        AConfirmer > 0, "À CONFIRMER",
 			        Bientot > 0 || APreparer > 0, "À PRÉPARER",
 			        "DOSSIER À JOUR"

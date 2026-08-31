@@ -190,3 +190,8 @@ relationship 30666666-6666-4666-8666-666666666666
 	crossFilteringBehavior: bothDirections
 	fromColumn: ComplianceDetailAll.Suivi_ID
 	toColumn: ComplianceTrackingTable.Suivi_ID
+
+relationship 30999999-9999-4999-8999-999999999999
+	crossFilteringBehavior: bothDirections
+	fromColumn: ComplianceDetailPrepare.Suivi_ID
+	toColumn: ComplianceTrackingTable.Suivi_ID
