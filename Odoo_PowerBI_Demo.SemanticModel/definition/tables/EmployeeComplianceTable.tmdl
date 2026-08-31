@@ -25,6 +25,39 @@ table EmployeeComplianceTable
 		formatString: #,0
 		lineageTag: c272c661-8c9a-4a58-90e5-94fb69f1debc
 
+	measure 'Salariés immatriculés' = [Salariés contrôlés] - [Salariés à régulariser]
+		formatString: 0
+		lineageTag: e52ae89c-4bf2-44c2-a550-298887cc9df6
+
+	measure 'Taux d''immatriculation' = DIVIDE([Salariés immatriculés], [Salariés contrôlés])
+		formatString: 0.0%
+		lineageTag: 9a37d0f6-049d-4fd8-8ec7-44fec1e1b4dd
+
+	measure 'Cotisations totales' = [Cotisations patronales] + [Cotisations salariales]
+		formatString: #,0
+		lineageTag: 6ef5a863-9e35-4932-b39c-19a8291aa405
+
+	measure 'Cotisations totales affichées' =
+			VAR Montant = [Cotisations totales]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(Montant), BLANK(),
+			        ABS(Montant) >= 1000000, FORMAT(DIVIDE(Montant, 1000000), "0.0", "fr-FR") & " M XOF",
+			        FORMAT(Montant, "#,0", "fr-FR") & " XOF"
+			    )
+		lineageTag: f0917fc4-b12a-4f68-a019-88dcefc70e2e
+
+	measure 'Résumé CNSS' =
+			VAR ÀRégulariser = [Salariés à régulariser]
+			RETURN
+			    IF(
+			        ÀRégulariser = 0,
+			        "Toutes les situations salariés sont documentées.",
+			        FORMAT(ÀRégulariser, "0") & " situation(s) salarié(s) demandent une régularisation."
+			    )
+		lineageTag: 702cb215-8361-4a19-9ef5-6d69c28103d4
+
 	column Contrôle_Salarié_ID
 		dataType: string
 		lineageTag: 672639b5-a951-4673-a9d0-ec313987f9be

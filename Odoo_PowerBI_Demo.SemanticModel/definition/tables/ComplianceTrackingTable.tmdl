@@ -9,46 +9,55 @@ table ComplianceTrackingTable
 		formatString: 0
 		lineageTag: 2e15d9c7-9caa-4862-b8b7-c5f9c8677d2f
 
-	measure 'Échéances conformes' =
-			CALCULATE(
-			    COUNTROWS(ComplianceTrackingTable),
-			    ComplianceTrackingTable[Statut opérationnel] IN {"Conforme", "Conforme hors délai"}
-			)
+	measure 'Échéances conformes' = [Dossiers à jour]
 		formatString: 0
 		lineageTag: eb844e53-92f8-4310-9574-cb42c6dace0b
 
-	measure 'Échéances à traiter' =
-			CALCULATE(
-			    COUNTROWS(ComplianceTrackingTable),
-			    ComplianceTrackingTable[Statut opérationnel] IN {"En retard", "Déclaré - non payé", "Justificatif manquant", "Écart à justifier", "Urgent"}
-			)
+	measure 'Échéances à traiter' = [Actions immédiates]
 		formatString: 0
 		lineageTag: 43cb74a9-c303-4e29-a377-bb7481963734
 
 	measure 'Taux de conformité' =
-			VAR BaseÉvaluable =
-			    CALCULATE(
-			        COUNTROWS(ComplianceTrackingTable),
-			        NOT (ComplianceTrackingTable[Statut opérationnel] IN {"À préparer", "Non applicable", "À valider"})
-			    )
-			RETURN DIVIDE([Échéances conformes], BaseÉvaluable)
+			VAR BaseÉvaluable = [Dossiers à jour] + [Actions immédiates]
+			RETURN DIVIDE([Dossiers à jour], BaseÉvaluable)
 		formatString: 0.0%
 		lineageTag: 44d0dfc0-e5e0-4599-9158-3c00507b1f49
 
-	measure 'Échéances dans 30 jours' =
-			VAR DateRéférence = MAX(ComplianceTrackingTable[Date_Référence])
-			RETURN
-			    CALCULATE(
-			        COUNTROWS(ComplianceTrackingTable),
-			        FILTER(
-			            ComplianceTrackingTable,
-			            ComplianceTrackingTable[Date_Échéance] >= DateRéférence
-			                && ComplianceTrackingTable[Date_Échéance] <= DateRéférence + 30
-			                && NOT (ComplianceTrackingTable[Statut opérationnel] IN {"Conforme", "Non applicable"})
-			        )
-			    )
+	measure 'Échéances dans 30 jours' = [À faire bientôt]
 		formatString: 0
 		lineageTag: 5b046117-da6f-4d69-ae10-54cdecd8cacc
+
+	measure 'Dossiers à jour' =
+			CALCULATE(
+			    COUNTROWS(ComplianceTrackingTable),
+			    FILTER(ComplianceTrackingTable, ComplianceTrackingTable[Statut opérationnel] IN {"À jour", "Fait hors délai"})
+			)
+		formatString: 0
+		lineageTag: 3b60ee55-d714-4f67-92cf-875b95bbdb15
+
+	measure 'Actions immédiates' =
+			CALCULATE(
+			    COUNTROWS(ComplianceTrackingTable),
+			    FILTER(ComplianceTrackingTable, ComplianceTrackingTable[Statut opérationnel] IN {"En retard", "Paiement en attente", "Écart à justifier", "Urgent"})
+			)
+		formatString: 0
+		lineageTag: 6ee4691f-e13b-4d3d-9a97-5255676c8cad
+
+	measure 'À faire bientôt' =
+			CALCULATE(
+			    COUNTROWS(ComplianceTrackingTable),
+			    FILTER(ComplianceTrackingTable, ComplianceTrackingTable[Statut opérationnel] = "À faire bientôt")
+			)
+		formatString: 0
+		lineageTag: a1adec64-4260-4a3c-b3f9-8113e13c56f2
+
+	measure 'Dossiers à confirmer' =
+			CALCULATE(
+			    COUNTROWS(ComplianceTrackingTable),
+			    FILTER(ComplianceTrackingTable, ComplianceTrackingTable[Statut opérationnel] = "À confirmer")
+			)
+		formatString: 0
+		lineageTag: 9d9e2d57-426c-40a8-92dd-a5bfd3a7a0b8
 
 	measure 'Montant restant à payer' =
 			SUMX(
@@ -72,6 +81,62 @@ table ComplianceTrackingTable
 
 	measure 'Date de référence conformité' = FORMAT(MAX(ComplianceTrackingTable[Date_Référence]), "dd MMM yyyy", "fr-FR")
 		lineageTag: 681d2190-6c72-4709-bc14-094c2d2765ff
+
+	measure 'État global conformité' =
+			SWITCH(
+			    TRUE(),
+			    [Actions immédiates] > 0, "ATTENTION REQUISE",
+			    [À faire bientôt] > 0, "À PRÉPARER",
+			    [Dossiers à confirmer] > 0, "À CONFIRMER",
+			    "DOSSIER À JOUR"
+			)
+		lineageTag: 5ecca656-9097-4e8c-a574-95fe42774d12
+
+	measure 'Résumé conformité' =
+			VAR Actions = [Actions immédiates]
+			VAR Bientôt = [À faire bientôt]
+			VAR Pièces = [Pièces à compléter]
+			VAR PhraseActions =
+			    SWITCH(
+			        TRUE(),
+			        Actions = 0, "Aucune action urgente.",
+			        Actions = 1, "1 action demande votre attention.",
+			        FORMAT(Actions, "0") & " actions demandent votre attention."
+			    )
+			VAR PhraseBientôt = IF(Bientôt > 0, " " & FORMAT(Bientôt, "0") & " échéance(s) sont à préparer dans les 30 jours.", "")
+			VAR PhrasePièces = IF(Pièces > 0, " " & FORMAT(Pièces, "0") & " pièce(s) restent à compléter.", "")
+			RETURN PhraseActions & PhraseBientôt & PhrasePièces
+		lineageTag: 22e5d751-83f3-4d90-abfa-7f771477dba7
+
+	measure 'Obligation sélectionnée' = SELECTEDVALUE(ComplianceObligationTable[Obligation], "Plusieurs obligations")
+		lineageTag: 86b79a3a-feee-49e2-8c52-06a7db47b136
+
+	measure 'Organisme sélectionné' = SELECTEDVALUE(ComplianceObligationTable[Organisme], "Organisme à confirmer")
+		lineageTag: d7c53c77-c727-4056-8805-5567ae1f944e
+
+	measure 'Statut du dossier' = SELECTEDVALUE(ComplianceTrackingTable[Statut opérationnel], "Sélection multiple")
+		lineageTag: 93a05393-4d17-4e12-bcfa-92b03219e099
+
+	measure 'Référence du dossier' = SELECTEDVALUE(ComplianceTrackingTable[Suivi_ID], "")
+		lineageTag: d7c15a12-8109-46dc-8b17-2229128eec0f
+
+	measure 'Échéance du dossier' =
+			VAR DateÉchéance = SELECTEDVALUE(ComplianceTrackingTable[Date_Échéance])
+			RETURN IF(ISBLANK(DateÉchéance), "À confirmer", FORMAT(DateÉchéance, "dd MMM yyyy", "fr-FR"))
+		lineageTag: 5c857024-6e20-4b6d-87a2-1382c293e059
+
+	measure 'Résumé du dossier' =
+			VAR Organisme = [Organisme sélectionné]
+			VAR Statut = [Statut du dossier]
+			VAR Action = SELECTEDVALUE(ComplianceTrackingTable[Action requise], "Consulter les éléments du dossier")
+			RETURN Organisme & " • " & Statut & " — " & Action
+		lineageTag: 296763a6-3dce-40ec-8b81-23ca8edd6687
+
+	measure 'Montant dû affiché' = FORMAT(COALESCE(SUM(ComplianceTrackingTable[Montant_Dû]), 0), "#,0", "fr-FR") & " XOF"
+		lineageTag: 9e50045a-2818-4848-b83f-71c28c26c26a
+
+	measure 'Montant payé affiché' = FORMAT(COALESCE(SUM(ComplianceTrackingTable[Montant_Payé]), 0), "#,0", "fr-FR") & " XOF"
+		lineageTag: 5c63a3e1-6976-47b3-9811-5385ce43545b
 
 	column Suivi_ID
 		dataType: string
@@ -191,15 +256,25 @@ table ComplianceTrackingTable
 			VAR StatutSaisi = TRIM(COALESCE(ComplianceTrackingTable[Statut_Saisi], ""))
 			VAR DateRéférence = ComplianceTrackingTable[Date_Référence]
 			VAR DateÉchéance = ComplianceTrackingTable[Date_Échéance]
+			VAR DateDéclaration = ComplianceTrackingTable[Date_Déclaration]
+			VAR DatePaiement = ComplianceTrackingTable[Date_Paiement]
+			VAR MontantDû = COALESCE(ComplianceTrackingTable[Montant_Dû], 0)
+			VAR MontantPayé = COALESCE(ComplianceTrackingTable[Montant_Payé], 0)
+			VAR Applicabilité = RELATED(ComplianceObligationTable[Applicabilité])
+			VAR ÉcartComptable = SUMX(RELATEDTABLE(ComplianceReconciliationTable), ABS(COALESCE(ComplianceReconciliationTable[Écart_Comptabilité], 0)))
 			VAR Jours = IF(NOT ISBLANK(DateÉchéance) && NOT ISBLANK(DateRéférence), DATEDIFF(DateRéférence, DateÉchéance, DAY))
 			RETURN
 			    SWITCH(
 			        TRUE(),
-			        StatutSaisi <> "", StatutSaisi,
-			        ISBLANK(DateÉchéance) || ISBLANK(DateRéférence), "À valider",
+			        StatutSaisi = "À confirmer" || Applicabilité = "À confirmer", "À confirmer",
+			        ISBLANK(DateÉchéance) || ISBLANK(DateRéférence), "À confirmer",
+			        ÉcartComptable > 0, "Écart à justifier",
+			        StatutSaisi = "Clôturé" && ((NOT ISBLANK(DateDéclaration) && DateDéclaration > DateÉchéance) || (NOT ISBLANK(DatePaiement) && DatePaiement > DateÉchéance)), "Fait hors délai",
+			        StatutSaisi = "Clôturé", "À jour",
+			        DateÉchéance < DateRéférence && NOT ISBLANK(DateDéclaration) && MontantDû > MontantPayé, "Paiement en attente",
 			        DateÉchéance < DateRéférence, "En retard",
 			        Jours <= 7, "Urgent",
-			        Jours <= 30, "À venir",
+			        Jours <= 30, "À faire bientôt",
 			        "À préparer"
 			    )
 		dataType: string
@@ -217,6 +292,64 @@ table ComplianceTrackingTable
 		formatString: #,0
 		lineageTag: aecff65d-832a-4228-ad5e-0422d444fa56
 		summarizeBy: sum
+
+	column 'État pièce' =
+			VAR PreuveRequise = RELATED(ComplianceObligationTable[Preuve_Requise])
+			VAR Pièces = RELATEDTABLE(ComplianceReconciliationTable)
+			VAR NombrePièces = COUNTROWS(Pièces)
+			VAR Disponibles = COUNTROWS(FILTER(Pièces, ComplianceReconciliationTable[Statut_Preuve] = "Disponible"))
+			VAR ÀCompléter = COUNTROWS(FILTER(Pièces, ComplianceReconciliationTable[Statut_Preuve] IN {"Manquant", "À obtenir"}))
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        PreuveRequise = FALSE(), "Non requise",
+			        NombrePièces = 0, "À confirmer",
+			        Disponibles = NombrePièces, "Disponible",
+			        ÀCompléter > 0, "À compléter",
+			        "À confirmer"
+			    )
+		dataType: string
+		lineageTag: 2e827960-b312-4b2a-86fb-28da66c76500
+		summarizeBy: none
+
+	column 'Action requise' =
+			VAR Statut = ComplianceTrackingTable[Statut opérationnel]
+			VAR ÉtatPièce = ComplianceTrackingTable[État pièce]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        Statut = "En retard", "Régulariser l'échéance",
+			        Statut = "Paiement en attente", "Effectuer le paiement",
+			        Statut = "Écart à justifier", "Expliquer l'écart comptable",
+			        Statut = "Urgent", "Finaliser le dossier",
+			        Statut = "À faire bientôt", "Préparer le dossier",
+			        Statut = "À confirmer", "Confirmer l'applicabilité",
+			        ÉtatPièce = "À compléter", "Joindre le justificatif",
+			        Statut = "À préparer", "Aucune action immédiate",
+			        Statut = "Fait hors délai", "Archivé — hors délai",
+			        "Dossier à jour"
+			    )
+		dataType: string
+		lineageTag: d94647bd-123b-4945-a54a-78fb8fcc5afd
+		summarizeBy: none
+
+	column Priorité_Affichage =
+			SWITCH(
+			    ComplianceTrackingTable[Statut opérationnel],
+			    "En retard", 1,
+			    "Paiement en attente", 2,
+			    "Écart à justifier", 3,
+			    "Urgent", 4,
+			    "À faire bientôt", 5,
+			    "À confirmer", 6,
+			    "À préparer", 7,
+			    "Fait hors délai", 8,
+			    9
+			)
+		dataType: int64
+		formatString: 0
+		lineageTag: 97faa598-6bd2-49ee-9f99-0c17843d4803
+		summarizeBy: none
 
 	partition ComplianceTrackingTable = m
 		mode: import
