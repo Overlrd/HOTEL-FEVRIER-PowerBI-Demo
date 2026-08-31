@@ -23,15 +23,27 @@ Ne pas renommer le classeur sans mettre à jour les partitions Power Query du mo
 | `ComplianceReconciliationTable` | Un rapprochement ou une preuve | Source comptable, mouvement, document, montants, écart et URL de preuve |
 | `EmployeeComplianceTable` | Un contrôle par salarié | Immatriculation, base CNSS, cotisations et anomalie |
 
-Relations principales : obligation → suivi → rapprochement ; date → suivi ; salarié → contrôle salarié ; mouvement de trésorerie et document → rapprochement.
+Relations principales : obligation → suivi → rapprochement ; date → suivi ; salarié → contrôle salarié ; document → rapprochement. Le lien de rapprochement vers les mouvements de trésorerie est volontairement **inactif** : cela évite deux chemins de filtre actifs vers la table de dates. Il reste disponible pour des mesures explicites avec `USERELATIONSHIP` si un besoin de rapprochement détaillé apparaît.
 
 ## Statuts et indicateurs
 
-`Statut opérationnel` reprend d'abord `Statut_Saisi`. Si celui-ci est vide, le modèle classe l'échéance selon `Date_Référence` et `Date_Échéance` : `En retard`, `Urgent`, `À venir`, `À préparer` ou `À valider`.
+`Statut opérationnel` transforme le statut de saisie et les éléments du dossier en une lecture exploitable. Une ligne `Clôturé` devient `À jour` ou `Fait hors délai`. Une ligne ouverte est classée selon l'échéance, le paiement et le rapprochement : `En retard`, `Paiement en attente`, `Écart à justifier`, `Urgent`, `À faire bientôt` ou `À préparer`. Une applicabilité ou une date non confirmée reste `À confirmer`.
 
-Les indicateurs couvrent : taux de conformité, échéances à traiter, échéances sous 30 jours, montant restant à payer, justificatifs manquants, écart comptable et salariés à régulariser.
+Les indicateurs principaux couvrent : dossiers à jour, actions immédiates, échéances sous 30 jours, dossiers à confirmer, montant restant à payer, justificatifs disponibles ou à compléter, écart comptable et situations CNSS à régulariser.
 
-Le taux de conformité exclut de sa base les statuts `À préparer`, `Non applicable` et `À valider`. Une ligne `Conforme hors délai` est comptée comme traitée, mais reste identifiable dans le détail.
+Le taux de conformité compare les dossiers `À jour` ou `Fait hors délai` aux dossiers qui nécessitent une action immédiate. Les dossiers futurs ou encore à confirmer restent visibles séparément et ne déforment pas ce ratio.
+
+## Expérience du rapport
+
+La page **Fiscalité & conformité** est volontairement distincte du thème analytique des autres pages. Elle se présente comme un dossier administratif sur fond papier, sans graphique de gestion :
+
+- un résumé rédigé et cinq repères de situation ;
+- un registre priorisé des obligations ;
+- un panneau de pièces justificatives ;
+- une synthèse CNSS sans liste nominative ;
+- deux filtres seulement, période et situation.
+
+Le clic droit sur une ligne du registre ouvre **Dossier d’obligation**, qui rassemble déclaration, paiement, cadre officiel, pièces et références comptables. Le bouton **Voir les situations salariés** ouvre la page CNSS détaillée ; cette page est masquée des onglets ordinaires et toutes les identités y sont signalées comme fictives.
 
 ## Gouvernance attendue
 
@@ -47,5 +59,6 @@ Le taux de conformité exclut de sa base les statuts `À préparer`, `Non applic
 2. Vérifier la feuille `Controles` du classeur.
 3. Dans Power BI Desktop ou Fabric, lancer `Update all` puis actualiser le modèle sémantique.
 4. Contrôler les relations, les mesures et l'absence d'erreur de chargement.
-5. Tester la navigation vers **Fiscalité & conformité**, les filtres, les URL et le drillthrough **Détail conformité**.
-6. Confirmer visuellement les couleurs, libellés, tableaux et mentions de démonstration avant publication.
+5. Tester la navigation vers **Fiscalité & conformité**, les deux filtres, les URL et le drillthrough **Dossier d’obligation**.
+6. Ouvrir la page **Détail des situations CNSS** depuis son bouton, vérifier les filtres département/statut et revenir au dossier principal.
+7. Confirmer visuellement les couleurs, libellés, tableaux et mentions de démonstration avant publication.

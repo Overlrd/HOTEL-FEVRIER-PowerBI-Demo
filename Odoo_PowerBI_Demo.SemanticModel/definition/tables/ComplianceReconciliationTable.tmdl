@@ -5,6 +5,27 @@ table ComplianceReconciliationTable
 		formatString: 0
 		lineageTag: 32382d33-14c4-4636-973c-48ff206d9e58
 
+	measure 'Pièces suivies' = COUNTROWS(ComplianceReconciliationTable)
+		formatString: 0
+		lineageTag: b7ab84ca-9a05-4578-85a3-473d55dc1a46
+
+	measure 'Pièces disponibles' = CALCULATE(COUNTROWS(ComplianceReconciliationTable), ComplianceReconciliationTable[Statut_Preuve] = "Disponible")
+		formatString: 0
+		lineageTag: 04006e97-d40d-487c-8a6a-f2656c702388
+
+	measure 'Pièces à compléter' = [Justificatifs manquants]
+		formatString: 0
+		lineageTag: bc68ff6b-ac0d-4e28-8ed4-6bbd3dfdded6
+
+	measure 'État du dossier documentaire' =
+			SWITCH(
+			    TRUE(),
+			    [Pièces à compléter] = 0, "Dossier documentaire complet",
+			    [Pièces à compléter] = 1, "1 pièce reste à compléter",
+			    FORMAT([Pièces à compléter], "0") & " pièces restent à compléter"
+			)
+		lineageTag: d5785059-1dd4-4f51-97d3-05a9b2fd3f3d
+
 	measure 'Écart comptable total' = SUMX(ComplianceReconciliationTable, ABS(ComplianceReconciliationTable[Écart_Comptabilité]))
 		formatString: #,0
 		lineageTag: a4e857ea-1903-4465-9963-eabd3cd0c206

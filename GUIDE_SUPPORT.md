@@ -1,6 +1,6 @@
 # Guide support — Dashboard Hôtel 2 Février
 
-**Version : 0.7 — Fiscalité et conformité**
+**Version : 0.8 — Dossier fiscalité et conformité**
 
 Le dashboard comporte huit pages visibles :
 - Vue d'ensemble
@@ -26,7 +26,7 @@ Elle contient aussi l'évolution mensuelle du chiffre d'affaires réalisé vs bu
 - Chaque page de détail dispose d'un bouton de retour.
 - **Réinitialiser** efface les filtres de la page.
 
-Détails disponibles : activité → commandes sources ; facture en retard → fiche de recouvrement ; type de chambre → détail journalier ; département → employés et paie ; catégorie → mouvements de stock ; ligne du compte de gestion → écritures sources ; suivi conformité → obligation, montants, rapprochements et preuves.
+Détails disponibles : activité → commandes sources ; facture en retard → fiche de recouvrement ; type de chambre → détail journalier ; département → employés et paie ; catégorie → mouvements de stock ; ligne du compte de gestion → écritures sources ; suivi conformité → dossier d'obligation ; synthèse CNSS → registre administratif salarié.
 
 ## Performance financière
 
@@ -41,9 +41,11 @@ Le résultat reste indicatif : amortissements, charges financières, fiscalité 
 
 ## Fiscalité & conformité
 
-La page rassemble les obligations OTR, CNSS et sectorielles dans un registre unique : échéance, statut opérationnel, montants déclarés/payés, écart comptable, justificatif et responsable client.
+La page rassemble les obligations OTR, CNSS et sectorielles sous la forme d'un dossier administratif. Elle donne d'abord une lecture simple : situation générale, actions immédiates, échéances à préparer, dossiers à confirmer, pièces manquantes et reste à payer.
 
-Les filtres portent sur le domaine, l'organisme, le statut et la période. Un clic droit sur un identifiant de suivi permet d'ouvrir **Détail conformité**. Le bas de page présente les contrôles salariés et les bases CNSS.
+Les filtres portent uniquement sur la période et la situation. Le registre est trié par action requise et échéance. Un clic droit sur une ligne permet d'ouvrir **Dossier d'obligation**, avec les dates, montants, sources, justificatifs et références comptables de la ligne. La synthèse CNSS ne montre aucun nom ; le bouton **Voir les situations salariés** ouvre une page séparée filtrable par département et statut.
+
+Cette page constitue une exception visuelle assumée : fond papier, encre sombre et statuts vert sauge, ambre, rouge atténué ou bleu-gris. Elle n'utilise ni le grand menu latéral bleu ni les graphiques des pages analytiques.
 
 Toutes les données sont fictives. Les responsables, règles d'applicabilité et sources officielles doivent être revalidés avant tout usage réel. Voir `COMPLIANCE_SOURCE.md`.
 
@@ -69,8 +71,9 @@ Le registre lie chaque pièce aux références existantes. La colonne `Document_
 6. Cliquer les catégories/barres principales et vérifier le filtrage croisé.
 7. Vérifier : chiffre d'affaires total = somme des activités ; résultat = chiffre d'affaires − achats − personnel − charges.
 8. Conserver `culture: en-US` et `sourceQueryCulture: en-US` pour Fabric.
-9. Sur Fiscalité & conformité, tester les quatre filtres, les URL officielles, les preuves et le drillthrough par `Suivi_ID`.
-10. Confirmer que chaque écran et chaque PDF de conformité reste clairement identifié comme fictif.
+9. Sur Fiscalité & conformité, tester les deux filtres, les URL officielles, les preuves et le drillthrough par `Suivi_ID`.
+10. Ouvrir le détail CNSS, tester ses deux filtres et le bouton de retour.
+11. Confirmer que chaque écran et chaque PDF de conformité reste clairement identifié comme fictif.
 
 ## Historique
 
@@ -81,3 +84,4 @@ Le registre lie chaque pièce aux références existantes. La colonne `Document_
 - v0.5 : correction JSON des boutons de retour et simplification des libellés.
 - v0.6 : ajout du registre documentaire Excel et du stockage SharePoint de démonstration.
 - v0.7 : ajout des sources, du modèle, des pages et de la navigation Fiscalité & conformité.
+- v0.8 : correction des statuts, suppression des visuels en erreur et refonte en dossier administratif avec détails obligation et CNSS séparés.
