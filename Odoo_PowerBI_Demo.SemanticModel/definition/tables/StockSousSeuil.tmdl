@@ -1,0 +1,87 @@
+table StockSousSeuil
+	lineageTag: 3b0a2b4c-8f5b-4c7d-9e21-5d665fd7b001
+
+	column Produit_ID
+		dataType: string
+		lineageTag: 3b0a2b4c-8f5b-4c7d-9e21-5d665fd7b002
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Produit_ID]
+
+	column Produit
+		dataType: string
+		lineageTag: 3b0a2b4c-8f5b-4c7d-9e21-5d665fd7b003
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Produit]
+
+	column Catégorie
+		dataType: string
+		lineageTag: 3b0a2b4c-8f5b-4c7d-9e21-5d665fd7b004
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Catégorie]
+
+	column Entrepôt
+		dataType: string
+		lineageTag: 3b0a2b4c-8f5b-4c7d-9e21-5d665fd7b005
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Entrepôt]
+
+	column 'Stock actuel'
+		dataType: int64
+		formatString: 0
+		lineageTag: 3b0a2b4c-8f5b-4c7d-9e21-5d665fd7b006
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Stock actuel]
+
+	column Seuil
+		dataType: int64
+		formatString: 0
+		lineageTag: 3b0a2b4c-8f5b-4c7d-9e21-5d665fd7b007
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Seuil]
+
+	column 'Écart au seuil'
+		dataType: int64
+		formatString: 0
+		lineageTag: 3b0a2b4c-8f5b-4c7d-9e21-5d665fd7b008
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Écart au seuil]
+
+	partition StockSousSeuil = calculated
+		mode: import
+		source =
+				VAR Produits =
+				    SUMMARIZE(
+				        StockTable,
+				        StockTable[Produit_ID]
+				    )
+				VAR DernierEtat =
+				    GENERATE(
+				        Produits,
+				        VAR ProduitCourant = StockTable[Produit_ID]
+				        VAR DerniereLigne =
+				            TOPN(
+				                1,
+				                FILTER(ALL(StockTable), StockTable[Produit_ID] = ProduitCourant),
+				                StockTable[Date], DESC,
+				                StockTable[Mouvement_Stock_ID], DESC
+				            )
+				        RETURN
+				            SELECTCOLUMNS(
+				                DerniereLigne,
+				                "Produit", StockTable[Nom_Produit],
+				                "Catégorie", StockTable[Catégorie],
+				                "Entrepôt", StockTable[Entrepôt],
+				                "Stock actuel", StockTable[Stock_Après],
+				                "Seuil", StockTable[Seuil_Stock],
+				                "Écart au seuil", StockTable[Stock_Après] - StockTable[Seuil_Stock]
+				            )
+				    )
+				RETURN
+				    FILTER(DernierEtat, [Stock actuel] < [Seuil])
