@@ -45,7 +45,7 @@ table PointsSuivi
 			VAR TopAct = TOPN(1, Activites, [__CA], DESC, OrderTable[Activité_CA], ASC)
 			VAR Nom = MAXX(TopAct, OrderTable[Activité_CA])
 			VAR Montant = MAXX(TopAct, [__CA])
-			RETURN IF(ISBLANK(Nom), BLANK(), Nom & " — " & FORMAT(Montant, "#,0", "fr-FR") & " XOF")
+			RETURN IF(ISBLANK(Nom), BLANK(), Nom & " - " & FORMAT(Montant, "#,0", "fr-FR") & " XOF")
 		lineageTag: 657a916e-ec98-4279-9a23-de2264740d43
 
 	measure 'Solde début période tooltip' =
@@ -122,7 +122,7 @@ table PointsSuivi
 			VAR TopClient = TOPN(1, AvecSolde, [__Solde], DESC, InvoiceTable[Nom_Partenaire], ASC)
 			VAR Nom = MAXX(TopClient, InvoiceTable[Nom_Partenaire])
 			VAR Solde = MAXX(TopClient, [__Solde])
-			RETURN IF(ISBLANK(Nom), BLANK(), Nom & " — " & FORMAT(Solde, "#,0", "fr-FR") & " XOF")
+			RETURN IF(ISBLANK(Nom), BLANK(), Nom & " - " & FORMAT(Solde, "#,0", "fr-FR") & " XOF")
 		lineageTag: a3896131-f6bd-49b3-88ef-6943ab20fb80
 
 	measure 'Chambres disponibles tooltip' = SUM(OccupancyTable[Chambres_Disponibles])
