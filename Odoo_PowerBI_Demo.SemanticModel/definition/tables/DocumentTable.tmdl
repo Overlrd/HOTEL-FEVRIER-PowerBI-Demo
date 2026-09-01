@@ -9,7 +9,7 @@ table DocumentTable
 		formatString: 0
 		lineageTag: c69d6391-84e2-468d-984c-f8e72c282a2f
 
-	measure 'Documents manquants' = CALCULATE([Nombre de documents], DocumentTable[Statut_Document] = "Manquant")
+	measure 'Documents manquants' = COALESCE(CALCULATE([Nombre de documents], DocumentTable[Statut_Document] = "Manquant"), 0)
 		formatString: 0
 		lineageTag: 1ad18161-4b7f-4bfe-b47f-cbb64c5617f0
 
