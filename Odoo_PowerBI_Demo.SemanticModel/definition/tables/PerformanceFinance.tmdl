@@ -57,6 +57,28 @@ table PerformanceFinance
 		lineageTag: 1cb1e683-ba07-4265-a72b-9477f3508541
 	measure 'CA HT affiché' = FORMAT([CA HT finance],"#,0","fr-FR")&" XOF"
 		lineageTag: 0a734f21-1af8-4d0b-895b-bd2fab2537b6
+
+	measure 'CA HT court' =
+			VAR Montant = [CA HT finance]
+			RETURN
+			SWITCH(
+				TRUE(),
+				ABS(Montant) >= 1000000000, FORMAT(DIVIDE(Montant,1000000000),"0.00","fr-FR") & " Md XOF",
+				ABS(Montant) >= 1000000, FORMAT(DIVIDE(Montant,1000000),"0","fr-FR") & " M XOF",
+				FORMAT(Montant,"#,0","fr-FR") & " XOF"
+			)
+		lineageTag: c6ef34d3-7dc2-4e72-8d64-a8feaf6228fd
+
+	measure 'Budget CA court' =
+			VAR Montant = [Budget CA]
+			RETURN
+			SWITCH(
+				TRUE(),
+				ABS(Montant) >= 1000000000, FORMAT(DIVIDE(Montant,1000000000),"0.00","fr-FR") & " Md XOF",
+				ABS(Montant) >= 1000000, FORMAT(DIVIDE(Montant,1000000),"0","fr-FR") & " M XOF",
+				FORMAT(Montant,"#,0","fr-FR") & " XOF"
+			)
+		lineageTag: 14260fc3-005d-4262-83b3-c0f1e533e686
 	measure 'Résultat gestion affiché' = FORMAT([Résultat de gestion disponible],"#,0","fr-FR")&" XOF"
 		lineageTag: 33c562c6-776a-4c73-839f-7d5c4c7b8104
 	measure 'Budget marge sur achats' = [Budget CA]-[Budget achats directs]

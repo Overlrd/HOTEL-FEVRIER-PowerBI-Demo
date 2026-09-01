@@ -22,6 +22,16 @@ table PointsSuivi
 		formatString: 0.0%
 		lineageTag: 8285286d-851b-4435-a115-0b24dd83e3fb
 
+	measure 'Écart CA budget affiché' =
+			VAR Ecart = [Écart CA vs budget % tooltip]
+			RETURN IF(ISBLANK(Ecart), "N/A", FORMAT(Ecart,"+0.0%;-0.0%;0.0%","fr-FR"))
+		lineageTag: 69f4c228-f2bd-426d-9bc9-23b095a24e52
+
+	measure 'Évolution CA tooltip affichée' =
+			VAR Evol = [Évolution CA tooltip]
+			RETURN IF(ISBLANK(Evol), "N/A", FORMAT(Evol,"+0.0%;-0.0%;0.0%","fr-FR"))
+		lineageTag: 351652a8-1f39-4869-8a6b-d5f06ea5037a
+
 	measure 'Activité principale CA tooltip' =
 			VAR Activites =
 				ADDCOLUMNS(
