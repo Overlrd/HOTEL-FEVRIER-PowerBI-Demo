@@ -65,8 +65,24 @@ table HRAttendanceTable
 		formatString: #,0
 		lineageTag: 4b76ec6e-a399-4bc5-b526-4538f9914c81
 
+	measure 'Absences non planifiées mois RH' =
+			VAR RefDate = [Date RH de référence]
+			VAR DebutMois = DATE(YEAR(RefDate), MONTH(RefDate), 1)
+			RETURN
+			CALCULATE(
+				COUNTROWS(HRAttendanceTable),
+				FILTER(
+					ALL(HRAttendanceTable[Date]),
+					HRAttendanceTable[Date] >= DebutMois
+						&& HRAttendanceTable[Date] <= RefDate
+				),
+				HRAttendanceTable[Non_Planifiée] = TRUE()
+			)
+		formatString: #,0
+		lineageTag: 7f511d3b-e83e-43dc-9ec8-86d792f7ed41
+
 	measure 'Absences non planifiées affichées' =
-			FORMAT([Absences non planifiées jour], "0", "fr-FR")
+			FORMAT([Absences non planifiées mois RH], "0", "fr-FR")
 		lineageTag: 9a77fa2f-8e8d-4be4-b727-27d969dc2ae3
 
 	measure 'Heures supplémentaires mois RH' =
