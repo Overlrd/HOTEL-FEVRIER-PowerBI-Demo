@@ -81,6 +81,39 @@ table PerformanceFinance
 		lineageTag: 14260fc3-005d-4262-83b3-c0f1e533e686
 	measure 'Résultat gestion affiché' = FORMAT([Résultat de gestion disponible],"#,0","fr-FR")&" XOF"
 		lineageTag: 33c562c6-776a-4c73-839f-7d5c4c7b8104
+
+	measure 'Résultat gestion court' =
+			VAR Montant = [Résultat de gestion disponible]
+			RETURN
+			SWITCH(
+				TRUE(),
+				ABS(Montant) >= 1000000000, FORMAT(DIVIDE(Montant,1000000000),"0.00","fr-FR") & " Md XOF",
+				ABS(Montant) >= 1000000, FORMAT(DIVIDE(Montant,1000000),"0","fr-FR") & " M XOF",
+				FORMAT(Montant,"#,0","fr-FR") & " XOF"
+			)
+		lineageTag: 7b9676e1-13d4-44da-b7ae-173d72eb6ad0
+
+	measure 'Budget résultat court' =
+			VAR Montant = [Budget résultat gestion]
+			RETURN
+			SWITCH(
+				TRUE(),
+				ABS(Montant) >= 1000000000, FORMAT(DIVIDE(Montant,1000000000),"0.00","fr-FR") & " Md XOF",
+				ABS(Montant) >= 1000000, FORMAT(DIVIDE(Montant,1000000),"0","fr-FR") & " M XOF",
+				FORMAT(Montant,"#,0","fr-FR") & " XOF"
+			)
+		lineageTag: 51b1069c-7391-4901-9efe-d6aef0da8f12
+
+	measure 'Écart résultat court' =
+			VAR Montant = [Écart résultat vs budget]
+			RETURN
+			SWITCH(
+				TRUE(),
+				ABS(Montant) >= 1000000000, FORMAT(DIVIDE(Montant,1000000000),"0.00","fr-FR") & " Md XOF",
+				ABS(Montant) >= 1000000, FORMAT(DIVIDE(Montant,1000000),"0","fr-FR") & " M XOF",
+				FORMAT(Montant,"#,0","fr-FR") & " XOF"
+			)
+		lineageTag: 1b754fd0-daa2-4a90-b769-24a7128cdcd5
 	measure 'Budget marge sur achats' = [Budget CA]-[Budget achats directs]
 		formatString: #,0
 		lineageTag: 4b274c51-4c53-4c9e-b6b0-3b20837a2cd2
