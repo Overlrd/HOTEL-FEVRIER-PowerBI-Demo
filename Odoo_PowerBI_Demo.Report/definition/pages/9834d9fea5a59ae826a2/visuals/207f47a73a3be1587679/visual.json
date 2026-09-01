@@ -451,7 +451,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Fiche de recouvrement — les champs de suivi sont modifiables dans Excel'"
+                  "Value": "'Fiche de recouvrement - les champs de suivi sont modifiables dans Excel'"
                 }
               }
             },

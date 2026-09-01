@@ -136,7 +136,7 @@ table ComplianceTrackingTable
 			VAR Organisme = [Organisme sélectionné]
 			VAR Statut = [Statut du dossier]
 			VAR Action = [Action du dossier]
-			RETURN Organisme & " • " & Statut & " — " & Action
+			RETURN Organisme & " • " & Statut & " - " & Action
 		lineageTag: 296763a6-3dce-40ec-8b81-23ca8edd6687
 
 	measure 'Montant dû affiché' = FORMAT(COALESCE(SUM(ComplianceTrackingTable[Montant_Dû]), 0), "#,0", "fr-FR") & " XOF"
@@ -330,7 +330,7 @@ table ComplianceTrackingTable
 			    "À faire bientôt", "Préparer le dossier",
 			    "À confirmer", "Confirmer les informations",
 			    "À préparer", "Aucune action immédiate",
-			    "Fait hors délai", "Archivé — hors délai",
+			    "Fait hors délai", "Archivé - hors délai",
 			    "Dossier à jour"
 			)
 		dataType: string
